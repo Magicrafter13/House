@@ -5,8 +5,8 @@ import java.util.*;
 
 class Main {
   private static final int verMajor = 1;
-  private static final int verMinor = 4;
-  private static final int verFix = 1;
+  private static final int verMinor = 5;
+  private static final int verFix = 0;
   private static String curVer() {
     return verMajor + "." + verMinor + "." + verFix;
   }
@@ -188,7 +188,13 @@ class Main {
               cmds[1].equalsIgnoreCase("-h") ||
               cmds[1].equalsIgnoreCase("-f")) System.out.print("\n" + user.viewCurItem() + "\n\n");
           else if (cmds[1].equalsIgnoreCase("-i") || cmds[1].equalsIgnoreCase("--item")) {
-
+            if (cmds.length > 2) {
+              boolean valid_item = false;
+              for (int i = 0; i < types.length; i++) if (cmds[2].equalsIgnoreCase(types[i])) valid_item = true;
+              if (valid_item) {
+                System.out.print("\n" + user.list(cmds[2]) + "\n\n");
+              } else System.out.print(cmds[2] + " is not a valid item type.\n");
+            } else System.out.print("No item type specified.\n");
           } else if (cmds[1].equalsIgnoreCase("-p") || cmds[1].equalsIgnoreCase("--page")) {
             for (int i = 0; i < (user.floorSize() / 20 + (user.floorSize() % 20 == 0 ? 0 : 1)); i++) {
               System.out.print("\n\tFloor Listing - Page " + (i + 1) + "\n\n");

@@ -29,7 +29,10 @@ public class Viewer {
     return cur_house.list(cur_floor);
   }
   public String list(int s, int e) {
-    return cur_house.list(cur_floor, s, e);
+    return cur_house.list(cur_floor, s, e, "*");
+  }
+  public String list(String type) {
+    return cur_house.list(cur_floor, type);
   }
   public void addItem(Item i) {
     cur_house.addItem(cur_floor, i);
