@@ -79,42 +79,18 @@ class Main {
     House my_house = new House(2, 2);
     Viewer user = new Viewer(my_house);
     Boolean here = true;
-
-    my_house.addItem(1, new Bookshelf(new ArrayList<Book>(Arrays.asList(
-      new Book("The Hobbit", "J.R.R. Tolkien", 1937),
-      new Book("Harry Potter and the Sorcerer's Stone", "J.K. Rowling", 1997)
-    ))));
-    int[] comp_floors = {1, 1, 1, 0, 1};
-    String[][] comp_infos = {
-      {"HP", "Pavilion", "p7-1500z", "Desktop"},
-      {"Compaq", "Presario", "1625", "Laptop"},
-      {"Gateway", "510xl", "", "Desktop"},
-      {"HP", "Pavilion", "dv6t-1300", "Laptop"},
-      {"Tandy", "1000", "TL/2", "Desktop"}
-    };
-    boolean[] comp_on = {true, false, false, true, false};
-    for (int i = 0; i < comp_on.length; i++)
-      my_house.addItem(comp_floors[i], new Computer(comp_infos[i][0], comp_infos[i][1], comp_infos[i][2], comp_on[i], comp_infos[i][3]));
-    int[][] vg_f_t = {{1,0}, {1,0}, {1,0}, {1,0}, {1,0}, {1,0}, {1,0}, {1,0}, {1,0}, {1,1}, {1,1}, {1,1}, {1,1}, {1,1}, {1,1}};
-    String[][] vg_infos = {
-      {"Atari", "VCS 2600"},
-      {"Nintendo", "NES"},
-      {"Nintendo", "SNES"},
-      {"Nintendo", "N64"},
-      {"Nintendo", "GameCube"},
-      {"Nintendo", "Wii"},
-      {"Nintendo", "Wii U"},
-      {"Microsoft", "Xbox 360"},
-      {"Sega", "Genesis"},
-      {"Nintendo", "Gameboy Color"},
-      {"Sega", "Game Gear"},
-      {"Sega", "Game Gear"},
-      {"Nintendo", "DSi"},
-      {"Nintendo", "DSi"},
-      {"Nintendo", "New 3DS XL"}
-    };
-    for (int i = 0; i < vg_f_t.length; i++)
-      my_house.addItem(vg_f_t[i][0], new Console(vg_f_t[i][1], vg_infos[i][0], vg_infos[i][1]));
+    
+    //This is to keep the contents of my actual house a little more private.
+    //Just make your own .java file that returns Items.
+    for (int i = 0; i < ItemImport.bookshelfs.length; i++) {
+      my_house.addItem(ItemImport.bookshelfs_f[i], ItemImport.bookshelfs[i]);
+    }
+    for (int i = 0; i < ItemImport.computers.length; i++) {
+      my_house.addItem(ItemImport.computers_f[i], ItemImport.computers[i]);
+    }
+    for (int i = 0; i < ItemImport.consoles.length; i++) {
+      my_house.addItem(ItemImport.consoles_f[i], ItemImport.consoles[i]);
+    }
 
     while (here) {
       System.out.print("> ");
