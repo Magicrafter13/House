@@ -33,6 +33,7 @@ public class House {
         item_ids.add(i);
       }
     }
+    if (items.size() == 0) return "Floor has no " + type + " items.";
     for (int i = 0; i < items.size(); i++) {
       ret_val += item_ids.get(i) + ": " + items.get(i).listInfo(true) + items.get(i).type() + items.get(i).listInfo(false);
       if (i < items.size() - 1) ret_val += "\n";

@@ -6,7 +6,7 @@ import java.util.*;
 class Main {
   private static final int verMajor = 1;
   private static final int verMinor = 5;
-  private static final int verFix = 0;
+  private static final int verFix = 2;
   private static String curVer() {
     return verMajor + "." + verMinor + "." + verFix;
   }
@@ -37,7 +37,7 @@ class Main {
       return "\nSyntax is: info\n\n" +
              "Returns info about the current 'Viewer'\n\n";
     case "list":
-      return "\nSyntax is: list [item / (-h / -f) / -r / -p] [start end]\n\n" +
+      return "\nSyntax is: list [item] [(-h / -f)] [-r start end] [-p] [-i item]\n\n" +
              "\titem - integer of item (see list)\n" +
              "\t-h / -f - will show the the \"Viewer\"'s current item\n" +
              "\t\tLong version is --hand or --focus\n" +
@@ -46,7 +46,9 @@ class Main {
              "\t\tLong version is --range\n" +
              "\t-p - lists all items on the floor one page at a time (page is defined as\n" +
              "\t     20 lines)\n" +
-             "\t\tLong version is --page\n\n" +
+             "\t\tLong version is --page\n" +
+             "\t-i item - lists all items of type 'item' (item string)\n" +
+             "\t\tLong version is --item\n\n" +
              "Used for getting info about an item, or multiple items.\n\n";
     case "move":
       return "\nSyntax is: move item floor\n\n" +
@@ -162,6 +164,7 @@ class Main {
           if (cmds[1].matches("[0-9]+")) {
             if (Integer.parseInt(cmds[1]) < user.floorSize()) {
               if (Integer.parseInt(cmds[1]) <= user.floorSize() && Integer.parseInt(cmds[1]) >= 0) {
+                Item temp_item = user.cur_item;
                 user.changeItemFocus(Integer.parseInt(cmds[1]));
                 System.out.print("\nThis Item is:\n" + user.cur_item + "\n\n" +
                                  "Are you sure you want to delete this? [Y/N] > ");
@@ -175,6 +178,7 @@ class Main {
                   }
                   if (yenu.equalsIgnoreCase("N")) valid_answer = true;
                 }
+                user.cur_item = temp_item;
               } else System.out.print("\nInvalid item number.\n\n");
             } else System.out.print("This floor only has " + user.floorSize() + " items on it\n");
           } else System.out.print("\"" + cmds[1] + "\" is not a valid integer\n");
