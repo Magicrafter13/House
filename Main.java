@@ -6,7 +6,7 @@ import java.util.*;
 class Main {
   private static final int verMajor = 1;
   private static final int verMinor = 9;
-  private static final int verFix = 1;
+  private static final int verFix = 2;
   private static String curVer() {
     return verMajor + "." + verMinor + "." + verFix;
   }
@@ -15,10 +15,10 @@ class Main {
   private static String help(String cmd) {
     switch (cmd) {
     case "add":
-      return "\nSyntax is: add item [constructor arguments...]\n\n" +
+      return "\nSyntax is: add item [arg]\n\n" +
              "\titem - must be a valid type\n" +
-             "\teach item has optional constructor arguments\n" +
-             "\ttype add item arg - to create a non-default item\n\n" +
+             "\t arg - causes you to be prompted for the requried info to create a new" +
+             "\t       item of this type (without arg, a default item is created)\n\n" +
              "Adds item to the current floor\n\n";
     case "attach":
       return "\nSyntax is: attach src dst [-d]\n\n" +
@@ -26,7 +26,7 @@ class Main {
              "\t      (when used with -d, src must be the integer of the item that is\n" +
              "\t      attached)\n" +
              "\tdst - must be a valid integer of an item on the current floor\n" +
-             "\t-d - detaches source from destination\n\n" +
+             "\t -d - detaches source from destination\n\n" +
              "[De/A]ttaches src [from/to] dst.\n\n";
     case "clear":
       return "\nSyntax is: clear\n\n" +
@@ -46,21 +46,21 @@ class Main {
              "Returns info about the current 'Viewer'\n\n";
     case "list":
       return "\nSyntax is: list [item] [(-h / -f)] [-r start end] [-p] [-i item]\n\n" +
-             "\titem - integer of item (see list)\n" +
+             "\t   item - integer of item (see list)\n" +
              "\t-h / -f - will show the the \"Viewer\"'s current item\n" +
-             "\t\tLong version is --hand or --focus\n" +
-             "\t-r - will list items between [start] and [end] (start and end are both\n" +
-             "\t     positive integers)\n" +
-             "\t\tLong version is --range\n" +
-             "\t-p - lists all items on the floor one page at a time (page is defined as\n" +
-             "\t     20 lines)\n" +
-             "\t\tLong version is --page\n" +
+             "\t          Long version is --hand or --focus\n" +
+             "\t     -r - will list items between [start] and [end] (start and end are\n"+
+             "\t          both positive integers)\n" +
+             "\t          Long version is --range\n" +
+             "\t     -p - lists all items on the floor one page at a time (page is\n" +
+             "\t          defined as 20 lines)\n" +
+             "\t          Long version is --page\n" +
              "\t-i item - lists all items of type 'item' (item string)\n" +
-             "\t\tLong version is --item\n\n" +
+             "\t          Long version is --item\n\n" +
              "Used for getting info about an item, or multiple items.\n\n";
     case "move":
       return "\nSyntax is: move item floor\n\n" +
-             "\titem - integer of item (see list)\n" +
+             "\t item - integer of item (see list)\n" +
              "\tfloor - integer of floor (or: < for next floor down or > for next floor\n" +
              "\t        down)\n\n" +
              "Moves an item from your current floor to the specified floor.\n\n";
