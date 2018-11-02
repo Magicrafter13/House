@@ -12,6 +12,9 @@ public class Viewer {
     this();
     cur_house = h;
   }
+  public Item getItem(int i) {
+    return cur_house.getItem(cur_floor, i);
+  }
   public boolean goFloor(int f) {
     if (f >= 0 && f < cur_house.size()) {
       cur_floor = f;
@@ -37,8 +40,22 @@ public class Viewer {
   public void addItem(Item i) {
     cur_house.addItem(cur_floor, i);
   }
-  public void removeItem(int i) {
-    cur_house.getFloor(cur_floor).removeItem(i);
+  public void removeItem(int in) {
+    Item temp = cur_house.getFloor(cur_floor).getItem(in);
+    //any Item that can have this item will have it removed
+    for (Floor f : cur_house.getFloors()) {
+      for (Item i : f.getItems()) {
+        switch (i.type()) {
+        case "Bookshelf":
+          for (int b = 0; b < ((Bookshelf)i).bookCount(); b++) if (((Bookshelf)i).getBook(b) == temp) ((Bookshelf)i).removeBook(b);
+          break;
+        case "Display":
+          for (int d = 0; d < ((Display)i).deviceCount(); d++) if (((Display)i).getDevice(d) == temp) ((Display)i).disconnect(d);
+          break;
+        }
+      }
+    }
+    cur_house.getFloor(cur_floor).removeItem(in);
   }
   public int curFloor() {
     return cur_floor;

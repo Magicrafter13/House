@@ -5,12 +5,12 @@ import java.util.*;
 
 class Main {
   private static final int verMajor = 1;
-  private static final int verMinor = 5;
-  private static final int verFix = 2;
+  private static final int verMinor = 8;
+  private static final int verFix = 0;
   private static String curVer() {
     return verMajor + "." + verMinor + "." + verFix;
   }
-  private static final String[] types = {"Book", "Bookshelf", "Computer", "Console"};
+  private static final String[] types = {"Book", "Bookshelf", "Computer", "Console", "Display"};
   private static final String os = System.getProperty("os.name");
   private static String help(String cmd) {
     switch (cmd) {
@@ -79,18 +79,17 @@ class Main {
     House my_house = new House(2, 2);
     Viewer user = new Viewer(my_house);
     Boolean here = true;
-    
+
     //This is to keep the contents of my actual house a little more private.
     //Just make your own .java file that returns Items.
-    for (int i = 0; i < ItemImport.bookshelfs.length; i++) {
+    for (int i = 0; i < ItemImport.bookshelfs.length; i++)
       my_house.addItem(ItemImport.bookshelfs_f[i], ItemImport.bookshelfs[i]);
-    }
-    for (int i = 0; i < ItemImport.computers.length; i++) {
+    for (int i = 0; i < ItemImport.computers.length; i++)
       my_house.addItem(ItemImport.computers_f[i], ItemImport.computers[i]);
-    }
-    for (int i = 0; i < ItemImport.consoles.length; i++) {
+    for (int i = 0; i < ItemImport.consoles.length; i++)
       my_house.addItem(ItemImport.consoles_f[i], ItemImport.consoles[i]);
-    }
+    for (int i = 0; i < ItemImport.displays.length; i++)
+      my_house.addItem(ItemImport.displays_f[i], ItemImport.displays[i]);
 
     while (here) {
       System.out.print("> ");
@@ -142,6 +141,7 @@ class Main {
               if (Integer.parseInt(cmds[1]) <= user.floorSize() && Integer.parseInt(cmds[1]) >= 0) {
                 Item temp_item = user.cur_item;
                 user.changeItemFocus(Integer.parseInt(cmds[1]));
+                if (user.cur_item == temp_item) temp_item = new Empty();
                 System.out.print("\nThis Item is:\n" + user.cur_item + "\n\n" +
                                  "Are you sure you want to delete this? [Y/N] > ");
                 String yenu = scan.nextLine();
@@ -221,6 +221,35 @@ class Main {
                       valid = true;
                     }
                     if (temp.equalsIgnoreCase("N") || ((Bookshelf)user.cur_item).bookCount() == 0) {
+                      System.out.print("\n" + user.viewCurItem());
+                      valid = true;
+                    }
+                    System.out.println();
+                  }
+                  System.out.println();
+                  break;
+                case "Display":
+                  System.out.print("This item is a display, would you like to see:\n" +
+                                   "(Y) A specific device\n(N) Just the display\n\n");
+                  Boolean valid_num = false;
+                  while (!valid_num) {
+                    System.out.print("[Y/N] > ");
+                    String temp = scan.nextLine();
+                    if (temp.equalsIgnoreCase("Y") && ((Display)user.cur_item).deviceCount() > 0) {
+                      System.out.print("\nWhich device:\n\n");
+                      Boolean valid2 = false;
+                      while (!valid2) {
+                        System.out.print("[0-" + (((Display)user.cur_item).deviceCount() - 1) + "] > ");
+                        int dv = scan.nextInt();
+                        scan.nextLine();
+                        if (dv > -1 && dv < ((Display)user.cur_item).deviceCount()) {
+                          System.out.print("\n" + ((Display)user.cur_item).getDevice(dv));
+                          valid2 = true;
+                        }
+                      }
+                      valid_num = true;
+                    }
+                    if (temp.equalsIgnoreCase("N") || ((Display)user.cur_item).deviceCount() == 0) {
                       System.out.print("\n" + user.viewCurItem());
                       valid = true;
                     }
@@ -314,7 +343,7 @@ class Main {
               break;
             case "console":
               if (cmds.length > 2) {
-                if (cmds[1].equals("arg")) {
+                if (cmds[2].equals("arg")) {
                   System.out.print("0: " + Console.types[0]);
                   for (int i = 1; i < Console.types.length; i++) System.out.print(" " + i + ": " + Console.types[i]);
                   System.out.println();
@@ -332,6 +361,47 @@ class Main {
               } else {
                 user.addItem(new Console());
                 System.out.print("\nNew console added to floor " + user.curFloor() + ".\n\n");
+              }
+              break;
+            case "display":
+              if (cmds.length > 2) {
+                if (cmds[2].equals("arg")) {
+                  System.out.print("\nIs it a Monitor (Y) or a TV (N)?\nWill default to (Y)es if next input is invalid.\n[Y/N] > ");
+                  String is_mon = scan.nextLine();
+                  System.out.print("\nType the number for each device connected to this Display seperated by a space.\n(Optional)\n > ");
+                  String[] con_devs = scan.nextLine().split(" +");
+                  ArrayList<Item> valid_devs = new ArrayList<Item>();
+                  ArrayList<Integer> added = new ArrayList<Integer>();
+                  ArrayList<Integer> not_added = new ArrayList<Integer>();
+                  ArrayList<String> not_number = new ArrayList<String>();
+                  for (String dev : con_devs) {
+                    if (dev.matches("[0-9]+")) {
+                      int devID = Integer.parseInt(dev);
+                      if (devID >= 0 && devID < user.floorSize()) added.add(devID);
+                      else not_added.add(devID);
+                    } else not_number.add(dev);
+                  }
+                  System.out.print("\nAdded: ");
+                  for (int num : added) System.out.print(num + " ");
+                  System.out.println();
+                  System.out.print("\nNot added: ");
+                  for (int num : not_added) System.out.print(num + " ");
+                  System.out.println();
+                  System.out.print("\nNot a number: ");
+                  for (String str_num : not_number) System.out.print(str_num + " ");
+                  System.out.print("\n\n");
+                  System.out.print("Enter the displays size in inches (decimals allowed) > ");
+                  double size = scan.nextDouble();
+                  scan.nextLine();
+                  ArrayList<Item> new_items = new ArrayList<Item>();
+                  for (int id : added) new_items.add(user.getItem(id));
+                  Display temp_disp = new Display((is_mon.equalsIgnoreCase("N") ? false : true), new_items, size);
+                  user.addItem(temp_disp);
+                  System.out.print("\nThis display added:\n" + temp_disp + "\n\n");
+                } else System.out.print("\nInvalid 2nd argument, did you mean arg?\n\n");
+              } else {
+                user.addItem(new Display());
+                System.out.print("\nNew display added to floor " + user.curFloor() + ".\n\n");
               }
               break;
             default:

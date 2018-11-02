@@ -17,6 +17,9 @@ public class Floor {
   public void removeItem(int i) {
     items.remove(i);
   }
+  public ArrayList<Item> getItems() {
+    return items;
+  }
   public Item getItem(int i) {
     return items.get(i);
   }

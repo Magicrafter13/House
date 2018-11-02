@@ -14,6 +14,9 @@ public class Bookshelf implements Item {
   public void addBook(Book b) {
     books.add(b);
   }
+  public void removeBook(int b) {
+    books.remove(b);
+  }
   public int bookCount() {
     return books.size();
   }

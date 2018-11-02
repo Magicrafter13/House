@@ -72,6 +72,9 @@ public class House {
   public Floor getFloor(int f) {
     return floors[f];
   }
+  public Floor[] getFloors() {
+    return floors;
+  }
   public String toString() {
     return "Color: " + colors[color] + "\n" +
            "Floors: " + floor_count;
