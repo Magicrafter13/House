@@ -12,6 +12,9 @@ public class Viewer {
     this();
     cur_house = h;
   }
+  public boolean isItem(int i) {
+    return (i >= 0 && i < cur_house.getFloor(cur_floor).size());
+  }
   public Item getItem(int i) {
     return cur_house.getItem(cur_floor, i);
   }

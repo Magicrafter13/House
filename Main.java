@@ -5,7 +5,7 @@ import java.util.*;
 
 class Main {
   private static final int verMajor = 1;
-  private static final int verMinor = 8;
+  private static final int verMinor = 9;
   private static final int verFix = 0;
   private static String curVer() {
     return verMajor + "." + verMinor + "." + verFix;
@@ -20,6 +20,14 @@ class Main {
              "\teach item has optional constructor arguments\n" +
              "\ttype add item arg - to create a non-default item\n\n" +
              "Adds item to the current floor\n\n";
+    case "attach":
+      return "\nSyntax is: attach src dst [-d]\n\n" +
+             "\tsrc - must be a valid integer of an item on the current floor\n" +
+             "\t      (when used with -d, src must be the integer of the item that is\n" +
+             "\t      attached)\n" +
+             "\tdst - must be a valid integer of an item on the current floor\n" +
+             "\t-d - detaches source from destination\n\n" +
+             "[De/A]ttaches src [from/to] dst.\n\n";
     case "clear":
       return "\nSyntax is: clear\n\n" +
              "Clears the console, and places cursor at home position\n\n";
@@ -98,6 +106,53 @@ class Main {
       cmds = new String[temp_arr.length];
       cmds = temp_arr.clone();
       switch (cmds[0]) {
+      case "attach":
+        if (cmds.length > 1) {
+          if (cmds[1].matches("[0-9]+")) {
+            if (cmds.length > 2) {
+              if (cmds[2].matches("[0-9]+")) {
+                int src = Math.abs(Integer.parseInt(cmds[1]));
+                int dst = Math.abs(Integer.parseInt(cmds[2]));
+                if (cmds.length > 3) {
+                  if (cmds[3].equalsIgnoreCase("-d")) {
+                    Item dst_i = user.getItem(dst);
+                    switch (dst_i.type()) {
+                    case "Bookshelf":
+                      if (src < ((Bookshelf)dst_i).bookCount()) ((Bookshelf)dst_i).removeBook(src);
+                      else System.out.print("Bookshelf only has " + ((Bookshelf)dst_i).bookCount() + " books on it.\n");
+                      break;
+                    case "Display":
+                      if (src < ((Display)dst_i).deviceCount()) ((Display)dst_i).disconnect(src);
+                      else System.out.print("Display only has " + ((Display)dst_i).deviceCount() + " devices connected.\n");
+                      break;
+                    default:
+                      System.out.print("Item cannot have things detached from it.\n");
+                      break;
+                    }
+                  } else System.out.print("Invalid argument, did you mean -d?\n");
+                } else if (user.isItem(src) && user.isItem(dst)) {
+                  Item src_i = user.getItem(src);
+                  Item dst_i = user.getItem(dst);
+                  switch (dst_i.type()) {
+                  case "Bookshelf":
+                    if (src_i instanceof Book) {
+                      user.removeItem(src);
+                      ((Bookshelf)dst_i).addBook((Book)src_i);
+                    } else System.out.print("Item " + src + " is not a book.\n");
+                    break;
+                  case "Display":
+                    if (src_i instanceof Computer || src_i instanceof Console) ((Display)dst_i).connect(src_i);
+                    else System.out.print("Item " + src + " cannot connect to a display.\n");
+                    break;
+                  default:
+                    System.out.print("Item cannot have things attached to it.\n");
+                  }
+                } else System.out.print("The floor only has " + user.floorSize() + " items.\n");
+              } else System.out.print("Item must be an integer.\n");
+            } else System.out.print("\nAttach it to what?\n\n");
+          } else System.out.print("Item must be an integer.\n");
+        } else System.out.print("\nAttach what to what?\n\n");
+        break;
       case "move":
         if (cmds.length > 1) {
           if (cmds[1].matches("[0-9]+")) {
@@ -251,7 +306,7 @@ class Main {
                     }
                     if (temp.equalsIgnoreCase("N") || ((Display)user.cur_item).deviceCount() == 0) {
                       System.out.print("\n" + user.viewCurItem());
-                      valid = true;
+                      valid_num = true;
                     }
                     System.out.println();
                   }
@@ -417,10 +472,12 @@ class Main {
       case "info":
         System.out.println("\n" + user + "\n");
         break;
+      case ">":
       case "up":
         if (user.goUp()) System.out.println("\nWelcome to floor " + user.curFloor() + ".\n");
         else System.out.println("\nYou are currently on the top floor, floor unchanged.\n");
         break;
+      case "<":
       case "down":
         if (user.goDown()) System.out.println("\nWelcome to floor " + user.curFloor() + ".\n");
         else System.out.println("\nYou are currently on the bottom floor, floor unchanged.\n");
@@ -430,6 +487,7 @@ class Main {
         if (cmds.length > 1) {
           switch (cmds[1]) {
           case "add": System.out.print(help("add")); break;
+          case "attach": System.out.print(help("attach")); break;
           case "clear": case "cls": System.out.print(help("clear")); break;
           case "down": System.out.print(help("down")); break;
           case "exit": case "quit": System.out.print(help("exit")); break;
@@ -444,6 +502,7 @@ class Main {
           }
         } else {
           System.out.print("\nadd - adds item to the current floor\n");
+          System.out.print("attach - attaches (or detaches) one item to (from) another\n");
           System.out.print("clear / cls - clears the screen\n");
           System.out.print("down - goes down 1 floor\n");
           System.out.print("exit / quit - stops the program\n");
