@@ -6,75 +6,112 @@ import java.util.*;
 class Main {
   private static final int verMajor = 1;
   private static final int verMinor = 10;
-  private static final int verFix = 0;
-  private static String curVer() {
-    return verMajor + "." + verMinor + "." + verFix;
-  }
+  private static final int verFix = 1;
+  private static String curVer() {return verMajor + "." + verMinor + "." + verFix;}
+  public static final String ANSI = "\u001b[";
+  public static final String ANSI_RESET = "\u001B[0m";
+  public static final String BLACK = "30";
+  public static final String RED = "31";
+  public static final String GREEN = "32";
+  public static final String YELLOW = "33";
+  public static final String BLUE = "34";
+  public static final String PURPLE = "35";
+  public static final String CYAN = "36";
+  public static final String WHITE = "37";
+  public static final String BRIGHT = "1";
+  public static final String CEND = "m"; //CEND = Color End
+  public static final String ASEP = ";"; //ASEP = Ansi Seperator
   private static final String os = System.getProperty("os.name");
+  private static String bright(String color) {
+    switch (color.toLowerCase()) {
+    case "red": return "\u001b[31;1m";
+    case "yellow": return "\u001b[33;1m";
+    case "green": return "\u001b[32;1m";
+    case "cyan": return "\u001b[36;1m";
+    case "blue": return "\u001b[34;1m";
+    case "purple": return "\u001b[35;1m";
+    case "white": return "\u001b[37;1m";
+    case "black": return "\u001b[30;1m";
+    }
+    return bright("red") + "[!cB]" + ANSI_RESET;
+  }
+  private static String color(String color) {
+    switch (color.toLowerCase()) {
+    case "red": return "\u001b[31m";
+    case "yellow": return "\u001b[33m";
+    case "green": return "\u001b[32m";
+    case "cyan": return "\u001b[36m";
+    case "blue": return "\u001b[34m";
+    case "purple": return "\u001b[35m";
+    case "white": return "\u001b[37m";
+    case "black": return "\u001b[30m";
+    }
+    return bright("red") + "[!c]" + ANSI_RESET;
+  }
   private static String help(String cmd) {
     switch (cmd) {
     case "add":
-      return "\nSyntax is: add item [arg]\n\n" +
-             "\titem - must be a valid type\n" +
-             "\t arg - causes you to be prompted for the requried info to create a new" +
-             "\t       item of this type (without arg, a default item is created)\n\n" +
+      return "\nSyntax is: " + bright("purple") + "add " + bright("red") + "item [arg]\n\n" +
+             "\t" + bright("red") + "item" + ANSI_RESET + " - must be a valid type\n" +
+             "\t " + bright("red") + "arg" + ANSI_RESET + " - causes you to be prompted for the requried info to create a new" +
+             "\t                item of this type (without arg, a default item is created)\n\n" +
              "Adds item to the current floor\n\n";
     case "attach":
-      return "\nSyntax is: attach src dst [-d]\n\n" +
-             "\tsrc - must be a valid integer of an item on the current floor\n" +
-             "\t      (when used with -d, src must be the integer of the item that is\n" +
+      return "\nSyntax is: " + bright("purple") + "attach " + bright("red") + "src dst [-d]\n\n" +
+             "\tsrc" + ANSI_RESET + " - must be a valid integer of an item on the current floor\n" +
+             "\t      (when used with " + bright("red") + "-d" + ANSI_RESET + ", " + bright("red") + "src" + ANSI_RESET + " must be the integer of the item that is\n" +
              "\t      attached)\n" +
-             "\tdst - must be a valid integer of an item on the current floor\n" +
-             "\t -d - detaches source from destination\n\n" +
-             "[De/A]ttaches src [from/to] dst.\n\n";
+             "\t" + bright("red") + "dst" + ANSI_RESET + " - must be a valid integer of an item on the current floor\n" +
+             "\t " + bright("red") + "-d" + ANSI_RESET + " - detaches source from destination\n\n" +
+             "[De/A]ttaches " + bright("red") + "src" + ANSI_RESET + " [from/to] " + bright("red") + "dst" + ANSI_RESET + ".\n\n";
     case "clear":
-      return "\nSyntax is: clear\n\n" +
+      return "\nSyntax is: " + bright("purple") + "clear" + ANSI_RESET + "\n\n" +
              "Clears the console, and places cursor at home position\n\n";
     case "down":
-      return "\nSyntax is: down\n\n" +
+      return "\nSyntax is: " + bright("purple") + "down" + ANSI_RESET + "\n\n" +
              "Moves to the next floor down, unless you are at the bottom\n\n";
     case "exit":
-      return "\nSyntax is: exit\n\n" +
+      return "\nSyntax is: " + bright("purple") + "exit" + ANSI_RESET + "\n\n" +
              "Stops the program, and returns to your command line/operating environment\n\n";
     case "grab":
-      return "\nSyntax is: grab item\n\n" +
-             "\titem - integer of item (see list)\n\n" +
+      return "\nSyntax is: " + bright("purple") + "grab " + bright("red") + "item\n\n" +
+             "\titem" + ANSI_RESET + " - integer of item (see list)\n\n" +
              "Changes the \"Viewer\"'s current item\n\n";
     case "info":
-      return "\nSyntax is: info\n\n" +
+      return "\nSyntax is: " + bright("purple") + "info" + ANSI_RESET + "\n\n" +
              "Returns info about the current 'Viewer'\n\n";
     case "list":
-      return "\nSyntax is: list [item] [(-h / -f)] [-r start end] [-p] [-i item]\n\n" +
-             "\t   item - integer of item (see list)\n" +
-             "\t-h / -f - will show the the \"Viewer\"'s current item\n" +
-             "\t          Long version is --hand or --focus\n" +
-             "\t     -r - will list items between [start] and [end] (start and end are\n"+
+      return "\nSyntax is: " + bright("purple") + "list " + bright("red") + "[item] [(-h / -f)] [-r start end] [-p] [-i item]\n\n" +
+             "\t   item" + ANSI_RESET + " - integer of item (see list)\n" +
+             "\t" + bright("red") + "-h / -f" + ANSI_RESET + " - will show the the \"Viewer\"'s current item\n" +
+             "\t          Long version is " + bright("red") + "--hand" + ANSI_RESET + " or " + bright("red") + "--focus\n" +
+             "\t     -r" + ANSI_RESET + " - will list items between " + bright("red") + "[start]" + ANSI_RESET + " and " + bright("red") + "[end]" + ANSI_RESET + " (start and end are\n"+
              "\t          both positive integers)\n" +
-             "\t          Long version is --range\n" +
-             "\t     -p - lists all items on the floor one page at a time (page is\n" +
+             "\t          Long version is " + bright("red") + "--range\n" +
+             "\t     -p" + ANSI_RESET + " - lists all items on the floor one page at a time (page is\n" +
              "\t          defined as 20 lines)\n" +
-             "\t          Long version is --page\n" +
-             "\t-i item - lists all items of type 'item' (item string)\n" +
-             "\t          Long version is --item\n\n" +
+             "\t          Long version is " + bright("red") + "--page\n" +
+             "\t-i item" + ANSI_RESET + " - lists all items of type " + bright("red") + "item" + ANSI_RESET + " (item string)\n" +
+             "\t          Long version is " + bright("red") + "--item" + ANSI_RESET + "\n\n" +
              "Used for getting info about an item, or multiple items.\n\n";
     case "move":
-      return "\nSyntax is: move item floor\n\n" +
-             "\t item - integer of item (see list)\n" +
-             "\tfloor - integer of floor (or: < for next floor down or > for next floor\n" +
+      return "\nSyntax is: " + bright("purple") + "move " + bright("red") + "item floor\n\n" +
+             "\t item" + ANSI_RESET + " - integer of item (see list)\n" +
+             "\t" + bright("red") + "floor" + ANSI_RESET + " - integer of floor (or: " + bright("red") + "<" + ANSI_RESET + " for next floor down or " + bright("red") + ">" + ANSI_RESET + " for next floor\n" +
              "\t        down)\n\n" +
              "Moves an item from your current floor to the specified floor.\n\n";
     case "remove":
-      return "\nSyntax is: remove item\n\n" +
-             "\titem - integer of item (see list)\n\n" +
+      return "\nSyntax is: " + bright("purple") + "remove " + bright("red") + "item\n\n" +
+             "\titem" + ANSI_RESET + " - integer of item (see list)\n\n" +
              "Removes specified item from\n\n";
     case "up":
-      return "\nSyntax is: up\n\n" +
+      return "\nSyntax is: " + bright("purple") + "up" + ANSI_RESET + "\n\n" +
              "Moves to the next floor up, unless you are at the top\n\n";
     case "ver":
-      return "\nSyntax is: ver\n\n" +
+      return "\nSyntax is: " + bright("purple") + "ver" + ANSI_RESET + "\n\n" +
              "Tells you the current version of the Heck Command Interpretter\n\n";
     default:
-      return "Code error!!! (Please report, as this message shouldn't be possible to see.)";
+      return bright("red") + "Code error!!! (Please report, as this message shouldn't be possible to see.)";
     }
   }
   private static boolean equalsIgnoreCaseOr(String test, String[] strs) {
@@ -468,20 +505,21 @@ class Main {
             default: System.out.print("\nNo help was found for this command.\n\n"); break;
             }
           } else {
-            System.out.print("\nadd - adds item to the current floor\n");
-            System.out.print("attach - attaches (or detaches) one item to (from) another\n");
-            System.out.print("clear / cls - clears the screen\n");
-            System.out.print("down - goes down 1 floor\n");
-            System.out.print("exit / quit - stops the program\n");
-            System.out.print("grab / select - sets which item you are currently focused on\n");
-            System.out.print("help - displays this screen\n");
-            System.out.print("info / status - shows information about you and the house you are currently in\n");
-            System.out.print("list / look - shows the items on the current floor, or shows info about a\n" +
-                             "              specific item\n");
-            System.out.print("move - moves an item to another floor\n");
-            System.out.print("remove - removes an object from the current floor\n");
-            System.out.print("up - goes up 1 floor\n");
-            System.out.print("ver / version - displays information about this command interpretter\n");
+            System.out.println();
+            System.out.print("          " + ANSI + PURPLE + ASEP + BRIGHT + CEND + "add" + ANSI_RESET + " - adds item to the current floor\n");
+            System.out.print("       " + ANSI + PURPLE + ASEP + BRIGHT + CEND + "attach" + ANSI_RESET + " - attaches (or detaches) one item to (from) another\n");
+            System.out.print("  " + ANSI + PURPLE + ASEP + BRIGHT + CEND + "clear / cls" + ANSI_RESET + " - clears the screen\n");
+            System.out.print("         " + ANSI + PURPLE + ASEP + BRIGHT + CEND + "down" + ANSI_RESET + " - goes down 1 floor\n");
+            System.out.print("  " + ANSI + PURPLE + ASEP + BRIGHT + CEND + "exit / quit" + ANSI_RESET + " - stops the program\n");
+            System.out.print("" + ANSI + PURPLE + ASEP + BRIGHT + CEND + "grab / select" + ANSI_RESET + " - sets which item you are currently focused on\n");
+            System.out.print("         " + ANSI + PURPLE + ASEP + BRIGHT + CEND + "help" + ANSI_RESET + " - displays this screen\n");
+            System.out.print("" + ANSI + PURPLE + ASEP + BRIGHT + CEND + "info / status" + ANSI_RESET + " - shows information about you and the house you are currently in\n");
+            System.out.print("  " + ANSI + PURPLE + ASEP + BRIGHT + CEND + "list / look" + ANSI_RESET + " - shows the items on the current floor, or shows info about a\n" +
+                             "                specific item\n");
+            System.out.print("         " + ANSI + PURPLE + ASEP + BRIGHT + CEND + "move" + ANSI_RESET + " - moves an item to another floor\n");
+            System.out.print("       " + ANSI + PURPLE + ASEP + BRIGHT + CEND + "remove" + ANSI_RESET + " - removes an object from the current floor\n");
+            System.out.print("           " + ANSI + PURPLE + ASEP + BRIGHT + CEND + "up" + ANSI_RESET + " - goes up 1 floor\n");
+            System.out.print("" + ANSI + PURPLE + ASEP + BRIGHT + CEND + "ver / version" + ANSI_RESET + " - displays information about this command interpretter\n");
             System.out.print("\ntype help (command) for more detailed information about a specific command\n\n");
           }
           break;
