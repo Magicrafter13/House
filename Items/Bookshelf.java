@@ -14,8 +14,13 @@ public class Bookshelf implements Item {
   public void addBook(Book b) {
     books.add(b);
   }
-  public void removeBook(int b) {
-    books.remove(b);
+  public String removeBook(int b) {
+    if (b >= 0 && b < books.size()) {
+      books.remove(b);
+      return "\nBook " + b + " removed.\n";
+    }
+    if (books.size() == 0) return "Bookshelf is already empty!";
+    return "Bookshelf only has " + books.size() + " book" + (books.size() > 1 ? "s" : "") + " on it.";
   }
   public int bookCount() {
     return books.size();

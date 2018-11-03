@@ -63,26 +63,34 @@ public class Viewer {
   public int curFloor() {
     return cur_floor;
   }
-  public boolean goUp() {
+  public String goUp() {
     cur_floor++;
     if (cur_floor >= cur_house.size()) {
       cur_floor--;
-      return false;
+      return "\nYou are currently on the top floor, floor unchanged.\n";
     }
-    return true;
+    return "\nWelcome to floor " + cur_floor + ".\n";
   }
-  public boolean goDown() {
+  public String goDown() {
     if (cur_floor > 0) {
       cur_floor--;
+      return "\nWelcome to floor " + cur_floor + ".\n";
+    }
+    return "\nYou are currently on the bottom floor, floor unchanged.\n";
+  }
+  public boolean changeItemFocus(int i) {
+    if (i >= 0 && i < cur_house.getFloor(cur_floor).size()) {
+      cur_item = cur_house.getItem(cur_floor, i);
       return true;
     }
     return false;
   }
-  public void changeItemFocus(int i) {
-    cur_item = cur_house.getItem(cur_floor, i);
-  }
-  public void changeItemFocus(int i, int si) {
-    cur_item = cur_house.getItem(cur_floor, i, si);
+  public int changeItemFocus(int i, int si) {
+    if (i >= 0 && i < cur_house.getFloor(cur_floor).size()) {
+      cur_item = cur_house.getItem(cur_floor, i, si);
+      return (cur_item instanceof Empty ? 1 : 0);
+    }
+    return 2;
   }
   /*public void changeItemFocus(Item i) {
     cur_item = i;

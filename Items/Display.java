@@ -15,11 +15,17 @@ public class Display implements Item {
     connected_to = con;
     size_inch = (sin > 0 ? sin : 20.0);
   }
-  public void connect(Item item) {
+  public String connect(Item item) {
     connected_to.add(item);
+    return item.listInfo(true) + item.type() + item.listInfo(false) + " connected to this monitor.\n";
   }
-  public void disconnect(int item) {
-    connected_to.remove(item);
+  public String disconnect(int item) {
+    if (item >= 0 && item < connected_to.size()) {
+      connected_to.remove(item);
+      return "\nDevice " + item + " removed.\n";
+    }
+    if (connected_to.size() == 0) return "Display has no devices connected!";
+    return "Display only has " + connected_to.size() + " device" + (connected_to.size() > 1 ? "s" : "") + " connected to it.";
   }
   public int deviceCount() {
     return connected_to.size();

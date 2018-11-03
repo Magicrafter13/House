@@ -2,6 +2,7 @@ import java.util.ArrayList;
 
 public class House {
   private static final String[] colors = {"White", "Red", "Brown", "Orange", "Yellow", "Green", "Blue", "Purple", "Pink", "Black"};
+  public static final String[] types = {"*", "Book", "Bookshelf", "Computer", "Console", "Display"};
   private int color;
   private int floor_count;
   private Floor[] floors;
@@ -22,8 +23,13 @@ public class House {
     initializeFloors();
   }
   public String list(int f, int s, int e, String type) {
+    boolean valid_type = false;
+    for (int i = 0; i < types.length; i++) if (type.equalsIgnoreCase(types[i])) valid_type = true;
+    if (!valid_type) return type + " is not a valid item type.";
     if (floors[f].size() == 0) return "Floor is empty!";
-    String ret_val = "";
+    if (!(s < e)) return "Start must be less than End";
+    if (s < 0) return "Start must be greater than or equal to 0";
+    String ret_val = "\n";
     ArrayList<Item> items = new ArrayList<Item>();
     ArrayList<Integer> item_ids = new ArrayList<Integer>();
     for (int i = s; i < e; i++) {
@@ -38,14 +44,7 @@ public class House {
       ret_val += item_ids.get(i) + ": " + items.get(i).listInfo(true) + items.get(i).type() + items.get(i).listInfo(false);
       if (i < items.size() - 1) ret_val += "\n";
     }
-    /*for (int i = s; i < e; i++) {
-      if (i > floors[f].size()) continue;
-      if (type.equalsIgnoreCase("*") || type.equalsIgnoreCase(floors[f].getItem(i).type())) {
-        ret_val += i + ": " + floors[f].getItem(i).listInfo(true) + floors[f].getItem(i).type() + floors[f].getItem(i).listInfo(false);
-        if (i < e - 1) ret_val += "\n";
-      }
-    }*/
-    return ret_val;
+    return ret_val + "\n";
   }
   public String list(int f) {
     return list(f, 0, floors[f].size(), "*");

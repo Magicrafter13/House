@@ -21,12 +21,17 @@ public class Floor {
     return items;
   }
   public Item getItem(int i) {
-    return items.get(i);
+    if (i >= 0 && i < items.size()) return items.get(i);
+    return new Empty();
   }
   public Item getItem(int i, int si) {
-    Item ret_val = items.get(i);
-    if (items.get(i) instanceof Bookshelf) ret_val = ((Bookshelf)items.get(i)).getBook(si);
-    return ret_val;
+    if (i >= 0 && i < items.size()) {
+      Item ret_val = items.get(i);
+      if (items.get(i) instanceof Bookshelf) ret_val = ((Bookshelf)items.get(i)).getBook(si);
+      if (items.get(i) instanceof Display) ret_val = ((Display)items.get(i)).getDevice(si);
+      return ret_val;
+    }
+    return new Empty();
   }
   public int size() {
     return items.size();

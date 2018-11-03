@@ -19,6 +19,11 @@ public class Book implements Item {
     author = a;
     if (y >= 1600) year = y;
   }
+  public void reset(String t, String a, int y) {
+    title = t;
+    author = a;
+    year = (y >= 1600 ? y : 1600);
+  }
   public String getTitle() {
     return title;
   }
