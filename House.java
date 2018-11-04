@@ -2,7 +2,7 @@ import java.util.ArrayList;
 
 public class House {
   private static final String[] colors = {"White", "Red", "Brown", "Orange", "Yellow", "Green", "Blue", "Purple", "Pink", "Black"};
-  public static final String[] types = {"*", "Book", "Bookshelf", "Computer", "Console", "Display"};
+  public static final String[] types = {"*", "Book", "Bookshelf", "Computer", "Console", "Display", "Bed"};
   private int color;
   private int floor_count;
   private Floor[] floors;

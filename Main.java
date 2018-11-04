@@ -5,8 +5,8 @@ import java.util.*;
 
 class Main {
   private static final int verMajor = 1;
-  private static final int verMinor = 10;
-  private static final int verFix = 1;
+  private static final int verMinor = 11;
+  private static final int verFix = 0;
   private static String curVer() {return verMajor + "." + verMinor + "." + verFix;}
   public static final String ANSI = "\u001b[";
   public static final String ANSI_RESET = "\u001B[0m";
@@ -143,6 +143,8 @@ class Main {
       my_house.addItem(ItemImport.consoles_f[i], ItemImport.consoles[i]);
     for (int i = 0; i < ItemImport.displays.length; i++)
       my_house.addItem(ItemImport.displays_f[i], ItemImport.displays[i]);
+    for (int i = 0; i < ItemImport.beds.length; i++)
+      my_house.addItem(ItemImport.beds_f[i], ItemImport.beds[i]);
 
     while (here) {
       System.out.print("> ");
@@ -191,6 +193,7 @@ class Main {
                       break;
                     default:
                       System.out.print("Item cannot have things attached to it.\n");
+                      break;
                     }
                   } else System.out.print("The floor only has " + user.floorSize() + " items.\n");
                 } else System.out.print("Item must be an integer.\n");
@@ -266,9 +269,9 @@ class Main {
               else System.out.print("No item type specified.\n");
             } else if (equalsIgnoreCaseOr(cmds[1], new String[]{"-p", "--page"})) {
               for (int i = 0; i < (user.floorSize() / 20 + (user.floorSize() % 20 == 0 ? 0 : 1)); i++) {
-                System.out.print("\n\tFloor Listing - Page " + (i + 1) + "\n\n");
+                System.out.println("\n\tFloor Listing - Page " + (i + 1));
                 boolean end_test = (20 * (i + 1) < user.floorSize());
-                System.out.print(user.list(20 * i, (end_test ? 20 * (i + 1) : user.floorSize())) + "\n\n");
+                System.out.println(user.list(20 * i, (end_test ? 20 * (i + 1) : user.floorSize())));
                 if (end_test) {
                   System.out.print("Press enter to continue > ");
                   scan.nextLine();
@@ -296,6 +299,7 @@ class Main {
                       while (!valid2) {
                         System.out.print("[0-" + (b_c - 1) + "] > ");
                         int bk = Math.abs(scan.nextInt());
+                        scan.nextLine();
                         if (bk < b_c) {
                           System.out.print("\n" + ((Bookshelf)user.cur_item).getBook(bk));
                           valid2 = true;
@@ -318,7 +322,7 @@ class Main {
                     if (temp.equals("Y") && ((Display)user.cur_item).deviceCount() > 0) {
                       System.out.print("\nWhich device:\n\n");
                       Boolean valid_num = false;
-                      while (valid_num) {
+                      while (!valid_num) {
                         System.out.print("[0-" + (((Display)user.cur_item).deviceCount() - 1) + "] > ");
                         int dv = Math.abs(scan.nextInt());
                         scan.nextLine();
@@ -337,17 +341,18 @@ class Main {
                 case "Book":
                 case "Computer":
                 case "Console":
+                case "Bed":
                   System.out.print("\n" + user.viewCurItem() + "\n\n");
                   break;
                 }
                 user.cur_item = temp_item;
               } else System.out.print("This floor only has " + user.floorSize() + " items on it\n");
             } else System.out.print("\"" + cmds[1] + "\" is not a valid integer\n");
-          } else System.out.print("\n" + user.list() + "\n\n");
+          } else System.out.println(user.list());
           break;
         case "add":
           if (cmds.length > 1) {
-            switch (cmds[1]) {
+            switch (cmds[1].toLowerCase()) {
               case "bookshelf":
                 Bookshelf temp_shelf = new Bookshelf();
                 if (cmds.length > 2) {
@@ -465,6 +470,24 @@ class Main {
                   } else System.out.print("\nInvalid 2nd argument, did you mean arg?\n\n");
                 } else System.out.print("\nNew display added to floor " + user.curFloor() + ".\n\n");
                 user.addItem(temp_disp);
+                break;
+              case "bed":
+                Bed temp_bed = new Bed();
+                if (cmds.length > 2) {
+                  if (cmds[2].equalsIgnoreCase("arg")) {
+                    System.out.print("\nIs this bed adjustable? (Invalid input will default to N)\n[Y/N] > ");
+                    boolean can_move = scan.nextLine().equalsIgnoreCase("Y");
+                    System.out.println();
+                    for (int i = 0; i < Bed.types.length; i++) System.out.print("[" + i + "] " + Bed.types[i] + " ");
+                    System.out.print("\nInvalid input defaults to 2");
+                    System.out.print("\n[0-" + (Bed.types.length - 1) + "] > ");
+                    String type_input = scan.nextLine();
+                    int bed_type = (type_input.matches("[0-9]+") && Math.abs(Integer.parseInt(type_input)) < Bed.types.length ? Math.abs(Integer.parseInt(type_input)) : 2);
+                    temp_bed = new Bed(can_move, bed_type);
+                    System.out.print("\nThis bed added:\n" + temp_bed + "\n\n");
+                  } else System.out.print("\nInvalid 2nd argument, did you mean arg?\n\n");
+                } else System.out.print("\nNew bed added to floor " + user.curFloor() + ".\n\n");
+                user.addItem(temp_bed);
                 break;
               default:
                 System.out.print("\"" + cmds[1] + "\" is not a valid Item type:\n");
