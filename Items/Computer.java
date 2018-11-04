@@ -45,7 +45,7 @@ public class Computer implements Item {
     else return ", turned " + (is_on ? "on" : "off");
   }
   public String toString() {
-    return computer_type + " Computer, ID:" + id + "\n" +
+    return computer_type + " " + Main.bright("yellow") + "Computer" + Main.ANSI_RESET + ", ID:" + id + "\n" +
            "Currently powered " + (is_on ? "on" : "off") + "\n" +
            "It is a(n) " + brand + " " + family + " " + model;
   }
