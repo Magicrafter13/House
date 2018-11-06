@@ -6,7 +6,7 @@ import java.util.*;
 class Main {
   private static final int verMajor = 1;
   private static final int verMinor = 12;
-  private static final int verFix = 0;
+  private static final int verFix = 1;
   private static String curVer() {return verMajor + "." + verMinor + "." + verFix;}
   public static final String ANSI = "\u001b[";
   public static final String ANSI_RESET = "\u001B[0m";
@@ -291,7 +291,7 @@ class Main {
                   case 1: System.out.print("This " + bright("yellow", "Item") + " either has no " + color("yellow", "sub-Items") + " on it, or the " + bright("cyan", "integer") + " is too high\n"); break;
                   case 2: System.out.print("This floor only has " + bright("cyan", Integer.toString(user.floorSize())) + " items on it\n"); break;
                   }
-                } else System.out.print("\"" + cmds[2] + "\" is not a valid integer\n");
+                } else System.out.print("\"" + cmds[2] + "\" is not a valid " + bright("cyan", "integer\n"));
               } else if (user.changeItemFocus(Math.abs(Integer.parseInt(cmds[1])))) {
                 while (!valid_answer) {
                   System.out.print("\nThis " + bright("yellow", "Item") + " is:\n" + user.cur_item + "\n\n" +
@@ -305,7 +305,7 @@ class Main {
                   }
                 }
               } else System.out.print("This floor only has " + bright("cyan", Integer.toString(user.floorSize())) + " items on it\n");
-            } else System.out.print("\"" + cmds[1] + "\" is not a valid integer\n");
+            } else System.out.print("\"" + cmds[1] + "\" is not a valid " + bright("cyan", "integer\n"));
           } else System.out.print("\nRemove what?\n\n");
           break;
         case "list":

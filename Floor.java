@@ -17,16 +17,31 @@ public class Floor {
   public void removeItem(int i) {
     items.remove(i);
   }
-  public boolean removeItem(int i, int si) {
-    switch (items.get(i).type()) {
+  public void removeItem(Item test) {
+    for (int i = 0; i < items.size(); i++) if (items.get(i) == test) items.remove(i);
+  }
+  public boolean removeItem(int in, int sin) {
+    int remove_from_floor = -1;
+    for (int i = 0; i < items.size(); i++) {
+      switch(items.get(in).type()) {
+      case "Bookshelf":
+        if (((Bookshelf)items.get(in)).getBook(sin) == items.get(i)) remove_from_floor = i;
+        break;
+      case "Display":
+        if (((Display)items.get(in)).getDevice(sin) == items.get(i)) remove_from_floor = i;
+        break;
+      }
+    }
+    switch (items.get(in).type()) {
     case "Bookshelf":
-      ((Bookshelf)items.get(i)).removeBook(si);
+      ((Bookshelf)items.get(in)).removeBook(sin);
       break;
     case "Display":
-      ((Display)items.get(i)).disconnect(si);
+      ((Display)items.get(in)).disconnect(sin);
       break;
     default: return false;
     }
+    if (remove_from_floor > -1) items.remove(remove_from_floor);
     return true;
   }
   public ArrayList<Item> getItems() {
