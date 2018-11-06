@@ -15,6 +15,10 @@ public class Display implements Item {
     connected_to = con;
     size_inch = (sin > 0 ? sin : 20.0);
   }
+  public boolean hasItem(Item test) {
+    for (Item i : connected_to) if (i == test) return true;
+    return false;
+  }
   public String connect(Item item) {
     connected_to.add(item);
     return item.listInfo(true) + Main.bright("yellow", item.type()) + item.listInfo(false) + " connected to this " + Main.bright("yellow", "Display") + ".\n";
@@ -25,7 +29,16 @@ public class Display implements Item {
       return "\nDevice " + item + " removed.\n";
     }
     if (connected_to.size() == 0) return Main.bright("yellow", "Display") + " has no devices connected!";
-    return Main.bright("yellow", "Display") + " only has " + Main.bright("cyan", connected_to.size()) + " device" + (connected_to.size() > 1 ? "s" : "") + " connected to it.";
+    return Main.bright("yellow", "Display") + " only has " + Main.bright("cyan", Integer.toString(connected_to.size())) + " device" + (connected_to.size() > 1 ? "s" : "") + " connected to it.";
+  }
+  public String disconnect(Item d) {
+    for (int i = 0; i < connected_to.size(); i++) {
+      if (connected_to.get(i) == d) {
+        connected_to.remove(i);
+        return Main.color("yellow", "\nDevice") + ", " + Main.color("blue", "disconnected") + ".\n";
+      }
+    }
+    return "No matching " + Main.color("yellow", "Device") + " found.";
   }
   public int deviceCount() {
     return connected_to.size();

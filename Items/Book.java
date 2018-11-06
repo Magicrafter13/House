@@ -19,6 +19,9 @@ public class Book implements Item {
     author = a;
     if (y >= 1600) year = y;
   }
+  public boolean hasItem(Item test) {
+    return false;
+  }
   public void reset(String t, String a, int y) {
     title = t;
     author = a;

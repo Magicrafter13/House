@@ -14,6 +14,9 @@ public class Bed implements Item {
     adjustable = a;
     bed_type = (t >= 0 && t < types.length ? t : 2);
   }
+  public boolean hasItem(Item test) {
+    return false;
+  }
   public String type() {
     return typeS;
   }

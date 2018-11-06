@@ -16,6 +16,9 @@ public class Console implements Item {
     company = c;
     system = s;
   }
+  public boolean hasItem(Item test) {
+    return false;
+  }
   public String type() {
     return typeS;
   }

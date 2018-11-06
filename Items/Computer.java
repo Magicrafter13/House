@@ -24,6 +24,9 @@ public class Computer implements Item {
     family = f;
     model = m;
   }
+  public boolean hasItem(Item test) {
+    return false;
+  }
   public void reset(String b, String f, String m, boolean state, String type) {
     computer_type = type;
     is_on = state;

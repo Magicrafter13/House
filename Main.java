@@ -5,8 +5,8 @@ import java.util.*;
 
 class Main {
   private static final int verMajor = 1;
-  private static final int verMinor = 11;
-  private static final int verFix = 3;
+  private static final int verMinor = 12;
+  private static final int verFix = 0;
   private static String curVer() {return verMajor + "." + verMinor + "." + verFix;}
   public static final String ANSI = "\u001b[";
   public static final String ANSI_RESET = "\u001B[0m";
@@ -253,9 +253,17 @@ class Main {
         case "select":
           if (cmds.length > 1) {
             if (cmds[1].matches("-?[0-9]+")) {
-              if (user.changeItemFocus(Math.abs(Integer.parseInt(cmds[1])))) {
-                System.out.print("\nThis " + bright("yellow", "Item") + " selected: (of type " + bright("yellow", user.cur_item.type()) + ")\n\n" + user.cur_item + "\n\n");
-              } else System.out.print("\"" + cmds[1] + "\" is invalid, must be less than the floor " + bright("yellow", "Item") + " size of: " + bright("cyan", Integer.toString(user.floorSize())) + "\n");
+              if (cmds.length > 2 ) {
+                if (cmds[2].matches("-?[0-9]+")) {
+                  switch(user.changeItemFocus(Math.abs(Integer.parseInt(cmds[1])), Math.abs(Integer.parseInt(cmds[2])))) {
+                  case 0: System.out.print("\nThis " + bright("yellow", "Item") + " selected: (of type " + bright("yellow", user.cur_item.type()) + ")\n\n" + user.cur_item + "\n\n"); break;
+                  case 1: System.out.print("Either " + bright("yellow", "Item ") + bright("cyan", cmds[1]) + " doesn't have any " + bright("yellow", "sub-Items") + ", or the " + bright("cyan", "integer") + " you entered is too high.\n"); break;
+                  case 2: System.out.print("\"" + cmds[1] + "\" is invalid, must be less than the floor " + bright("yellow", "Item") + " size of: " + bright("cyan", Integer.toString(user.floorSize())) + "\n"); break;
+                  default: System.out.print(bright("red", "ERROR: get sub-item did not return 0, 1, or 2. Please report this!\n"));
+                  }
+                } else System.out.print("\"" + cmds[2] + "\" is not a valid " + bright("cyan", "integer\n"));
+              } else if (user.changeItemFocus(Math.abs(Integer.parseInt(cmds[1])))) System.out.print("\nThis " + bright("yellow", "Item") + " selected: (of type " + bright("yellow", user.cur_item.type()) + ")\n\n" + user.cur_item + "\n\n");
+              else System.out.print("\"" + cmds[1] + "\" is invalid, must be less than the floor " + bright("yellow", "Item") + " size of: " + bright("cyan", Integer.toString(user.floorSize())) + "\n");
             } else System.out.print("\"" + cmds[1] + "\" is not a valid " + bright("cyan", "integer\n"));
           } else System.out.print(bright("blue", "\nGrab") + " what?\n\n");
           break;
@@ -263,21 +271,40 @@ class Main {
           if (cmds.length > 1) {
             if (cmds[1].matches("-?[0-9]+")) {
               Item temp_item = user.cur_item;
-              if (user.changeItemFocus(Math.abs(Integer.parseInt(cmds[1])))) {
-                if (user.cur_item == temp_item) temp_item = new Empty();
-                Boolean valid_answer = false;
+              Boolean valid_answer = false;
+              if (cmds.length > 2) {
+                if (cmds[2].matches("-?[0-9]+")) {
+                  switch (user.changeItemFocus(Math.abs(Integer.parseInt(cmds[1])), Math.abs(Integer.parseInt(cmds[2])))) {
+                  case 0:
+                    while (!valid_answer) {
+                      System.out.print("\nThis " + bright("yellow", "Item") + " is:\n" + user.cur_item + "\n\n" +
+                                       bright("red") + "Are you sure you want to delete this? [Y/N] > ");
+                      user.cur_item = temp_item;
+                      String yenu = scan.nextLine().toUpperCase();
+                      System.out.println(ANSI_RESET);
+                      switch (yenu) {
+                      case "Y": user.removeItem(Math.abs(Integer.parseInt(cmds[1])), Math.abs(Integer.parseInt(cmds[2])));
+                      case "N": valid_answer = true;
+                      }
+                    }
+                    break;
+                  case 1: System.out.print("This " + bright("yellow", "Item") + " either has no " + color("yellow", "sub-Items") + " on it, or the " + bright("cyan", "integer") + " is too high\n"); break;
+                  case 2: System.out.print("This floor only has " + bright("cyan", Integer.toString(user.floorSize())) + " items on it\n"); break;
+                  }
+                } else System.out.print("\"" + cmds[2] + "\" is not a valid integer\n");
+              } else if (user.changeItemFocus(Math.abs(Integer.parseInt(cmds[1])))) {
                 while (!valid_answer) {
                   System.out.print("\nThis " + bright("yellow", "Item") + " is:\n" + user.cur_item + "\n\n" +
                                    bright("red") + "Are you sure you want to delete this? [Y/N] > ");
+                  user.cur_item = temp_item;
                   String yenu = scan.nextLine().toUpperCase();
                   System.out.println(ANSI_RESET);
                   switch (yenu) {
-                  case "Y": user.removeItem(Integer.parseInt(cmds[1]));
+                  case "Y": user.removeItem(Math.abs(Integer.parseInt(cmds[1])));
                   case "N": valid_answer = true;
                   }
                 }
-                user.cur_item = temp_item;
-              }else System.out.print("This floor only has " + user.floorSize() + " items on it\n");
+              } else System.out.print("This floor only has " + bright("cyan", Integer.toString(user.floorSize())) + " items on it\n");
             } else System.out.print("\"" + cmds[1] + "\" is not a valid integer\n");
           } else System.out.print("\nRemove what?\n\n");
           break;

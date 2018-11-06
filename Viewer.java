@@ -43,18 +43,44 @@ public class Viewer {
   public void addItem(Item i) {
     cur_house.addItem(cur_floor, i);
   }
+  public void removeItem(int in, int sin) {
+    Item temp = cur_house.getFloor(cur_floor).getItem(in, sin);
+    if (temp == cur_item) cur_item = new Empty();
+    if (temp.hasItem(cur_item)) if (!(temp instanceof Display)) cur_item = new Empty();
+    //any Item that can have this item will have it removed - currently no sub items have their own sub items
+    if (cur_house.getFloor(cur_floor).removeItem(in, sin)) {
+      for (Floor f : cur_house.getFloors()) {
+        for (Item i : f.getItems()) {
+          if (i.hasItem(temp)) {
+            switch (i.type()) {
+            case "Bookshelf":
+              ((Bookshelf)i).removeBook(temp);
+              break;
+            case "Display":
+              ((Display)i).disconnect(temp);
+              break;
+            }
+          }
+        }
+      }
+    }
+  }
   public void removeItem(int in) {
     Item temp = cur_house.getFloor(cur_floor).getItem(in);
+    if (temp == cur_item) cur_item = new Empty();
+    if (temp.hasItem(cur_item)) if (!(temp instanceof Display)) cur_item = new Empty();
     //any Item that can have this item will have it removed
     for (Floor f : cur_house.getFloors()) {
       for (Item i : f.getItems()) {
-        switch (i.type()) {
-        case "Bookshelf":
-          for (int b = 0; b < ((Bookshelf)i).bookCount(); b++) if (((Bookshelf)i).getBook(b) == temp) ((Bookshelf)i).removeBook(b);
-          break;
-        case "Display":
-          for (int d = 0; d < ((Display)i).deviceCount(); d++) if (((Display)i).getDevice(d) == temp) ((Display)i).disconnect(d);
-          break;
+        if (i.hasItem(temp)) {
+          switch (i.type()) {
+          case "Bookshelf":
+            ((Bookshelf)i).removeBook(temp);
+            break;
+          case "Display":
+            ((Display)i).disconnect(temp);
+            break;
+          }
         }
       }
     }
@@ -69,12 +95,12 @@ public class Viewer {
       cur_floor--;
       return "\nYou are currently on the top floor, floor unchanged.\n";
     }
-    return "\nWelcome to floor " + cur_floor + ".\n";
+    return "\nWelcome to floor " + Main.bright("cyan", Integer.toString(cur_floor)) + ".\n";
   }
   public String goDown() {
     if (cur_floor > 0) {
       cur_floor--;
-      return "\nWelcome to floor " + cur_floor + ".\n";
+      return "\nWelcome to floor " + Main.bright("cyan", Integer.toString(cur_floor)) + ".\n";
     }
     return "\nYou are currently on the bottom floor, floor unchanged.\n";
   }

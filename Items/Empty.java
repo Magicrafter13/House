@@ -6,6 +6,9 @@ public class Empty implements Item {
   public Item getSub(int i) {
     return new Book("This item doesn't contain other items.", "(I don't think it should be possible to see this...)", 2018);
   }
+  public boolean hasItem(Item test) {
+    return false;
+  }
   public String type() {
     return typeS;
   }

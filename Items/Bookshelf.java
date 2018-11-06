@@ -11,6 +11,10 @@ public class Bookshelf implements Item {
     this();
     books = b;
   }
+  public boolean hasItem(Item test) {
+    if (test instanceof Book) for (Book b : books) if (test == b) return true;
+    return false;
+  }
   public void addBook(Book b) {
     books.add(b);
   }
@@ -20,7 +24,16 @@ public class Bookshelf implements Item {
       return Main.bright("yellow", "\nBook ") + b + Main.color("blue", " removed") + ".\n";
     }
     if (books.size() == 0) return Main.bright("yellow", "Bookshelf") + " is already empty!";
-    return Main.bright("yellow", "Bookshelf") + " only has " + Main.bright("cyan", books.size()) + (books.size() > 1 ? Main.color("yellow", " Books") : Main.bright("yellow", " Book")) + " on it.";
+    return Main.bright("yellow", "Bookshelf") + " only has " + Main.bright("cyan", Integer.toString(books.size())) + (books.size() > 1 ? Main.color("yellow", " Books") : Main.bright("yellow", " Book")) + " on it.";
+  }
+  public String removeBook(Item b) {
+    for (int i = 0; i < books.size(); i++) {
+      if (books.get(i) == b) {
+        books.remove(b);
+        return Main.bright("yellow", "\nBook") + ", " + Main.color("blue", "removed") + ".\n";
+      }
+    }
+    return "No matching " + Main.bright("yellow", "Book") + " found.";
   }
   public int bookCount() {
     return books.size();
@@ -33,7 +46,7 @@ public class Bookshelf implements Item {
   }
   public String listInfo(boolean before_not_after) {
     if (before_not_after) return bookCount() > 0 ? "" : "Empty ";
-    if (bookCount() > 0) return " (" + Main.bright("cyan", bookCount()) + (bookCount() > 1 ? Main.color("yellow", " Books") : Main.bright("yellow", " Book")) + ")";
+    if (bookCount() > 0) return " (" + Main.bright("cyan", Integer.toString(bookCount())) + (bookCount() > 1 ? Main.color("yellow", " Books") : Main.bright("yellow", " Book")) + ")";
     return "";
   }
   public String toString() {
