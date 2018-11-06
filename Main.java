@@ -6,7 +6,7 @@ import java.util.*;
 class Main {
   private static final int verMajor = 1;
   private static final int verMinor = 11;
-  private static final int verFix = 2;
+  private static final int verFix = 3;
   private static String curVer() {return verMajor + "." + verMinor + "." + verFix;}
   public static final String ANSI = "\u001b[";
   public static final String ANSI_RESET = "\u001B[0m";
@@ -35,6 +35,9 @@ class Main {
     }
     return bright("red") + "[!cB]" + ANSI_RESET;
   }
+  public static String bright(String color, String text) {
+    return bright(color) + text + ANSI_RESET;
+  }
   public static String color(String color) {
     switch (color.toLowerCase()) {
     case "red": return "\u001b[31m";
@@ -48,76 +51,90 @@ class Main {
     }
     return bright("red") + "[!c]" + ANSI_RESET;
   }
+  public static String color(String color, String text) {
+    return color(color) + text + ANSI_RESET;
+  }
+  public static String alternate(String color, String text) {
+    String ret_val = "";
+    for (int i = 0; i < text.length(); i++) ret_val += (i % 2 == 0 ? bright(color, text.substring(i, i + 1)) : color(color, text.substring(i, i + 1)));
+    return ret_val + ANSI_RESET;
+  }
   private static String help(String cmd) {
     switch (cmd) {
     case "add":
-      return "\nSyntax is: " + bright("blue") + "add " + bright("red") + "item " + bright("green") + "[arg]\n\n" +
-             "\t" + bright("red") + "item" + ANSI_RESET + " - must be a valid type\n" +
-             "\t " + bright("green") + "arg" + ANSI_RESET + " - causes you to be prompted for the requried info to create a new" +
-             "\t                item of this type (without arg, a default item is created)\n\n" +
-             "Adds item to the current floor\n\n";
+      return "\n" + bright("purple", "Syntax") + " is: " + bright("blue", "add ") + bright("red", "item ") + bright("green", "[arg]\n\n") +
+             "\t" + bright("red", "item") + " - must be a valid type\n" +
+             "\t " + bright("green", "arg") + " - causes you to be prompted for the requried info to create a new\n" +
+             "\t                " + bright("yellow", "Item") + " of this type (without " + bright("green", "arg") + ", a default " + bright("yellow", "Item") + " is created)\n\n" +
+             color("blue") + "Adds" + bright("yellow", " Item ") + "to the current floor\n\n";
     case "attach":
-      return "\nSyntax is: " + bright("blue") + "attach " + bright("red") + "src dst " + bright("green") + "[-d]\n\n" +
-             "\t" + bright("red") + "src" + ANSI_RESET + " - must be a valid integer of an item on the current floor\n" +
-             "\t      (when used with " + bright("red") + "-d" + ANSI_RESET + ", " + bright("red") + "src" + ANSI_RESET + " must be the integer of the item that is\n" +
-             "\t      attached)\n" +
-             "\t" + bright("red") + "dst" + ANSI_RESET + " - must be a valid integer of an item on the current floor\n" +
-             "\t " + bright("green") + "-d" + ANSI_RESET + " - detaches source from destination\n\n" +
-             "[De/A]ttaches " + bright("red") + "src" + ANSI_RESET + " [from/to] " + bright("red") + "dst" + ANSI_RESET + ".\n\n";
+      return "\n" + bright("purple", "Syntax") + " is: " + bright("blue", "attach ") + bright("red", "src dst ") + bright("green", "[-d]\n\n") +
+             "\t" + bright("red", "src") + " - " + bright("cyan", "integer") + " of an " + bright("red", "Item") + " on the current floor (when used with " + bright("green", "-d") + ", " + bright("red", "src\n") +
+             "\t      must be the " + bright("cyan", "integer") + " of the " + bright("yellow", "Item") + " that is attached)\n" +
+             "\t" + bright("red", "dst") + " - " + bright("cyan", "integer") + " of an " + bright("yellow", "Item") + " on the current floor\n" +
+             "\t " + bright("green", "-d") + " - " + color("blue", "detaches") + color("red", " source") + " from " + color("red", "destination\n\n") +
+             color("blue", "[De/A]ttaches ") + bright("red", "src") + " [from/to] " + bright("red", "dst") + ".\n\n";
     case "clear":
-      return "\nSyntax is: " + bright("blue") + "clear" + ANSI_RESET + "\n\n" +
-             "Clears the console, and places cursor at home position\n\n";
+      return bright("purple", "\nSyntax") + " is: " + bright("blue", "clear\n\n") +
+             color("blue", "Clears") + " the console, and places cursor at home position\n\n";
     case "down":
-      return "\nSyntax is: " + bright("blue") + "down" + ANSI_RESET + "\n\n" +
-             "Moves to the next floor down, unless you are at the bottom\n\n";
+      return bright("purple", "\nSyntax") + " is: " + bright("blue", "down\n\n") +
+             "Moves to the next floor " + bright("blue", "down") + ", unless you are at the bottom\n\n";
     case "exit":
-      return "\nSyntax is: " + bright("blue") + "exit" + ANSI_RESET + "\n\n" +
+      return bright("purple", "\nSyntax") + " is: " + bright("blue", "exit\n\n") +
              "Stops the program, and returns to your command line/operating environment\n\n";
     case "grab":
-      return "\nSyntax is: " + bright("blue") + "grab " + bright("red") + "item\n\n" +
-             "\titem" + ANSI_RESET + " - integer of item (see list)\n\n" +
-             "Changes the \"Viewer\"'s current item\n\n";
+      return bright("purple", "\nSyntax") + " is: " + bright("blue", "grab ") + bright("red") + "item\n\n" +
+             "\titem" + ANSI_RESET + " - " + bright("cyan", "integer") + " of " + bright("yellow", "Item") + " (see " + bright("blue", "list") + ")\n\n" +
+             "Changes the \"Viewer\"'s current " + bright("yellow", "Item\n\n");
     case "help":
-      return "\nSyntax is: " + bright("blue") + "help " + bright("red") + "[command]\n\n" +
-             "\tcommand" + ANSI_RESET + " - a valid command\n\n" +
-             "Colors:\n\n" +
-             "\t   red - warning -or- argument name\n" +
-             "\tyellow - item\n" +
-             "\t green - string argument (type it as it appears [without any brackets])\n" +
-             "\t  blue - command\n\n";
+      return bright("purple", "\nSyntax") + " is: " + bright("blue", "help ") + bright("red") + "[command]\n\n" +
+             "\tcommand" + ANSI_RESET + " - a valid " + color("blue", "command\n\n") +
+             "Colors:\n" +
+             "\t   " + alternate("red", "red") + " - warning -or- argument name (usually an integer)\n" +
+             "\t         dark: usually expanded name of a commands argument (to show\n" +
+             "\t         meaning)\n" +
+             "\t" + alternate("yellow", "yellow") + " - Item\n" +
+             "\t         dark: when talking about an Item but not using the exact term\n" +
+             "\t         \"Item\" (or the exact name of an Item)\n" +
+             "\t " + alternate("green", "green") + " - string argument (type it as it appears [without any brackets])\n" +
+             "\t         dark: (no use yet)\n" +
+             "\t  " + alternate("cyan", "cyan") + " - an integer for use when a command requires an Item number\n" +
+             "\t         dark: Item integer for sub-items (ie: a book in a bookshelf)\n" +
+             "\t  " + alternate("blue", "blue") + " - command\n" +
+             "\t         dark: when referencing the command without using its exact name\n\n";
     case "info":
-      return "\nSyntax is: " + bright("blue") + "info" + ANSI_RESET + "\n\n" +
-             "Returns info about the current 'Viewer'\n\n";
+      return bright("purple", "\nSyntax") + " is: " + bright("blue", "info\n\n") +
+             "Returns " + bright("blue", "info") + " about the current 'Viewer'\n\n";
     case "list":
-      return "\nSyntax is: " + bright("blue") + "list " + bright("red") + "[item] " + bright("green") + "[(-h / -f)] [-r " + bright("red") + "start end" + bright("green") + "] [-p] [-i " + bright("yellow") + "Item" + bright("green") + "]\n\n" +
-             "\t   " + bright("red") + "item" + ANSI_RESET + " - integer of item (see " + bright("blue") + "list" + ANSI_RESET + ")\n" +
-             "\t" + bright("green") + "-h / -f" + ANSI_RESET + " - will show the the \"Viewer\"'s current item\n" +
-             "\t          Long version is " + bright("green") + "--hand" + ANSI_RESET + " or " + bright("green") + "--focus\n" +
-             "\t     -r" + ANSI_RESET + " - will list items between " + bright("red") + "[start]" + ANSI_RESET + " and " + bright("red") + "[end]" + ANSI_RESET + " (start and end are\n"+
-             "\t          both positive integers)\n" +
+      return bright("purple", "\nSyntax") + " is: " + bright("blue", "list ") + "[" + bright("red", "item") + "] [(" + bright("green", "-h") + " / " + bright("green", "-f") + ")] [" + bright("green", "-r ") + bright("red", "start end") + "] [" + bright("green", " -p") + "] [" + bright("green", "-i ") + bright("yellow", "Item") + "]\n\n" +
+             "\t   " + bright("red", "item") + " - " + bright("cyan", "integer") + " of " + bright("yellow", "Item") + " (see " + bright("blue", "list") + ")\n" +
+             "\t" + bright("green", "-h / -f") + " - will show the the \"Viewer\"'s current " + bright("yellow", "Item\n") +
+             "\t          Long version is " + bright("green", "--hand") + " or " + bright("green") + "--focus\n" +
+             "\t     -r" + ANSI_RESET + " - will " + bright("blue", "list") + " " + color("yellow", "Items") + " between [" + bright("red", "start") + "] and [" + bright("red", "end") + "]\n" +
              "\t          Long version is " + bright("green") + "--range\n" +
-             "\t     -p" + ANSI_RESET + " - lists all items on the floor one page at a time (page is\n" +
+             "\t     -p" + ANSI_RESET + " - " + color("blue", "lists") + " all " + color("yellow", "Items") + " on the floor one page at a time (page is\n" +
              "\t          defined as 20 lines)\n" +
              "\t          Long version is " + bright("green") + "--page\n" +
-             "\t-i " + bright("yellow") + "Item" + ANSI_RESET + " - lists all items of type " + bright("red") + "item" + ANSI_RESET + " (item string)\n" +
-             "\t          Long version is " + bright("green") + "--item" + ANSI_RESET + "\n\n" +
-             "Used for getting info about an item, or multiple items.\n\n";
+             "\t-i " + bright("yellow", "Item") + " - " + color("blue", "lists") + " all " + color("yellow", "Items") + " of type " + bright("yellow", "Item") + " (" + bright("yellow", "Item") + " string)\n" +
+             "\t          Long version is " + bright("green", "--item\n\n") +
+             "Used for getting info about an " + bright("yellow", "Item") + ", or multiple " + color("yellow", "Items") + ".\n\n";
     case "move":
-      return "\nSyntax is: " + bright("blue") + "move " + bright("red") + "item floor\n\n" +
-             "\t item" + ANSI_RESET + " - integer of item (see " + bright("blue") + "list)\n" +
-             "\t" + bright("red") + "floor" + ANSI_RESET + " - integer of floor (or: " + bright("green") + "<" + ANSI_RESET + " for next floor down or " + bright("green") + ">" + ANSI_RESET + " for next floor\n" +
-             "\t        down)\n\n" +
-             "Moves an item from your current floor to the specified floor.\n\n";
+      return bright("purple", "\nSyntax") + " is: " + bright("blue", "move ") + bright("red") + "item floor\n\n" +
+             "\t item" + ANSI_RESET + " - " + bright("cyan", "integer") + " of " + bright("yellow", "Item") + " (see " + bright("blue", "list") + ")\n" +
+             "\t" + bright("red", "floor") + " - " + bright("cyan", "integer") + " of floor (or: " + bright("green", "<") + " for next floor down or " + bright("green", ">") + " for next floor\n" +
+             "\t        up)\n\n" +
+             color("blue", "Moves") + " an " + bright("yellow", "Item") + " from your current floor to the specified floor.\n\n";
     case "remove":
-      return "\nSyntax is: " + bright("blue") + "remove " + bright("red") + "item\n\n" +
-             "\titem" + ANSI_RESET + " - integer of item (see " + bright("blue") + "list" + ANSI_RESET + ")\n\n" +
-             "Removes specified item from current floor.\n\n";
+      return bright("purple", "\nSyntax") + " is: " + bright("blue", "remove ") + bright("red") + "item\n\n" +
+             "\titem" + ANSI_RESET + " - " + bright("cyan", "integer") + " of " + bright("yellow", "Item") + " (see " + bright("blue", "list") + ")\n\n" +
+             color("blue", "Removes") + " specified " + bright("yellow", "Item") + " from current floor.\n\n";
     case "up":
-      return "\nSyntax is: " + bright("blue") + "up" + ANSI_RESET + "\n\n" +
-             "Moves to the next floor up, unless you are at the top\n\n";
+      return bright("purple", "\nSyntax") + " is: " + bright("blue", "up\n\n") +
+             "Moves to the next floor " + bright("blue", "up") + ", unless you are at the top\n\n";
     case "ver":
-      return "\nSyntax is: " + bright("blue") + "ver" + ANSI_RESET + "\n\n" +
-             "Tells you the current version of the Heck Command Interpretter\n\n";
+      return bright("purple", "\nSyntax") + " is: " + bright("blue", "vern\n") +
+             "Tells you the current " + bright("blue", "version") + " of the Heck Command Interpretter\n\n";
     default:
       return bright("red") + "Code error!!! (Please report, as this message shouldn't be possible to see.)";
     }
@@ -181,10 +198,10 @@ class Main {
                         System.out.println(((Display)dst_i).disconnect(src));
                         break;
                       default:
-                        System.out.print("Item cannot have things detached from it.\n");
+                        System.out.print("That " + bright("yellow", "Item") + " cannot have things " + color("blue", "detached") + " from it.\n");
                         break;
                       }
-                    } else System.out.print("Invalid argument, did you mean " + bright("red") + "-d" + ANSI_RESET + "?\n");
+                    } else System.out.print("Invalid argument, did you mean " + bright("green", "-d") + "?\n");
                   } else if (user.isItem(src) && user.isItem(dst)) {
                     Item src_i = user.getItem(src);
                     Item dst_i = user.getItem(dst);
@@ -193,21 +210,21 @@ class Main {
                       if (src_i instanceof Book) {
                         user.removeItem(src);
                         ((Bookshelf)dst_i).addBook((Book)src_i);
-                      } else System.out.print("Item " + src + " is not a " + bright("yellow") + "Book" + ANSI_RESET + ".\n");
+                      } else System.out.print(bright("yellow", "Item ") + src + " is not a " + bright("yellow", "Book") + ".\n");
                       break;
                     case "Display":
                       if (src_i instanceof Computer || src_i instanceof Console) System.out.println("\n" + ((Display)dst_i).connect(src_i));
-                      else System.out.print("Item " + src + " cannot connect to a " + bright("yellow") + "Display" + ANSI_RESET + ".\n");
+                      else System.out.print(bright("yellow", "Item ") + src + " cannot connect to a " + bright("yellow", "Display") + ".\n");
                       break;
                     default:
                       System.out.print("Item cannot have things attached to it.\n");
                       break;
                     }
-                  } else System.out.print("The floor only has " + user.floorSize() + " items.\n");
-                } else System.out.print("Item must be an integer.\n");
-              } else System.out.print("\nAttach it to what?\n\n");
-            } else System.out.print("Item must be an integer.\n");
-          } else System.out.print("\nAttach what to what?\n\n");
+                  } else System.out.print("The floor only has " + bright("cyan", Integer.toString(user.floorSize())) + " items.\n");
+                } else System.out.print(color("red", "Item") + " must be an " + bright("cyan", "integer") + ".\n");
+              } else System.out.print(bright("blue", "\nAttach") + " it to what?\n\n");
+            } else System.out.print(color("red", "Item") + " must be an " + bright("cyan", "integer") + ".\n");
+          } else System.out.print(bright("blue", "\nAttach") + " what to what?\n\n");
           break;
         case "move":
           if (cmds.length > 1) {
@@ -223,43 +240,40 @@ class Main {
                       user.addItem(user.cur_item);
                       user.goFloor(old_floor);
                       user.removeItem(item);
-                      System.out.print("\nThis item " + bright("purple") + "moved" + ANSI_RESET + " to floor " + destination + "\n" + user.cur_item + "\n\n");
+                      System.out.print("\nThis " + bright("yellow", "Item ") + bright("blue", "moved") + " to floor " + destination + "\n" + user.cur_item + "\n\n");
                     } else System.out.print("Floor does not exist.\n");
-                  } else System.out.print("Item does not exist.\n");
+                  } else System.out.print(bright("yellow", "Item") + " does not exist.\n");
                   user.cur_item = old_item;
-                } else System.out.print("Floor must be an integer, or: < or >.\n");
-              } else System.out.print("\nMove it where?\n\n");
-            } else System.out.print("Item must be an integer.\n");
-          } else System.out.print("\nMove what, and where?\n\n");
+                } else System.out.print("Floor must be an " + bright("cyan", "integer") + ", or: " + bright("green", "<") + " or " + bright("green", ">") + ".\n");
+              } else System.out.print(bright("blue", "\nMove") + " it where?\n\n");
+            } else System.out.print(bright("yellow", "Item") + " must be an " + bright("cyan", "integer") + ".\n");
+          } else System.out.print(bright("blue", "\nMove") + " what, and where?\n\n");
           break;
         case "grab":
         case "select":
           if (cmds.length > 1) {
-            if (cmds[1].matches("[0-9]+")) {
+            if (cmds[1].matches("-?[0-9]+")) {
               if (user.changeItemFocus(Math.abs(Integer.parseInt(cmds[1])))) {
-                System.out.print("\nThis item selected: (of type " + bright("yellow") + user.cur_item.type() + ANSI_RESET + ")\n\n" + user.cur_item + "\n\n");
-              } else System.out.print("\"" + cmds[1] + "\" is invalid, must be less than the floor item size of: " + user.floorSize() + "\n");
-            } else System.out.print("\"" + cmds[1] + "\" is not a valid integer\n");
-          } else System.out.print("\nGrab what?\n\n");
+                System.out.print("\nThis " + bright("yellow", "Item") + " selected: (of type " + bright("yellow", user.cur_item.type()) + ")\n\n" + user.cur_item + "\n\n");
+              } else System.out.print("\"" + cmds[1] + "\" is invalid, must be less than the floor " + bright("yellow", "Item") + " size of: " + bright("cyan", Integer.toString(user.floorSize())) + "\n");
+            } else System.out.print("\"" + cmds[1] + "\" is not a valid " + bright("cyan", "integer\n"));
+          } else System.out.print(bright("blue", "\nGrab") + " what?\n\n");
           break;
         case "remove":
           if (cmds.length > 1) {
-            if (cmds[1].matches("[0-9]+")) {
+            if (cmds[1].matches("-?[0-9]+")) {
               Item temp_item = user.cur_item;
               if (user.changeItemFocus(Math.abs(Integer.parseInt(cmds[1])))) {
                 if (user.cur_item == temp_item) temp_item = new Empty();
-                System.out.print("\nThis Item is:\n" + user.cur_item + "\n\n" +
-                                 bright("red") + "Are you sure you want to delete this? [Y/N] > ");
-                String yenu = scan.nextLine().toUpperCase();
-                System.out.println(ANSI_RESET);
                 Boolean valid_answer = false;
                 while (!valid_answer) {
+                  System.out.print("\nThis " + bright("yellow", "Item") + " is:\n" + user.cur_item + "\n\n" +
+                                   bright("red") + "Are you sure you want to delete this? [Y/N] > ");
+                  String yenu = scan.nextLine().toUpperCase();
+                  System.out.println(ANSI_RESET);
                   switch (yenu) {
-                  case "Y":
-                    user.removeItem(Integer.parseInt(cmds[1]));
-                  case "N":
-                    valid_answer = true;
-                    break;
+                  case "Y": user.removeItem(Integer.parseInt(cmds[1]));
+                  case "N": valid_answer = true;
                   }
                 }
                 user.cur_item = temp_item;
@@ -273,10 +287,10 @@ class Main {
             if (equalsIgnoreCaseOr(cmds[1], new String[]{"--hand", "--focus", "-h", "-f"})) System.out.print("\n" + user.viewCurItem() + "\n\n");
             else if (equalsIgnoreCaseOr(cmds[1], new String[]{"-i", "--item"})) {
               if (cmds.length > 2) System.out.println(user.list(cmds[2]));
-              else System.out.print("No item type specified.\n");
+              else System.out.print("No " + bright("red", "Item") + " type specified.\n");
             } else if (equalsIgnoreCaseOr(cmds[1], new String[]{"-p", "--page"})) {
               for (int i = 0; i < (user.floorSize() / 20 + (user.floorSize() % 20 == 0 ? 0 : 1)); i++) {
-                System.out.println("\n\tFloor Listing - Page " + (i + 1));
+                System.out.println("\n\tFloor " + color("blue", "Listing") + " - Page " + (i + 1));
                 boolean end_test = (20 * (i + 1) < user.floorSize());
                 System.out.println(user.list(20 * i, (end_test ? 20 * (i + 1) : user.floorSize())));
                 if (end_test) {
@@ -285,24 +299,24 @@ class Main {
                 }
               }
             } else if (equalsIgnoreCaseOr(cmds[1], new String[]{"-r", "--range"})) {
-              if (cmds.length > 3 && matchesAnd(new String[]{cmds[2], cmds[3]}, "[0-9]+")) System.out.println(user.list(Integer.parseInt(cmds[2]), Integer.parseInt(cmds[3]) + 1));
-              else System.out.print("range requires 2 integers\n");
-            } else if (cmds[1].matches("[0-9]+")) {
+              if (cmds.length > 3 && matchesAnd(new String[]{cmds[2], cmds[3]}, "-?[0-9]+")) System.out.println(user.list(Integer.parseInt(cmds[2]), Integer.parseInt(cmds[3]) + 1));
+              else System.out.print(bright("blue", "range") + " requires " + bright("cyan", "2 integers\n"));
+            } else if (cmds[1].matches("-?[0-9]+")) {
               if (Integer.parseInt(cmds[1]) < user.floorSize()) {
                 Item temp_item = user.cur_item;
                 user.changeItemFocus(Integer.parseInt(cmds[1]));
                 switch (user.cur_item.type()) {
                 case "Bookshelf":
-                  System.out.print("This item is a " + bright("yellow") + "Bookshelf" + ANSI_RESET + ", would you like to see:\n" +
-                                   "(Y) A specific " + bright("yellow") + "Book" + ANSI_RESET + "\n(N) Just the " + bright("yellow") + "Bookshelf" + ANSI_RESET + "\n\n");
+                  System.out.print("This " + bright("yellow", "Item") + " is a " + bright("yellow", "Bookshelf") + ", would you like to see:\n" +
+                                   "(Y) A specific " + bright("yellow", "Book") + "\n(N) Just the " + bright("yellow", "Bookshelf") + "\n\n");
                   while (true) {
                     System.out.print("[Y/N] > ");
                     String temp = scan.nextLine().toUpperCase();
                     int b_c = ((Bookshelf)user.cur_item).bookCount();
                     if (temp.equals("Y") && b_c > 0) {
-                      System.out.print("\nWhich book:\n\n");
+                      System.out.print("\nWhich " + bright("yellow", "Book:\n\n"));
                       while (true) {
-                        System.out.print("[0-" + (b_c - 1) + "] > ");
+                        System.out.print("[" + bright("cyan", "0") + "-" + bright("cyan", Integer.toString((b_c - 1))) + "] > ");
                         int bk = Math.abs(scan.nextInt());
                         scan.nextLine();
                         if (bk < b_c) {
@@ -318,15 +332,15 @@ class Main {
                   System.out.println();
                   break;
                 case "Display":
-                  System.out.print("This item is a " + bright("yellow") + "Display" + ANSI_RESET + ", would you like to see:\n" +
-                                   "(Y) A specific device\n(N) Just the " + bright("yellow") + "Display" + ANSI_RESET + "\n\n");
+                  System.out.print("This " + bright("yellow", "Item") + " is a " + bright("yellow", "Display") + ", would you like to see:\n" +
+                                   "(Y) A specific device\n(N) Just the " + bright("yellow", "Display\n\n"));
                   while (true) {
                     System.out.print("[Y/N] > ");
                     String temp = scan.nextLine().toUpperCase();
                     if (temp.equals("Y") && ((Display)user.cur_item).deviceCount() > 0) {
                       System.out.print("\nWhich device:\n\n");
                       while (true) {
-                        System.out.print("[0-" + (((Display)user.cur_item).deviceCount() - 1) + "] > ");
+                        System.out.print("[" + bright("cyan", "0") + "-" + bright("cyan", Integer.toString((((Display)user.cur_item).deviceCount() - 1))) + "] > ");
                         int dv = Math.abs(scan.nextInt());
                         scan.nextLine();
                         if (dv < ((Display)user.cur_item).deviceCount()) {
@@ -349,8 +363,8 @@ class Main {
                   break;
                 }
                 user.cur_item = temp_item;
-              } else System.out.print("This floor only has " + user.floorSize() + " items on it\n");
-            } else System.out.print("\"" + cmds[1] + "\" is not a valid integer\n");
+              } else System.out.print("This floor only has " + user.floorSize() + color("yellow", " Items") + " on it\n");
+            } else System.out.print("\"" + cmds[1] + "\" is not a valid " + bright("cyan", "integer\n"));
           } else System.out.println(user.list());
           break;
         case "add":
@@ -360,15 +374,15 @@ class Main {
                 Bookshelf temp_shelf = new Bookshelf();
                 if (cmds.length > 2) {
                   if (cmds[2].equalsIgnoreCase("arg")) {
-                    System.out.print("\nHow many books will be on this shelf? > ");
+                    System.out.print("\nHow many " + color("yellow", "books") + " will be on this " + color("yellow", "shelf") + "? > ");
                     int length = scan.nextInt();
                     scan.nextLine();
                     System.out.println();
                     for (int i = 0; i < length; i++) {
-                      System.out.print(bright("red") + "Book " + ANSI_RESET + i + "\n");
-                      System.out.print("\nEnter " + bright("red") + "Book" + ANSI_RESET + " Title > ");
+                      System.out.print(bright("yellow", "Book ") + bright("cyan", Integer.toString(i)) + "\n");
+                      System.out.print("\nEnter " + bright("yellow", "Book") + " Title > ");
                       String title = scan.nextLine();
-                      System.out.print("\nEnter " + bright("red") + "Book" + ANSI_RESET + " Author > ");
+                      System.out.print("\nEnter " + bright("yellow", "Book") + " Author > ");
                       String author = scan.nextLine();
                       System.out.print("\nEnter Publishing Year > ");
                       int year = scan.nextInt();
@@ -376,66 +390,65 @@ class Main {
                       System.out.println();
                       temp_shelf.addBook(new Book(title, author, year));
                     }
-                    System.out.print("\nThis " + bright("yellow") + "Bookshelf" + ANSI_RESET + " created:\n" + temp_shelf + "\n\n");
-                  } else System.out.print("\nInvalid 2nd argument, did you mean " + bright("red") + "arg" + ANSI_RESET + "?\n\n");
-                } else System.out.print("\nNew " + bright("yellow") + "Bookshelf" + ANSI_RESET + " added to floor " + user.curFloor() + ".\n\n");
+                    System.out.print("\nThis " + bright("yellow", "Bookshelf") + " created:\n" + temp_shelf + "\n\n");
+                  } else System.out.print("\nInvalid 2nd argument, did you mean " + bright("green", "arg") + "?\n\n");
+                } else System.out.print("\nNew " + bright("yellow", "Bookshelf") + " added to floor " + bright("cyan", Integer.toString(user.curFloor())) + ".\n\n");
                 user.addItem(temp_shelf);
                 break;
               case "book":
                 Book temp_book = new Book();
                 if (cmds.length > 2) {
                   if (cmds[2].equalsIgnoreCase("arg")) {
-                    System.out.print("\nEnter " + bright("yellow") + "Book" + ANSI_RESET + " Title > ");
+                    System.out.print("\nEnter " + bright("yellow", "Book") + " Title > ");
                     String title = scan.nextLine();
-                    System.out.print("\nEnter " + bright("yellow") + "Book" + ANSI_RESET + " Author > ");
+                    System.out.print("\nEnter " + bright("yellow", "Book") + " Author > ");
                     String author = scan.nextLine();
                     System.out.print("\nEnter Publishing Year > ");
                     int year = scan.nextInt();
                     scan.nextLine();
                     temp_book.reset(title, author, year);
-                    System.out.print("\nThis " + bright("yellow") + "Book" + ANSI_RESET + " added:\n" + temp_book + "\n\n");
-                  } else System.out.print("\nInvalid 2nd argument, did you mean " + bright("red") + "arg" + ANSI_RESET + "?\n\n");
-                } else System.out.print("\nNew " + bright("yellow") + "Book" + ANSI_RESET + " added to floor " + user.curFloor() + ".\n\n");
+                    System.out.print("\nThis " + bright("yellow", "Book") + " added:\n" + temp_book + "\n\n");
+                  } else System.out.print("\nInvalid 2nd argument, did you mean " + bright("green", "arg") + "?\n\n");
+                } else System.out.print("\nNew " + bright("yellow", "Book") + " added to floor " + bright("cyan", Integer.toString(user.curFloor())) + ".\n\n");
                 user.addItem(temp_book);
                 break;
               case "computer":
                 Computer temp_comp = new Computer();
                 if (cmds.length > 2) {
                   if (cmds[2].equalsIgnoreCase("arg")) {
-                    System.out.print("\nWhat kind of " + bright("yellow") + "Computer" + ANSI_RESET + " is it? (Desktop, Laptop, etc) > ");
+                    System.out.print("\nWhat kind of " + bright("yellow", "Computer") + " is it? (Desktop, Laptop, etc) > ");
                     String type = scan.nextLine();
-                    System.out.print("\n" + bright("yellow") + "Computer" + ANSI_RESET + " Brand (ie: HP, Microsoft) > ");
+                    System.out.print("\n" + bright("yellow", "Computer") + " Brand (ie: HP, Microsoft) > ");
                     String brand = scan.nextLine();
-                    System.out.print("" + bright("yellow") + "Computer" + ANSI_RESET + " Family (ie: Pavilion, Surface) > ");
+                    System.out.print("" + bright("yellow", "Computer") + " Family (ie: Pavilion, Surface) > ");
                     String family = scan.nextLine();
-                    System.out.print("" + bright("yellow") + "Computer" + ANSI_RESET + " Model (ie: dv6, Pro 3) > ");
+                    System.out.print("" + bright("yellow", "Computer") + " Model (ie: dv6, Pro 3) > ");
                     String model = scan.nextLine();
                     System.out.print("\nIs it on? (Invalid input will default to no)\n Yes or no? [Y/N] > ");
                     String is_on = scan.nextLine().toUpperCase();
                     temp_comp.reset(brand, family, model, (is_on.equals("Y") ? true : false), type);
-                    System.out.print("\nThis " + bright("yellow") + "Computer" + ANSI_RESET + " added:\n" + temp_comp + "\n\n");
-                  } else System.out.print("\nInvalid 2nd argument, did you mean " + bright("red") + "arg" + ANSI_RESET + "?\n\n");
-                } else System.out.print("\nNew " + bright("yellow") + "Computer" + ANSI_RESET + " added to floor " + user.curFloor() + ".\n\n");
+                    System.out.print("\nThis " + bright("yellow", "Computer") + " added:\n" + temp_comp + "\n\n");
+                  } else System.out.print("\nInvalid 2nd argument, did you mean " + bright("green", "arg") + "?\n\n");
+                } else System.out.print("\nNew " + bright("yellow", "Computer") + " added to floor " + bright("cyan", Integer.toString(user.curFloor())) + ".\n\n");
                 user.addItem(temp_comp);
                 break;
               case "console":
                 Console temp_console = new Console();
                 if (cmds.length > 2) {
                   if (cmds[2].equalsIgnoreCase("arg")) {
-                    System.out.print("0: " + Console.types[0]);
-                    for (int i = 1; i < Console.types.length; i++) System.out.print(" " + i + ": " + Console.types[i]);
+                    for (int i = 0; i < Console.types.length; i++) System.out.print(bright("cyan", Integer.toString(i)) + ": " + Console.types[i] + " ");
                     System.out.println();
-                    System.out.print("\nEnter " + bright("yellow") + "Console" + ANSI_RESET + " Type > ");
+                    System.out.print("\nEnter " + bright("yellow", "Console") + " Type > ");
                     int temp_type = scan.nextInt();
                     scan.nextLine();
-                    System.out.print("\nEnter " + bright("yellow") + "Console" + ANSI_RESET + " Manufacturer (ie Nintendo) > ");
+                    System.out.print("\nEnter " + bright("yellow", "Console") + " Manufacturer (ie Nintendo) > ");
                     String com = scan.nextLine();
-                    System.out.print("\nEnter " + bright("yellow") + "Console" + ANSI_RESET + " Name (ie GameCube) > ");
+                    System.out.print("\nEnter " + bright("yellow", "Console") + " Name (ie GameCube) > ");
                     String sys = scan.nextLine();
                     temp_console = new Console(temp_type, com, sys);
-                    System.out.print("\nThis " + bright("yellow") + "Console" + ANSI_RESET + " added:\n" + temp_console + "\n\n");
-                  } else System.out.print("\nInvalid 2nd argument, did you mean " + bright("red") + "arg" + ANSI_RESET + "?\n\n");
-                } else System.out.print("\nNew " + bright("yellow") + "Console" + ANSI_RESET + " added to floor " + user.curFloor() + ".\n\n");
+                    System.out.print("\nThis " + bright("yellow", "Console") + " added:\n" + temp_console + "\n\n");
+                  } else System.out.print("\nInvalid 2nd argument, did you mean " + bright("green", "arg") + "?\n\n");
+                } else System.out.print("\nNew " + bright("yellow", "Console") + " added to floor " + bright("cyan", Integer.toString(user.curFloor())) + ".\n\n");
                 user.addItem(temp_console);
                 break;
               case "display":
@@ -444,14 +457,14 @@ class Main {
                   if (cmds[2].equalsIgnoreCase("arg")) {
                     System.out.print("\nIs it a Monitor (Y) or a TV (N)?\nWill default to (Y)es if next input is invalid.\n[Y/N] > ");
                     String is_mon = scan.nextLine().toUpperCase();
-                    System.out.print("\nType the number for each device connected to this " + bright("yellow") + "Display" + ANSI_RESET + " seperated by a space.\n(Optional)\n> ");
+                    System.out.print("\nType the number for each device connected to this " + bright("yellow", "Display") + " seperated by a space.\n(Optional)\n> ");
                     String[] con_devs = scan.nextLine().split(" +");
                     ArrayList<Item> valid_devs = new ArrayList<Item>();
                     ArrayList<Integer> added = new ArrayList<Integer>();
                     ArrayList<Integer> not_added = new ArrayList<Integer>();
                     ArrayList<String> not_number = new ArrayList<String>();
                     for (String dev : con_devs) {
-                      if (dev.matches("[0-9]+")) {
+                      if (dev.matches("-?[0-9]+")) {
                         int devID = Integer.parseInt(dev);
                         if (devID >= 0 && devID < user.floorSize()) added.add(devID);
                         else not_added.add(devID);
@@ -463,37 +476,37 @@ class Main {
                     for (int num : not_added) System.out.print(num + " ");
                     System.out.print("\n\nNot a number: ");
                     for (String str_num : not_number) System.out.print(str_num + " ");
-                    System.out.print("\n\nEnter the " + bright("yellow") + "Display" + ANSI_RESET + "'s size in inches (decimals allowed) > ");
+                    System.out.print("\n\nEnter the " + color("yellow", "Display's") + " size in inches (decimals allowed) > ");
                     double size = scan.nextDouble();
                     scan.nextLine();
                     ArrayList<Item> new_items = new ArrayList<Item>();
                     for (int id : added) new_items.add(user.getItem(id));
                     temp_disp = new Display((is_mon.equals("N") ? false : true), new_items, size);
-                    System.out.print("\nThis " + bright("yellow") + "Display" + ANSI_RESET + " added:\n" + temp_disp + "\n\n");
-                  } else System.out.print("\nInvalid 2nd argument, did you mean " + bright("red") + "arg" + ANSI_RESET + "?\n\n");
-                } else System.out.print("\nNew " + bright("yellow") + "Display" + ANSI_RESET + " added to floor " + user.curFloor() + ".\n\n");
+                    System.out.print("\nThis " + bright("yellow", "Display") + " added:\n" + temp_disp + "\n\n");
+                  } else System.out.print("\nInvalid 2nd argument, did you mean " + bright("green", "arg") + "?\n\n");
+                } else System.out.print("\nNew " + bright("yellow", "Display") + " added to floor " + bright("cyan", Integer.toString(user.curFloor())) + ".\n\n");
                 user.addItem(temp_disp);
                 break;
               case "bed":
                 Bed temp_bed = new Bed();
                 if (cmds.length > 2) {
                   if (cmds[2].equalsIgnoreCase("arg")) {
-                    System.out.print("\nIs this " + bright("yellow") + "Bed" + ANSI_RESET + " adjustable? (Invalid input will default to N)\n[Y/N] > ");
+                    System.out.print("\nIs this " + bright("yellow", "Bed") + " adjustable? (Invalid input will default to N)\n[Y/N] > ");
                     boolean can_move = scan.nextLine().equalsIgnoreCase("Y");
                     System.out.println();
-                    for (int i = 0; i < Bed.types.length; i++) System.out.print("[" + i + "] " + Bed.types[i] + " ");
-                    System.out.print("\nInvalid input defaults to 2");
-                    System.out.print("\n[0-" + (Bed.types.length - 1) + "] > ");
+                    for (int i = 0; i < Bed.types.length; i++) System.out.print("[" + bright("cyan", Integer.toString(i)) + "] " + Bed.types[i] + " ");
+                    System.out.print("\nInvalid input defaults to " + bright("cyan", "2"));
+                    System.out.print("\n[" + bright("cyan", "0") + "-" + bright("cyan", Integer.toString((Bed.types.length - 1))) + "] > ");
                     String type_input = scan.nextLine();
                     int bed_type = (type_input.matches("-?[0-9]+") && Math.abs(Integer.parseInt(type_input)) < Bed.types.length ? Math.abs(Integer.parseInt(type_input)) : 2);
                     temp_bed = new Bed(can_move, bed_type);
-                    System.out.print("\nThis " + bright("yellow") + "Bed" + ANSI_RESET + " added:\n" + temp_bed + "\n\n");
-                  } else System.out.print("\nInvalid 2nd argument, did you mean " + bright("red") + "arg" + ANSI_RESET + "?\n\n");
-                } else System.out.print("\nNew " + bright("yellow") + "Bed" + ANSI_RESET + " added to floor " + user.curFloor() + ".\n\n");
+                    System.out.print("\nThis " + bright("yellow", "Bed") + " added:\n" + temp_bed + "\n\n");
+                  } else System.out.print("\nInvalid 2nd argument, did you mean " + bright("green", "arg") + "?\n\n");
+                } else System.out.print("\nNew " + bright("yellow", "Bed") + " added to floor " + bright("cyan", Integer.toString(user.curFloor())) + ".\n\n");
                 user.addItem(temp_bed);
                 break;
               default:
-                System.out.print("\"" + cmds[1] + "\" is not a valid " + bright("yellow") + "Item" + ANSI_RESET + " type:\n");
+                System.out.print("\"" + cmds[1] + "\" is not a valid " + bright("yellow", "Item") + " type:\n");
                 for (int i = 0; i < cmds.length; i++) System.out.print(cmds[i] + " ");
                 System.out.print("\n" + help("add"));
                 break;
@@ -563,7 +576,7 @@ class Main {
           break;
         case "ver":
         case "version":
-          System.out.print("\n" + bright("red") + "H" + bright("green") + "e" + bright("blue") + "c" + ANSI_RESET + "k Command Interpretter\n\tVersion " + curVer() + "\n\n");
+          System.out.print("\n" + bright("red", "H") + bright("green", "e") + bright("blue", "c") + "k Command Interpretter\n\tVersion " + curVer() + "\n\n");
           break;
         default:
           System.out.print("\"" + cmds[0] + "\" is not a valid command:\n");

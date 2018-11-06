@@ -17,15 +17,15 @@ public class Display implements Item {
   }
   public String connect(Item item) {
     connected_to.add(item);
-    return item.listInfo(true) + Main.bright("yellow") + item.type() + Main.ANSI_RESET + item.listInfo(false) + " connected to this " + Main.bright("yellow") + "Display" + Main.ANSI_RESET + ".\n";
+    return item.listInfo(true) + Main.bright("yellow", item.type()) + item.listInfo(false) + " connected to this " + Main.bright("yellow", "Display") + ".\n";
   }
   public String disconnect(int item) {
     if (item >= 0 && item < connected_to.size()) {
       connected_to.remove(item);
       return "\nDevice " + item + " removed.\n";
     }
-    if (connected_to.size() == 0) return Main.bright("yellow") + "Display" + Main.ANSI_RESET + " has no devices connected!";
-    return Main.bright("yellow") + "Display" + Main.ANSI_RESET + " only has " + connected_to.size() + " device" + (connected_to.size() > 1 ? "s" : "") + " connected to it.";
+    if (connected_to.size() == 0) return Main.bright("yellow", "Display") + " has no devices connected!";
+    return Main.bright("yellow", "Display") + " only has " + Main.bright("cyan", connected_to.size()) + " device" + (connected_to.size() > 1 ? "s" : "") + " connected to it.";
   }
   public int deviceCount() {
     return connected_to.size();
