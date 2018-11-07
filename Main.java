@@ -6,7 +6,7 @@ import java.util.*;
 class Main {
   private static final int verMajor = 1;
   private static final int verMinor = 12;
-  private static final int verFix = 1;
+  private static final int verFix = 3;
   private static String curVer() {return verMajor + "." + verMinor + "." + verFix;}
   public static final String ANSI = "\u001b[";
   public static final String ANSI_RESET = "\u001B[0m";
@@ -213,7 +213,7 @@ class Main {
                       } else System.out.print(bright("yellow", "Item ") + src + " is not a " + bright("yellow", "Book") + ".\n");
                       break;
                     case "Display":
-                      if (src_i instanceof Computer || src_i instanceof Console) System.out.println("\n" + ((Display)dst_i).connect(src_i));
+                      if (src_i instanceof Computer || src_i instanceof Console) System.out.println(((Display)dst_i).connect(src_i));
                       else System.out.print(bright("yellow", "Item ") + src + " cannot connect to a " + bright("yellow", "Display") + ".\n");
                       break;
                     default:

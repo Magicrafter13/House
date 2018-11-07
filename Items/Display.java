@@ -20,8 +20,9 @@ public class Display implements Item {
     return false;
   }
   public String connect(Item item) {
+    for (Item i : connected_to) if (i == item) return "This " + Main.bright("yellow", "Item") + " is already connected.";
     connected_to.add(item);
-    return item.listInfo(true) + Main.bright("yellow", item.type()) + item.listInfo(false) + Main.color("blue", " connected") + " to this " + Main.bright("yellow", "Display") + ".\n";
+    return "\n" + item.listInfo(true) + Main.bright("yellow", item.type()) + item.listInfo(false) + Main.color("blue", " connected") + " to this " + Main.bright("yellow", "Display") + ".\n";
   }
   public String disconnect(int item) {
     if (item >= 0 && item < connected_to.size()) {
