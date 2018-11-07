@@ -1,10 +1,10 @@
 public class Empty implements Item {
-  private static final String message = "You have no items/objects selected";
+  private static final String message = "You have no \u001b[33mItems/Objects\u001B[0m selected";
   private static final String typeS = "No Item";
 
   public Empty() {}
   public Item getSub(int i) {
-    return new Book("This item doesn't contain other items.", "(I don't think it should be possible to see this...)", 2018);
+    return new Book("This " + Main.bright("yellow", "Item") + " doesn't contain other " + Main.color("yellow", "Items") + ".", "(I don't think it should be possible to see this...)", 2018);
   }
   public boolean hasItem(Item test) {
     return false;

@@ -26,7 +26,7 @@ public class Viewer {
     return false;
   }
   public String viewCurItem() {
-    return "Object type is: " + Main.bright("yellow") + cur_item.type() + Main.ANSI_RESET + "\n\n" + cur_item;
+    return "Object type is: " + Main.bright("yellow", cur_item.type()) + "\n\n" + cur_item;
   }
   public int floorSize() {
     return cur_house.getFloor(cur_floor).size();

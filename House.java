@@ -24,11 +24,11 @@ public class House {
   }
   public String list(int f, int s, int e, String type) {
     boolean valid_type = false;
-    for (int i = 0; i < types.length; i++) if (type.equalsIgnoreCase(types[i])) valid_type = true;
-    if (!valid_type) return type + " is not a valid item type.";
+    for (String t : types) if (type.equalsIgnoreCase(t)) valid_type = true;
+    if (!valid_type) return type + " is not a valid " + Main.bright("yellow", "Item") + " type.";
     if (floors[f].size() == 0) return "Floor is empty!";
-    if (!(s < e)) return Main.bright("red") + "Start" + Main.ANSI_RESET + " must be less than " + Main.bright("red") + "End" + Main.ANSI_RESET;
-    if (s < 0) return Main.bright("red") + "Start" + Main.ANSI_RESET + " must be greater than or equal to 0";
+    if (!(s < e)) return Main.bright("red", "Start") + " must be less than " + Main.bright("red", "End");
+    if (s < 0) return Main.bright("red", "Start") + " must be greater than or equal to " + Main.bright("cyan", "0");
     String ret_val = "\n";
     ArrayList<Item> items = new ArrayList<Item>();
     ArrayList<Integer> item_ids = new ArrayList<Integer>();
@@ -39,9 +39,9 @@ public class House {
         item_ids.add(i);
       }
     }
-    if (items.size() == 0) return "Floor has no " + Main.bright("yellow") + type + Main.ANSI_RESET + " items.";
+    if (items.size() == 0) return "Floor has no " + Main.bright("yellow", type) + Main.color(" items.");
     for (int i = 0; i < items.size(); i++) {
-      ret_val += item_ids.get(i) + ": " + items.get(i).listInfo(true) + Main.bright("yellow") + items.get(i).type() + Main.ANSI_RESET + items.get(i).listInfo(false);
+      ret_val += Main.bright("cyan", Integer.toString(item_ids.get(i))) + ": " + items.get(i).listInfo(true) + Main.bright("yellow", items.get(i).type()) + items.get(i).listInfo(false);
       if (i < items.size() - 1) ret_val += "\n";
     }
     return ret_val + "\n";
@@ -76,6 +76,6 @@ public class House {
   }
   public String toString() {
     return "Color: " + colors[color] + "\n" +
-           "Floors: " + floor_count;
+           "Floors: " + Main.bright("cyan", Integer.toString(floor_count));
   }
 }

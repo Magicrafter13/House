@@ -63,6 +63,6 @@ public class Floor {
     return items.size();
   }
   public String toString() {
-    return "This floor has " + items.size() + " items on it.";
+    return "This floor has " + Main.bright("cyan", Integer.toString(items.size())) + Main.color("yellow", " Items") + " on it.";
   }
 }

@@ -306,7 +306,7 @@ class Main {
                 }
               } else System.out.print("This floor only has " + bright("cyan", Integer.toString(user.floorSize())) + " items on it\n");
             } else System.out.print("\"" + cmds[1] + "\" is not a valid " + bright("cyan", "integer\n"));
-          } else System.out.print("\nRemove what?\n\n");
+          } else System.out.print(bright("blue", "\nRemove") + " what?\n\n");
           break;
         case "list":
         case "look":
@@ -451,7 +451,7 @@ class Main {
                     String family = scan.nextLine();
                     System.out.print("" + bright("yellow", "Computer") + " Model (ie: dv6, Pro 3) > ");
                     String model = scan.nextLine();
-                    System.out.print("\nIs it on? (Invalid input will default to no)\n Yes or no? [Y/N] > ");
+                    System.out.print("\nIs it on? (Invalid input will default to no)\nYes or no? [Y/N] > ");
                     String is_on = scan.nextLine().toUpperCase();
                     temp_comp.reset(brand, family, model, (is_on.equals("Y") ? true : false), type);
                     System.out.print("\nThis " + bright("yellow", "Computer") + " added:\n" + temp_comp + "\n\n");

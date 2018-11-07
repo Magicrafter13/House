@@ -51,7 +51,7 @@ public class Bookshelf implements Item {
   }
   public String toString() {
     String ret_val = Main.color("yellow", "Books") + " in this " + Main.color("yellow", "shelf") + ":";
-    for (int i = 0; i < books.size(); i++) ret_val += "\n\t\"" + books.get(i).getTitle() + "\" by \"" + books.get(i).getAuthor() + "\" ID: " + books.get(i).getID();
+    for (int i = 0; i < books.size(); i++) ret_val += "\n\t" + Main.bright("cyan", Integer.toString(i)) + ": \"" + books.get(i).getTitle() + "\" by \"" + books.get(i).getAuthor() + "\" ID: " + books.get(i).getID();
     return ret_val + "\nEnd of " + Main.bright("yellow", "Bookshelf") + " contents.";
   }
 }
