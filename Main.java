@@ -147,6 +147,35 @@ class Main {
     for (int i = 0; i < strs.length; i++) if (!strs[i].matches(match)) return false;
     return true;
   }
+  private static boolean canGoInside(String src, String dst) {
+    switch (dst.toLowerCase()) {
+      case "bookshelf":
+      return src.equalsIgnoreCase("book");
+      case "container":
+      switch (src.toLowerCase()) {
+        case "empty":
+        case "fridge":
+        return false;
+        default: return true;
+      }
+      case "display":
+      switch (src.toLowerCase()) {
+        case "computer":
+        case "console":
+        return true;
+        default: return false;
+      }
+      case "empty": return false;
+      case "fridge":
+      switch (src.toLowerCase()) {
+        case "empty":
+        case "fridge":
+        return false;
+        default: return true;
+      }
+      default: return false;
+    }
+  }
 
   public static void main (String str[]) throws IOException {
     Scanner scan = new Scanner(System.in);
@@ -170,6 +199,10 @@ class Main {
       my_house.addItem(ItemImport.displays_f[i], ItemImport.displays[i]);
     for (int i = 0; i < ItemImport.beds.length; i++)
       my_house.addItem(ItemImport.beds_f[i], ItemImport.beds[i]);
+    for (int i = 0; i < ItemImport.containers.length; i++)
+      my_house.addItem(ItemImport.containers_f[i], ItemImport.containers[i]);
+    for (int i = 0; i < ItemImport.fridges.length; i++)
+      my_house.addItem(ItemImport.fridges_f[i], ItemImport.fridges[i]);
 
     while (here) {
       System.out.print("> ");
@@ -197,6 +230,9 @@ class Main {
                       case "Display":
                         System.out.println(((Display)dst_i).disconnect(src));
                         break;
+                      case "Container": case "Fridge":
+                        System.out.println(((Container)dst_i).removeItem(src));
+                        break;
                       default:
                         System.out.print("That " + bright("yellow", "Item") + " cannot have things " + color("blue", "detached") + " from it.\n");
                         break;
@@ -215,6 +251,12 @@ class Main {
                     case "Display":
                       if (src_i instanceof Computer || src_i instanceof Console) System.out.println(((Display)dst_i).connect(src_i));
                       else System.out.print(bright("yellow", "Item ") + src + " cannot connect to a " + bright("yellow", "Display") + ".\n");
+                      break;
+                    case "Container": case "Fridge":
+                      if (canGoInside(src_i.type(), dst_i.type())) {
+                        user.removeItem(src);
+                        System.out.println(((Container)dst_i).addItem(src_i));
+                      } else System.out.println("A " + src_i.type() + ", cannot be put-in/attached-to a " + dst_i.type());
                       break;
                     default:
                       System.out.print("Item cannot have things attached to it.\n");
