@@ -34,14 +34,14 @@ public class House {
     ArrayList<Integer> item_ids = new ArrayList<Integer>();
     for (int i = s; i < e; i++) {
       if (i > floors[f].size()) continue;
-      if (type.equals("*") || type.equalsIgnoreCase(floors[f].getItem(i).type())) {
+      if (type.equals("*") || type.equalsIgnoreCase(floors[f].getItem(i).subType())) {
         items.add(floors[f].getItem(i));
         item_ids.add(i);
       }
     }
     if (items.size() == 0) return "Floor has no " + Main.bright("yellow", type) + Main.color(" items.");
     for (int i = 0; i < items.size(); i++) {
-      ret_val += Main.bright("cyan", Integer.toString(item_ids.get(i))) + ": " + items.get(i).listInfo(true) + Main.bright("yellow", items.get(i).type()) + items.get(i).listInfo(false);
+      ret_val += Main.bright("cyan", Integer.toString(item_ids.get(i))) + ": " + items.get(i).listInfo(true) + Main.bright("yellow", items.get(i).subType()) + items.get(i).listInfo(false);
       if (i < items.size() - 1) ret_val += "\n";
     }
     return ret_val + "\n";

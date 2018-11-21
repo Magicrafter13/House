@@ -43,6 +43,9 @@ public class Container implements Item {
   public String type() {
     return typeS;
   }
+  public String subType() {
+    return type();
+  }
   public String listInfo(boolean before_not_after) {
     if (before_not_after) return "";
     return ", " + (items.size() > 0 ? Main.bright("cyan", Integer.toString(items.size())) + Main.bright("yellow", " Items") : Main.color("yellow", "Empty"));

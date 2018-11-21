@@ -43,6 +43,9 @@ public class Computer implements Item {
   public String type() {
     return typeS;
   }
+  public String subType() {
+    return type();
+  }
   public String listInfo(boolean before_not_after) {
     if (before_not_after) return brand + " ";
     else return ", turned " + (is_on ? "on" : "off");

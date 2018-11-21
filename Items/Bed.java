@@ -20,6 +20,9 @@ public class Bed implements Item {
   public String type() {
     return typeS;
   }
+  public String subType() {
+    return type();
+  }
   public String listInfo(boolean before_not_after) {
     if (before_not_after) return types[bed_type] + " ";
     if (adjustable) return " - Adjustable";

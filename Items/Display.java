@@ -50,6 +50,9 @@ public class Display implements Item {
   public String type() {
     return typeS;
   }
+  public String subType() {
+    return type();
+  }
   public String listInfo(boolean before_not_after) {
     if (before_not_after) return size_inch + "\" " + (is_monitor ? "Monitor" : "TV") + " (";
     else return ") - " + connected_to.size() + " devices are connected to it";

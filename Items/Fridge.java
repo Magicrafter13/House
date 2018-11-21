@@ -61,7 +61,7 @@ public class Fridge extends Container implements Item {
     celsius = false;
     temperature = 35.0;
   }
-  public String type() {
+  public String subType() {
     return typeS;
   }
   public String listInfo(boolean before_not_after) {

@@ -34,7 +34,7 @@ public class Bookshelf extends Container implements Item {
     }
     return "No matching " + Main.bright("yellow", "Book") + " found.";
   }
-  public String type() {
+  public String subType() {
     return typeS;
   }
   public String listInfo(boolean before_not_after) {
