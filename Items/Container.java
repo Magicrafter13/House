@@ -10,6 +10,10 @@ public class Container implements Item {
   public Container(ArrayList<Item> is) {
     items = is;
   }
+  public Item getItem(int i) {
+    if (i < 0 || i >= items.size()) return new Empty();
+    return items.get(i);
+  }
   public String addItem(Item i) {
     if (i == this) return "You can't put something inside itself!";
     if (!hasItem(i)) items.add(i);
@@ -44,6 +48,8 @@ public class Container implements Item {
     return ", " + (items.size() > 0 ? Main.bright("cyan", Integer.toString(items.size())) + Main.bright("yellow", " Items") : Main.color("yellow", "Empty"));
   }
   public String toString() {
-    return Main.bright("yellow", typeS);
+    String ret_val = Main.bright("yellow", typeS);
+    for (int i = 0; i < items.size(); i++) ret_val += "\t" + Main.bright("cyan", Integer.toString(i)) + ": " + items.get(i).listInfo(true) + items.get(i) + items.get(i).listInfo(false) + "\n";
+    return ret_val + "End of " + Main.bright("yellow", "Container") + " contents.";
   }
 }

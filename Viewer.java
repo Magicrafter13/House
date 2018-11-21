@@ -53,8 +53,8 @@ public class Viewer {
         for (Item i : f.getItems()) {
           if (i.hasItem(temp)) {
             switch (i.type()) {
-            case "Bookshelf":
-              ((Bookshelf)i).removeBook(temp);
+            case "Container": case "Fridge": case "Bookshelf":
+              ((Container)i).removeItem(temp);
               break;
             case "Display":
               ((Display)i).disconnect(temp);
@@ -65,8 +65,8 @@ public class Viewer {
       }
     }
   }
-  public void removeItem(int in) {
-    Item temp = cur_house.getFloor(cur_floor).getItem(in);
+  public void removeItem(Item in) {
+    Item temp = in;
     if (temp == cur_item) cur_item = new Empty();
     if (temp.hasItem(cur_item)) if (!(temp instanceof Display)) cur_item = new Empty();
     //any Item that can have this item will have it removed
@@ -74,8 +74,8 @@ public class Viewer {
       for (Item i : f.getItems()) {
         if (i.hasItem(temp)) {
           switch (i.type()) {
-          case "Bookshelf":
-            ((Bookshelf)i).removeBook(temp);
+          case "Container": case "Fridge": case "Bookshelf":
+            ((Container)i).removeItem(temp);
             break;
           case "Display":
             ((Display)i).disconnect(temp);
@@ -85,6 +85,27 @@ public class Viewer {
       }
     }
     cur_house.getFloor(cur_floor).removeItem(in);
+  }
+  public void removeItem(int in) {
+    removeItem(cur_house.getFloor(cur_floor).getItem(in));
+    /*if (temp == cur_item) cur_item = new Empty();
+    if (temp.hasItem(cur_item)) if (!(temp instanceof Display)) cur_item = new Empty();
+    //any Item that can have this item will have it removed
+    for (Floor f : cur_house.getFloors()) {
+      for (Item i : f.getItems()) {
+        if (i.hasItem(temp)) {
+          switch (i.type()) {
+          case "Container": case "Fridge": case "Bookshelf":
+            ((Container)i).removeItem(temp);
+            break;
+          case "Display":
+            ((Display)i).disconnect(temp);
+            break;
+          }
+        }
+      }
+    }
+    cur_house.getFloor(cur_floor).removeItem(in);*/
   }
   public int curFloor() {
     return cur_floor;

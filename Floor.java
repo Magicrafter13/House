@@ -24,8 +24,8 @@ public class Floor {
     int remove_from_floor = -1;
     for (int i = 0; i < items.size(); i++) {
       switch(items.get(in).type()) {
-      case "Bookshelf":
-        if (((Bookshelf)items.get(in)).getBook(sin) == items.get(i)) remove_from_floor = i;
+      case "Container": case "Fridge": case "Bookshelf":
+        if (((Container)items.get(in)).getItem(sin) == items.get(i)) remove_from_floor = i;
         break;
       case "Display":
         if (((Display)items.get(in)).getDevice(sin) == items.get(i)) remove_from_floor = i;
@@ -33,8 +33,8 @@ public class Floor {
       }
     }
     switch (items.get(in).type()) {
-    case "Bookshelf":
-      ((Bookshelf)items.get(in)).removeBook(sin);
+    case "Container": case "Fridge": case "Bookshelf":
+      ((Container)items.get(in)).removeItem(sin);
       break;
     case "Display":
       ((Display)items.get(in)).disconnect(sin);
@@ -54,7 +54,7 @@ public class Floor {
   public Item getItem(int i, int si) {
     Item ret_val = new Empty();
     if (i >= 0 && i < items.size()) {
-      if (items.get(i) instanceof Bookshelf) ret_val = ((Bookshelf)items.get(i)).getBook(si);
+      if (items.get(i) instanceof Container) ret_val = ((Container)items.get(i)).getItem(si);
       if (items.get(i) instanceof Display) ret_val = ((Display)items.get(i)).getDevice(si);
     }
     return ret_val;

@@ -223,15 +223,12 @@ class Main {
                     if (cmds[3].equalsIgnoreCase("-d")) {
                       Item dst_i = user.getItem(dst);
                       switch (dst_i.type()) {
-                      case "Bookshelf":
-                        if (src < ((Bookshelf)dst_i).bookCount()) user.addItem(((Bookshelf)dst_i).getBook(src));
-                        System.out.println(((Bookshelf)dst_i).removeBook(src));
+                      case "Container": case "Fridge": case "Bookshelf":
+                        user.addItem(((Container)dst_i).getItem(src));
+                        System.out.println(((Container)dst_i).removeItem(src));
                         break;
                       case "Display":
                         System.out.println(((Display)dst_i).disconnect(src));
-                        break;
-                      case "Container": case "Fridge":
-                        System.out.println(((Container)dst_i).removeItem(src));
                         break;
                       default:
                         System.out.print("That " + bright("yellow", "Item") + " cannot have things " + color("blue", "detached") + " from it.\n");
@@ -242,21 +239,15 @@ class Main {
                     Item src_i = user.getItem(src);
                     Item dst_i = user.getItem(dst);
                     switch (dst_i.type()) {
-                    case "Bookshelf":
-                      if (src_i instanceof Book) {
-                        user.removeItem(src);
-                        ((Bookshelf)dst_i).addBook((Book)src_i);
-                      } else System.out.print(bright("yellow", "Item ") + src + " is not a " + bright("yellow", "Book") + ".\n");
-                      break;
-                    case "Display":
-                      if (src_i instanceof Computer || src_i instanceof Console) System.out.println(((Display)dst_i).connect(src_i));
-                      else System.out.print(bright("yellow", "Item ") + src + " cannot connect to a " + bright("yellow", "Display") + ".\n");
-                      break;
-                    case "Container": case "Fridge":
+                    case "Container": case "Fridge": case "Bookshelf":
                       if (canGoInside(src_i.type(), dst_i.type())) {
                         user.removeItem(src);
                         System.out.println(((Container)dst_i).addItem(src_i));
                       } else System.out.println("A " + src_i.type() + ", cannot be put-in/attached-to a " + dst_i.type());
+                      break;
+                    case "Display":
+                      if (src_i instanceof Computer || src_i instanceof Console) System.out.println(((Display)dst_i).connect(src_i));
+                      else System.out.print(bright("yellow", "Item ") + src + " cannot connect to a " + bright("yellow", "Display") + ".\n");
                       break;
                     default:
                       System.out.print("Item cannot have things attached to it.\n");
@@ -279,9 +270,11 @@ class Main {
                   int old_floor = user.curFloor();
                   if(user.changeItemFocus(item)) {
                     if (user.goFloor(destination)) {
-                      user.addItem(user.cur_item);
+                      Item temp_item = user.cur_item;
+                      user.addItem(temp_item);
                       user.goFloor(old_floor);
                       user.removeItem(item);
+                      user.cur_item = temp_item;
                       System.out.print("\nThis " + bright("yellow", "Item ") + bright("blue", "moved") + " to floor " + destination + "\n" + user.cur_item + "\n\n");
                     } else System.out.print("Floor does not exist.\n");
                   } else System.out.print(bright("yellow", "Item") + " does not exist.\n");
@@ -375,26 +368,26 @@ class Main {
                 Item temp_item = user.cur_item;
                 user.changeItemFocus(Integer.parseInt(cmds[1]));
                 switch (user.cur_item.type()) {
-                case "Bookshelf":
-                  System.out.print("This " + bright("yellow", "Item") + " is a " + bright("yellow", "Bookshelf") + ", would you like to see:\n" +
-                                   "(Y) A specific " + bright("yellow", "Book") + "\n(N) Just the " + bright("yellow", "Bookshelf") + "\n\n");
+                case "Container": case "Fridge": case "Bookshelf":
+                  System.out.print("This " + bright("yellow", "Item") + " is a " + bright("yellow", "Container") + ", would you like to see:\n" +
+                                   "(Y) A specific " + bright("yellow", "Item") + "\n(N) Just the overall contents\n\n");
                   while (true) {
                     System.out.print("[Y/N] > ");
                     String temp = scan.nextLine().toUpperCase();
-                    int b_c = ((Bookshelf)user.cur_item).bookCount();
-                    if (temp.equals("Y") && b_c > 0) {
-                      System.out.print("\nWhich " + bright("yellow", "Book:\n\n"));
+                    int i_c = ((Container)user.cur_item).size();
+                    if (temp.equals("Y") && i_c > 0) {
+                      System.out.print("\nWhich " + bright("yellow", "Item") + ":\n\n");
                       while (true) {
-                        System.out.print("[" + bright("cyan", "0") + "-" + bright("cyan", Integer.toString((b_c - 1))) + "] > ");
-                        int bk = Math.abs(scan.nextInt());
+                        System.out.print("[" + bright("cyan", "0") + "-" + bright("cyan", Integer.toString((i_c - 1))) + "] > ");
+                        int im = Math.abs(scan.nextInt());
                         scan.nextLine();
-                        if (bk < b_c) {
-                          System.out.print("\n" + ((Bookshelf)user.cur_item).getBook(bk));
+                        if (im < i_c) {
+                          System.out.print("\n" + ((Container)user.cur_item).getItem(im));
                           break;
                         }
                       }
                     }
-                    if (temp.equals("N") || ((Bookshelf)user.cur_item).bookCount() == 0) System.out.print("\n" + user.viewCurItem());
+                    if (temp.equals("N") || ((Container)user.cur_item).size() == 0) System.out.print("\n" + user.viewCurItem());
                     System.out.println();
                     if (equalsIgnoreCaseOr(temp, new String[]{"Y", "N"})) break;
                   }
@@ -457,7 +450,7 @@ class Main {
                       int year = scan.nextInt();
                       scan.nextLine();
                       System.out.println();
-                      temp_shelf.addBook(new Book(title, author, year));
+                      temp_shelf.addItem(new Book(title, author, year));
                     }
                     System.out.print("\nThis " + bright("yellow", "Bookshelf") + " created:\n" + temp_shelf + "\n\n");
                   } else System.out.print("\nInvalid 2nd argument, did you mean " + bright("green", "arg") + "?\n\n");
@@ -535,7 +528,7 @@ class Main {
                     for (String dev : con_devs) {
                       if (dev.matches("-?[0-9]+")) {
                         int devID = Integer.parseInt(dev);
-                        if (devID >= 0 && devID < user.floorSize()) added.add(devID);
+                        if (devID >= 0 && devID < user.floorSize() && canGoInside(user.getItem(devID).type(), "Display")) added.add(devID);
                         else not_added.add(devID);
                       } else not_number.add(dev);
                     }
@@ -573,6 +566,35 @@ class Main {
                   } else System.out.print("\nInvalid 2nd argument, did you mean " + bright("green", "arg") + "?\n\n");
                 } else System.out.print("\nNew " + bright("yellow", "Bed") + " added to floor " + bright("cyan", Integer.toString(user.curFloor())) + ".\n\n");
                 user.addItem(temp_bed);
+                break;
+              case "container": case "fridge":
+                Container temp_con = new Container();
+                if (cmds.length > 2) {
+                  if (cmds[2].equalsIgnoreCase("arg")) {
+                    System.out.print("\nType the number for each " + bright("yellow", "Item") + " to be put inside this " + bright("yellow", cmds[1].substring(0, 1).toUpperCase() + cmds[1].substring(1).toLowerCase()) + " seperated by a space.\n(Optional)\n> ");
+                    String[] objs = scan.nextLine().split(" +");
+                    ArrayList<Item> valid_objs = new ArrayList<Item>();
+                    ArrayList<Integer> added = new ArrayList<Integer>();
+                    ArrayList<Integer> not_added = new ArrayList<Integer>();
+                    ArrayList<String> not_number = new ArrayList<String>();
+                    for (String itm : objs) {
+                      if (itm.matches("-?[0-9]+")) {
+                        int devID = Integer.parseInt(itm);
+                        if (devID >= 0 && devID < user.floorSize()) added.add(devID);
+                        else not_added.add(devID);
+                      } else not_number.add(itm);
+                    }
+                    ArrayList<Item> to_add = new ArrayList<Item>();
+                    for (int num : added) to_add.add(user.getItem(num));
+                    for (Item i : to_add) {
+                      if (canGoInside(i.type(), cmds[1].substring(0, 1).toUpperCase() + cmds[1].substring(1).toLowerCase())) {
+                        user.removeItem(i);
+                        temp_con.addItem(i);
+                      }
+                    }
+                  } else System.out.print("\nInvalid 2nd argument, did you mean " + bright("green", "arg") + "?\n\n");
+                } else System.out.print("\nNew " + bright("yellow", "Container") + " added to floor " + bright("cyan", Integer.toString(user.curFloor())) + ".\n\n");
+                user.addItem(temp_con);
                 break;
               default:
                 System.out.print("\"" + cmds[1] + "\" is not a valid " + bright("yellow", "Item") + " type:\n");
