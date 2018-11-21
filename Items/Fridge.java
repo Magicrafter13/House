@@ -70,7 +70,7 @@ public class Fridge extends Container implements Item {
   }
   public String toString() {
     String ret_val = Main.color("yellow", "Items") + " in this " + Main.bright("yellow", "Fridge") + ":";
-    for (int i = 0; i < size(); i++) ret_val += "\n\t" + Main.bright("cyan", Integer.toString(i)) + ": " + getItem(i).listInfo(true) + getItem(i).type() + getItem(i).listInfo(false);
+    for (int i = 0; i < size(); i++) ret_val += "\n\t" + Main.bright("cyan", Integer.toString(i)) + ": " + getItem(i).listInfo(true) + getItem(i).subType() + getItem(i).listInfo(false);
     return ret_val + "\nEnd of " + Main.bright("yellow", "Fridge") + " contents.";
   }
 }
