@@ -240,7 +240,7 @@ class Main {
                       case "Container":
                         Item temp_item = ((Container)dst_i).getItem(src);
                         if (!(temp_item instanceof Empty)) {
-                          user.addItem();
+                          user.addItem(temp_item);
                           System.out.println(((Container)dst_i).removeItem(src));
                         } else System.out.print("The " + bright("yellow", dst_i.subType()) + " doesn't have that many " + color("yellow", "Items") + " in it.\n");
                         break;
