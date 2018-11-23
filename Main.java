@@ -5,8 +5,8 @@ import java.util.*;
 
 class Main {
   private static final int verMajor = 1;
-  private static final int verMinor = 15;
-  private static final int verFix = 1;
+  private static final int verMinor = 16;
+  private static final int verFix = 0;
   private static String curVer() {return verMajor + "." + verMinor + "." + verFix;}
   public static final String ANSI = "\u001b[";
   public static final String ANSI_RESET = "\u001B[0m";
@@ -173,6 +173,11 @@ class Main {
         return false;
         default: return true;
       }
+      case "dresser":
+      switch (src.toLowerCase()) {
+        case "clothing": return true;
+        default: return false;
+      }
       default: return false;
     }
   }
@@ -180,6 +185,7 @@ class Main {
     switch (type.toLowerCase()) {
       case "fridge": return new Fridge();
       case "bookshelf": return new Bookshelf();
+      case "dresser" : return new Dresser();
       default: return new Container();
     }
   }
@@ -187,7 +193,22 @@ class Main {
     switch (input.toLowerCase()) {
       case "fridge": return "Fridge";
       case "bookshelf": return "Bookshelf";
+      case "dresser": return "Dresser";
       default: return "Container";
+    }
+  }
+  public static Item createClothing(String type) {
+    switch (type.toLowerCase()) {
+      case "shirt": return new Shirt();
+      case "pants": return new Pants();
+      default: return new Clothing();
+    }
+  }
+  public static String setValidClothing(String input) {
+    switch (input.toLowerCase()) {
+      case "shirt": return "Shirt";
+      case "pants": return "Pants";
+      default: return "Clothing";
     }
   }
 
@@ -217,6 +238,8 @@ class Main {
       my_house.addItem(ItemImport.containers_f[i], ItemImport.containers[i]);
     for (int i = 0; i < ItemImport.fridges.length; i++)
       my_house.addItem(ItemImport.fridges_f[i], ItemImport.fridges[i]);
+    for (int i = 0; i < ItemImport.dressers.length; i++)
+      my_house.addItem(ItemImport.dressers_f[i], ItemImport.dressers[i]);
 
     while (here) {
       System.out.print("> ");
@@ -257,7 +280,7 @@ class Main {
                     Item dst_i = user.getItem(dst);
                     switch (dst_i.type()) {
                     case "Container":
-                      if (canGoInside(src_i.subType(), dst_i.subType())) {
+                      if (canGoInside((src_i instanceof Clothing ? "Clothing" : src_i.subType()), dst_i.subType())) {
                         user.removeItem(src);
                         System.out.println(((Container)dst_i).addItem(src_i));
                       } else System.out.println("A " + src_i.subType() + ", cannot be put-in/attached-to a " + dst_i.subType());
@@ -438,6 +461,7 @@ class Main {
                 case "Computer":
                 case "Console":
                 case "Bed":
+                case "Clothing":
                   System.out.print("\n" + user.viewCurItem() + "\n\n");
                   break;
                 }
@@ -582,7 +606,7 @@ class Main {
                     ArrayList<Item> to_add = new ArrayList<Item>();
                     for (int num : added) to_add.add(user.getItem(num));
                     for (Item i : to_add) {
-                      if (canGoInside(i.type(), type)) {
+                      if (canGoInside((i instanceof Clothing ? "Clothing" : i.type()), type)) {
                         user.removeItem(i);
                         ((Container)temp_con).addItem(i);
                       }
@@ -591,6 +615,20 @@ class Main {
                   } else System.out.print("\nInvalid 2nd argument, did you mean " + bright("green", "arg") + "?\n\n");
                 } else System.out.print("\nNew " + bright("yellow", type) + " added to floor " + bright("cyan", Integer.toString(user.curFloor())) + ".\n\n");
                 user.addItem(temp_con);
+                break;
+              case "clothing":
+                System.out.print("\nEnter the " + bright("yellow", "Clothing") + " sub-type:\n\tie: Clothing, Shirt, Pants, etc. (Defaults to Clothing)\n\n> ");
+                String cloth_type = setValidClothing(scan.nextLine());
+                Item temp_cloth = createClothing(cloth_type);
+                if (cmds.length > 2) {
+                  if (cmds[2].equalsIgnoreCase("arg")) {
+                    System.out.print("\nEnter Clothing color > ");
+                    String color = scan.nextLine();
+                    ((Clothing)temp_cloth).setColor(color);
+                    System.out.print("\nThis " + bright("yellow", cloth_type) + " created:\n" + temp_cloth + "\n\n");
+                  } else System.out.print("\nInvalid 2nd argument, did you mean " + bright("green", "arg") + "?\n\n");
+                } else System.out.print("\nNew " + bright("yellow", cloth_type) + " added to floor " + bright("cyan", Integer.toString(user.curFloor())) + ".\n\n");
+                user.addItem(temp_cloth);
                 break;
               default:
                 System.out.print("\"" + cmds[1] + "\" is not a valid " + bright("yellow", "Item") + " type:\n");
