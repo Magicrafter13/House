@@ -6,7 +6,7 @@ import java.util.*;
 class Main {
   private static final int verMajor = 1;
   private static final int verMinor = 16;
-  private static final int verFix = 0;
+  private static final int verFix = 1;
   private static String curVer() {return verMajor + "." + verMinor + "." + verFix;}
   public static final String ANSI = "\u001b[";
   public static final String ANSI_RESET = "\u001B[0m";
@@ -178,6 +178,14 @@ class Main {
         case "clothing": return true;
         default: return false;
       }
+      case "table":
+      switch (src.toLowerCase()) {
+        case "fridge":
+        case "empty":
+        case "table":
+        return false;
+        default: return true;
+      }
       default: return false;
     }
   }
@@ -186,15 +194,8 @@ class Main {
       case "fridge": return new Fridge();
       case "bookshelf": return new Bookshelf();
       case "dresser" : return new Dresser();
+      case "table" : return new Table();
       default: return new Container();
-    }
-  }
-  public static String setValidContainer(String input) {
-    switch (input.toLowerCase()) {
-      case "fridge": return "Fridge";
-      case "bookshelf": return "Bookshelf";
-      case "dresser": return "Dresser";
-      default: return "Container";
     }
   }
   public static Item createClothing(String type) {
@@ -202,13 +203,6 @@ class Main {
       case "shirt": return new Shirt();
       case "pants": return new Pants();
       default: return new Clothing();
-    }
-  }
-  public static String setValidClothing(String input) {
-    switch (input.toLowerCase()) {
-      case "shirt": return "Shirt";
-      case "pants": return "Pants";
-      default: return "Clothing";
     }
   }
 
@@ -240,6 +234,8 @@ class Main {
       my_house.addItem(ItemImport.fridges_f[i], ItemImport.fridges[i]);
     for (int i = 0; i < ItemImport.dressers.length; i++)
       my_house.addItem(ItemImport.dressers_f[i], ItemImport.dressers[i]);
+    for (int i = 0; i < ItemImport.tables.length; i++)
+      my_house.addItem(ItemImport.tables_f[i], ItemImport.tables[i]);
 
     while (here) {
       System.out.print("> ");
@@ -585,11 +581,11 @@ class Main {
                 break;
               case "container":
                 System.out.print("\nEnter the " + bright("yellow", "Container") + " sub-type:\n\tie: Container, Bookshelf, Fridge, etc. (Defaults to Container)\n\n> ");
-                String type = setValidContainer(scan.nextLine());
+                String type = scan.nextLine();
                 Item temp_con = createContainer(type);
                 if (cmds.length > 2) {
                   if (cmds[2].equalsIgnoreCase("arg")) {
-                    System.out.print("\nType the number for each " + bright("yellow", "Item") + " to be put inside this " + bright("yellow", type) + " seperated by a space.\n(Optional)\n> ");
+                    System.out.print("\nType the number for each " + bright("yellow", "Item") + " to be put inside this " + bright("yellow", temp_con.subType()) + " seperated by a space.\n(Optional)\n> ");
                     String[] objs = scan.nextLine().split(" +");
                     System.out.println();
                     ArrayList<Item> valid_objs = new ArrayList<Item>();
@@ -611,23 +607,23 @@ class Main {
                         ((Container)temp_con).addItem(i);
                       }
                     }
-                    System.out.print("\nThis " + bright("yellow", type) + " created:\n" + temp_con + "\n\n");
+                    System.out.print("\nThis " + bright("yellow", temp_con.subType()) + " created:\n" + temp_con + "\n\n");
                   } else System.out.print("\nInvalid 2nd argument, did you mean " + bright("green", "arg") + "?\n\n");
-                } else System.out.print("\nNew " + bright("yellow", type) + " added to floor " + bright("cyan", Integer.toString(user.curFloor())) + ".\n\n");
+                } else System.out.print("\nNew " + bright("yellow", temp_con.subType()) + " added to floor " + bright("cyan", Integer.toString(user.curFloor())) + ".\n\n");
                 user.addItem(temp_con);
                 break;
               case "clothing":
                 System.out.print("\nEnter the " + bright("yellow", "Clothing") + " sub-type:\n\tie: Clothing, Shirt, Pants, etc. (Defaults to Clothing)\n\n> ");
-                String cloth_type = setValidClothing(scan.nextLine());
+                String cloth_type = scan.nextLine();
                 Item temp_cloth = createClothing(cloth_type);
                 if (cmds.length > 2) {
                   if (cmds[2].equalsIgnoreCase("arg")) {
                     System.out.print("\nEnter Clothing color > ");
                     String color = scan.nextLine();
                     ((Clothing)temp_cloth).setColor(color);
-                    System.out.print("\nThis " + bright("yellow", cloth_type) + " created:\n" + temp_cloth + "\n\n");
+                    System.out.print("\nThis " + bright("yellow", temp_cloth.subType()) + " created:\n" + temp_cloth + "\n\n");
                   } else System.out.print("\nInvalid 2nd argument, did you mean " + bright("green", "arg") + "?\n\n");
-                } else System.out.print("\nNew " + bright("yellow", cloth_type) + " added to floor " + bright("cyan", Integer.toString(user.curFloor())) + ".\n\n");
+                } else System.out.print("\nNew " + bright("yellow", temp_cloth.subType()) + " added to floor " + bright("cyan", Integer.toString(user.curFloor())) + ".\n\n");
                 user.addItem(temp_cloth);
                 break;
               default:

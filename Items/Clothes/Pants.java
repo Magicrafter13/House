@@ -15,6 +15,6 @@ public class Pants extends Clothing implements Item {
     return "";
   }
   public String toString() {
-    return "This is a " + getColor() + " " + subType();
+    return "These are " + getColor() + " " + subType();
   }
 }
