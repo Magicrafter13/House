@@ -31,11 +31,17 @@ public class Viewer {
   public int floorSize() {
     return cur_house.getFloor(cur_floor).size();
   }
+  public int pageCount(int rangeStart, int rangeEnd, String searchType, int pageLength) {
+    return cur_house.pageCount(cur_floor, rangeStart, rangeEnd, searchType, pageLength);
+  }
+  public String list(int s, int e, String type, int pageLength, int page) {
+    return cur_house.list(cur_floor, s, e, type, pageLength, page);
+  }
   public String list() {
     return cur_house.list(cur_floor);
   }
   public String list(int s, int e) {
-    return cur_house.list(cur_floor, s, e, "*");
+    return cur_house.list(cur_floor, s, e, "*", floorSize(), 0);
   }
   public String list(String type) {
     return cur_house.list(cur_floor, type);

@@ -2,7 +2,9 @@ import java.util.ArrayList;
 
 public class House {
   private static final String[] colors = {"White", "Red", "Brown", "Orange", "Yellow", "Green", "Blue", "Purple", "Pink", "Black"};
-  public static final String[] types = {"*", "Book", "Bookshelf", "Computer", "Console", "Display", "Bed"};
+  public static final String[] types = {"*", "Bed", "Book", "Computer", "Console", "Display",
+                                        "Bookshelf", "Container", "Dresser", "Fridge", "Table",
+                                        "Clothing", "Pants", "Shirt"};
   private int color;
   private int floor_count;
   private Floor[] floors;
@@ -22,7 +24,23 @@ public class House {
     floors = new Floor[floor_count];
     initializeFloors();
   }
-  public String list(int f, int s, int e, String type) {
+  public int pageCount(int f, int rangeStart, int rangeEnd, String searchType, int pageLength) {
+    boolean valid_type = false;
+    for (String t : types) if (searchType.equalsIgnoreCase(t)) valid_type = true;
+    if (!valid_type) return -1;
+    if (floors[f].size() == 0) return -2;
+    if (!(rangeStart < rangeEnd)) return -3;
+    if (rangeStart < 0) return -4;
+    int items = 0;
+    for (int i = rangeStart; i < rangeEnd; i++) {
+      if (i > floors[f].size()) continue;
+      if (searchType.equals("*") || searchType.equalsIgnoreCase(floors[f].getItem(i).subType()) || searchType.equalsIgnoreCase(floors[f].getItem(i).type())) {
+        items++;
+      }
+    }
+    return (items / pageLength + (items % pageLength == 0 ? 0 : 1));
+  }
+  public String list(int f, int s, int e, String type, int pageLength, int page) {
     boolean valid_type = false;
     for (String t : types) if (type.equalsIgnoreCase(t)) valid_type = true;
     if (!valid_type) return type + " is not a valid " + Main.bright("yellow", "Item") + " type.";
@@ -34,23 +52,24 @@ public class House {
     ArrayList<Integer> item_ids = new ArrayList<Integer>();
     for (int i = s; i < e; i++) {
       if (i > floors[f].size()) continue;
-      if (type.equals("*") || type.equalsIgnoreCase(floors[f].getItem(i).subType())) {
+      if (type.equals("*") || type.equalsIgnoreCase(floors[f].getItem(i).subType()) || type.equalsIgnoreCase(floors[f].getItem(i).type())) {
         items.add(floors[f].getItem(i));
         item_ids.add(i);
       }
     }
-    if (items.size() == 0) return "Floor has no " + Main.bright("yellow", type) + Main.color(" items.");
-    for (int i = 0; i < items.size(); i++) {
+    if (items.size() == 0) return "Floor has no " + Main.bright("yellow", type) + Main.color("yellow", " items.");
+    for (int i = pageLength * page; i < pageLength * (page + 1); i++) {
+      if (i >= items.size()) continue;
       ret_val += Main.bright("cyan", Integer.toString(item_ids.get(i))) + ": " + items.get(i).listInfo(true) + Main.bright("yellow", items.get(i).subType()) + items.get(i).listInfo(false);
       if (i < items.size() - 1) ret_val += "\n";
     }
     return ret_val + "\n";
   }
   public String list(int f) {
-    return list(f, 0, floors[f].size(), "*");
+    return list(f, 0, floors[f].size(), "*", floors[f].size(), 0);
   }
   public String list(int f, String type) {
-    return list(f, 0, floors[f].size(), type);
+    return list(f, 0, floors[f].size(), type, floors[f].size(), 0);
   }
   public int size() {
     return floor_count;

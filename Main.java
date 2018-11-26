@@ -6,7 +6,7 @@ import java.util.*;
 class Main {
   private static final int verMajor = 1;
   private static final int verMinor = 16;
-  private static final int verFix = 1;
+  private static final int verFix = 2;
   private static String curVer() {return verMajor + "." + verMinor + "." + verFix;}
   public static final String ANSI = "\u001b[";
   public static final String ANSI_RESET = "\u001B[0m";
@@ -382,23 +382,60 @@ class Main {
         case "list":
         case "look":
           if (cmds.length > 1) {
-            if (equalsIgnoreCaseOr(cmds[1], new String[]{"--hand", "--focus", "-h", "-f"})) System.out.print("\n" + user.viewCurItem() + "\n\n");
-            else if (equalsIgnoreCaseOr(cmds[1], new String[]{"-i", "--item"})) {
+            if (equalsIgnoreCaseOr(cmds[1], new String[]{"--hand", "--focus", "-h", "-f"})) {
+              System.out.print("\n" + user.viewCurItem() + "\n\n");
+            /*} else if (equalsIgnoreCaseOr(cmds[1], new String[]{"-i", "--item"})) {
+              System.out.print("uhhhhhh\n");
               if (cmds.length > 2) System.out.println(user.list(cmds[2]));
-              else System.out.print("No " + bright("red", "Item") + " type specified.\n");
-            } else if (equalsIgnoreCaseOr(cmds[1], new String[]{"-p", "--page"})) {
-              for (int i = 0; i < (user.floorSize() / 20 + (user.floorSize() % 20 == 0 ? 0 : 1)); i++) {
-                System.out.println("\n\tFloor " + color("blue", "Listing") + " - Page " + (i + 1));
-                boolean end_test = (20 * (i + 1) < user.floorSize());
-                System.out.println(user.list(20 * i, (end_test ? 20 * (i + 1) : user.floorSize())));
-                if (end_test) {
-                  System.out.print("Press enter to continue > ");
-                  scan.nextLine();
+              else System.out.print("No " + bright("red", "Item") + " type specified.\n");*/
+            } else if (cmds.length > 2 || equalsIgnoreCaseOr(cmds[1], new String[]{"-p", "--page"})) {
+              boolean page = false;
+              int rangeStart = 0;
+              int rangeEnd = user.floorSize();
+              String searchType = "*";
+              int invalidArg = 0;
+              for (int i = 1; i < cmds.length; i++) {
+                if (equalsIgnoreCaseOr(cmds[i], new String[]{"-i", "--item"}) && (i + 1 < cmds.length)) {
+                  searchType = cmds[i + 1];
+                  i++;
+                  continue;
                 }
+                if (equalsIgnoreCaseOr(cmds[i], new String[]{"-r", "--range"}) && (i + 2 < cmds.length)) {
+                  if (cmds[i + 1].matches("-?[0-9]+") && cmds[i + 2].matches("-?[0-9]+")) {
+                    rangeStart = Math.abs(Integer.parseInt(cmds[i + 1]));
+                    rangeEnd = Math.abs(Integer.parseInt(cmds[i + 2]));
+                    i += 2;
+                    continue;
+                  }
+                }
+                if (equalsIgnoreCaseOr(cmds[i], new String[]{"-p", "--page"})) {
+                  page = true;
+                  continue;
+                }
+                invalidArg = i;
               }
-            } else if (equalsIgnoreCaseOr(cmds[1], new String[]{"-r", "--range"})) {
-              if (cmds.length > 3 && matchesAnd(new String[]{cmds[2], cmds[3]}, "-?[0-9]+")) System.out.println(user.list(Integer.parseInt(cmds[2]), Integer.parseInt(cmds[3]) + 1));
-              else System.out.print(bright("blue", "range") + " requires " + bright("cyan", "2 integers\n"));
+              if (invalidArg == 0) {
+                if (page) {
+                  int pageCount = user.pageCount(rangeStart, rangeEnd, searchType, 20);
+                  switch (pageCount) {
+                    case 0: System.out.print("No " + bright("yellow", "Items") + " match your criteria.\n"); break;
+                    case -1: System.out.print(searchType + " is not a valid type.\n"); break;
+                    case -2: System.out.print("Floor is empty.\n"); break;
+                    case -3: System.out.print("Range start must be greater than or equal to range end.\n"); break;
+                    case -4: System.out.print("Range start must be greater than or equal to 0.\n"); break;
+                    default:
+                    for (int i = 0; i < pageCount; i++) {
+                      System.out.println("\n\tFloor " + color("blue", "Listing") + " - Page " + (i + 1));
+                      boolean end_test = (i + 1 < pageCount);
+                      System.out.print(user.list(rangeStart, rangeEnd, searchType, 20, i));
+                      if (end_test) {
+                        System.out.print("Press enter to continue > ");
+                        scan.nextLine();
+                      } else System.out.println();
+                    }
+                  }
+                } else System.out.print(user.list(rangeStart, rangeEnd, searchType, user.floorSize(), 0) + "\n");
+              } else System.out.print(cmds[invalidArg] + " is not a valid argument.\n");
             } else if (cmds[1].matches("-?[0-9]+")) {
               if (Integer.parseInt(cmds[1]) < user.floorSize()) {
                 Item temp_item = user.cur_item;
@@ -464,6 +501,22 @@ class Main {
                 user.cur_item = temp_item;
               } else System.out.print("This floor only has " + user.floorSize() + color("yellow", " Items") + " on it\n");
             } else System.out.print("\"" + cmds[1] + "\" is not a valid " + bright("cyan", "integer\n"));
+            /*if (equalsIgnoreCaseOr(cmds[1], new String[]{"-p", "--page"})) {
+              for (int i = 0; i < (user.floorSize() / 20 + (user.floorSize() % 20 == 0 ? 0 : 1)); i++) {
+                System.out.println("\n\tFloor " + color("blue", "Listing") + " - Page " + (i + 1));
+                boolean end_test = (20 * (i + 1) < user.floorSize());
+                System.out.println(user.list(20 * i, (end_test ? 20 * (i + 1) : user.floorSize())));
+                if (end_test) {
+                  System.out.print("Press enter to continue > ");
+                  scan.nextLine();
+                }
+              }
+            } else if (equalsIgnoreCaseOr(cmds[1], new String[]{"-r", "--range"})) {
+              if (cmds.length > 3 && matchesAnd(new String[]{cmds[2], cmds[3]}, "-?[0-9]+")) System.out.println(user.list(Integer.parseInt(cmds[2]), Integer.parseInt(cmds[3]) + 1));
+              else System.out.print(bright("blue", "range") + " requires " + bright("cyan", "2 integers\n"));
+            } else if (cmds[1].matches("-?[0-9]+")) {
+
+            }*/
           } else System.out.println(user.list());
           break;
         case "add":
