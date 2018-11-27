@@ -14,15 +14,9 @@ public class Bed implements Item {
     adjustable = a;
     bed_type = (t >= 0 && t < types.length ? t : 2);
   }
-  public boolean hasItem(Item test) {
-    return false;
-  }
-  public String type() {
-    return typeS;
-  }
-  public String subType() {
-    return type();
-  }
+  public boolean hasItem(Item test) { return false; }
+  public String type() { return typeS; }
+  public String subType() { return type(); }
   public String listInfo(boolean before_not_after) {
     if (before_not_after) return types[bed_type] + " ";
     if (adjustable) return " - Adjustable";

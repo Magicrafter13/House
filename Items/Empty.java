@@ -6,20 +6,9 @@ public class Empty implements Item {
   public Item getSub(int i) {
     return new Book("This " + Main.bright("yellow", "Item") + " doesn't contain other " + Main.color("yellow", "Items") + ".", "(I don't think it should be possible to see this...)", 2018);
   }
-  public boolean hasItem(Item test) {
-    return false;
-  }
-  public String type() {
-    return typeS;
-  }
-  public String subType() {
-    return type();
-  }
-  public String listInfo(boolean before_not_after) {
-    if (before_not_after) return "";
-    else return "";
-  }
-  public String toString() {
-    return message;
-  }
+  public boolean hasItem(Item test) { return false; }
+  public String type() { return typeS; }
+  public String subType() { return type(); }
+  public String listInfo(boolean before_not_after) { return ""; }
+  public String toString() { return message; }
 }

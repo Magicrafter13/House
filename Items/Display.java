@@ -41,21 +41,12 @@ public class Display implements Item {
     }
     return "No matching " + Main.color("yellow", "Device") + " found.";
   }
-  public int deviceCount() {
-    return connected_to.size();
-  }
-  public Item getDevice(int i) {
-    return connected_to.get(i);
-  }
-  public String type() {
-    return typeS;
-  }
-  public String subType() {
-    return type();
-  }
+  public int deviceCount() { return connected_to.size(); }
+  public Item getDevice(int i) { return connected_to.get(i); }
+  public String type() { return typeS; }
+  public String subType() { return type(); }
   public String listInfo(boolean before_not_after) {
-    if (before_not_after) return size_inch + "\" " + (is_monitor ? "Monitor" : "TV") + " (";
-    else return ") - " + connected_to.size() + " devices are connected to it";
+    return (before_not_after ? size_inch + "\" " + (is_monitor ? "Monitor" : "TV") + " (" : ") - " + connected_to.size() + " devices are connected to it");
   }
   public String toString() {
     String ret_val = size_inch + "\" " + (is_monitor ? "Monitor" : "TV") + " (" + Main.bright("cyan", Integer.toString(connected_to.size())) + " devices):";

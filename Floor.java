@@ -11,12 +11,8 @@ public class Floor {
     this();
     items = i;
   }
-  public void addItem(Item i) {
-    items.add(i);
-  }
-  public void removeItem(int i) {
-    items.remove(i);
-  }
+  public void addItem(Item i) { items.add(i); }
+  public void removeItem(int i) { items.remove(i); }
   public void removeItem(Item test) {
     for (int i = 0; i < items.size(); i++) if (items.get(i) == test) items.remove(i);
   }
@@ -33,24 +29,15 @@ public class Floor {
       }
     }
     switch (items.get(in).type()) {
-    case "Container": case "Fridge": case "Bookshelf":
-      ((Container)items.get(in)).removeItem(sin);
-      break;
-    case "Display":
-      ((Display)items.get(in)).disconnect(sin);
-      break;
-    default: return false;
+      case "Container": case "Fridge": case "Bookshelf": ((Container)items.get(in)).removeItem(sin); break;
+      case "Display": ((Display)items.get(in)).disconnect(sin); break;
+      default: return false;
     }
     if (remove_from_floor > -1) items.remove(remove_from_floor);
     return true;
   }
-  public ArrayList<Item> getItems() {
-    return items;
-  }
-  public Item getItem(int i) {
-    if (i >= 0 && i < items.size()) return items.get(i);
-    return new Empty();
-  }
+  public ArrayList<Item> getItems() { return items; }
+  public Item getItem(int i) { return ((i >= 0 && i < items.size()) ? items.get(i) : new Empty()); }
   public Item getItem(int i, int si) {
     Item ret_val = new Empty();
     if (i >= 0 && i < items.size()) {
@@ -59,10 +46,9 @@ public class Floor {
     }
     return ret_val;
   }
-  public int size() {
-    return items.size();
-  }
+  public int size() { return items.size(); }
   public String toString() {
-    return "This floor has " + Main.bright("cyan", Integer.toString(items.size())) + Main.color("yellow", " Items") + " on it.";
+    return "This floor has " + Main.bright("cyan", Integer.toString(items.size())) +
+           Main.color("yellow", " Items") + " on it.";
   }
 }

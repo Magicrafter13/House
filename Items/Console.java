@@ -16,18 +16,11 @@ public class Console implements Item {
     company = c;
     system = s;
   }
-  public boolean hasItem(Item test) {
-    return false;
-  }
-  public String type() {
-    return typeS;
-  }
-  public String subType() {
-    return type();
-  }
+  public boolean hasItem(Item test) { return false; }
+  public String type() { return typeS; }
+  public String subType() { return type(); }
   public String listInfo(boolean before_not_after) {
-    if (before_not_after) return company + " ";
-    else return " - " + types[sys_type];
+    return (before_not_after ? " " : " - " + types[sys_type]);
   }
   public String toString() {
     return "This Video Game " + types[sys_type] + ", is a " + company + "\n" +

@@ -12,43 +12,25 @@ public class Viewer {
     this();
     cur_house = h;
   }
-  public boolean isItem(int i) {
-    return (i >= 0 && i < cur_house.getFloor(cur_floor).size());
-  }
-  public Item getItem(int i) {
-    return cur_house.getItem(cur_floor, i);
-  }
+  public boolean isItem(int i) { return (i >= 0 && i < cur_house.getFloor(cur_floor).size()); }
+  public Item getItem(int i) { return cur_house.getItem(cur_floor, i); }
   public boolean goFloor(int f) {
-    if (f >= 0 && f < cur_house.size()) {
-      cur_floor = f;
-      return true;
-    }
-    return false;
+    boolean check = (f >= 0 && f < cur_house.size());
+    if (check) cur_floor = f;
+    return check;
   }
   public String viewCurItem() {
     return "Object type is: " + Main.bright("yellow", cur_item.type()) + "\n\n" + cur_item;
   }
-  public int floorSize() {
-    return cur_house.getFloor(cur_floor).size();
+  public int floorSize() { return cur_house.getFloor(cur_floor).size(); }
+  public int pageCount(int s, int e, String t, int l) { return cur_house.pageCount(cur_floor, s, e, t, l); }
+  public String list(int s, int e, String t, int l, int p) {
+    return cur_house.list(cur_floor, s, e, t, l, p);
   }
-  public int pageCount(int rangeStart, int rangeEnd, String searchType, int pageLength) {
-    return cur_house.pageCount(cur_floor, rangeStart, rangeEnd, searchType, pageLength);
-  }
-  public String list(int s, int e, String type, int pageLength, int page) {
-    return cur_house.list(cur_floor, s, e, type, pageLength, page);
-  }
-  public String list() {
-    return cur_house.list(cur_floor);
-  }
-  public String list(int s, int e) {
-    return cur_house.list(cur_floor, s, e, "*", floorSize(), 0);
-  }
-  public String list(String type) {
-    return cur_house.list(cur_floor, type);
-  }
-  public void addItem(Item i) {
-    cur_house.addItem(cur_floor, i);
-  }
+  public String list() { return cur_house.list(cur_floor); }
+  public String list(int s, int e) { return cur_house.list(cur_floor, s, e, "*", floorSize(), 0); }
+  public String list(String type) { return cur_house.list(cur_floor, type); }
+  public void addItem(Item i) { cur_house.addItem(cur_floor, i); }
   public void removeItem(int in, int sin) {
     Item temp = cur_house.getFloor(cur_floor).getItem(in, sin);
     if (temp == cur_item) cur_item = new Empty();
@@ -59,12 +41,8 @@ public class Viewer {
         for (Item i : f.getItems()) {
           if (i.hasItem(temp)) {
             switch (i.type()) {
-            case "Container": case "Fridge": case "Bookshelf":
-              ((Container)i).removeItem(temp);
-              break;
-            case "Display":
-              ((Display)i).disconnect(temp);
-              break;
+              case "Container": ((Container)i).removeItem(temp); break;
+              case "Display": ((Display)i).disconnect(temp); break;
             }
           }
         }
@@ -80,42 +58,16 @@ public class Viewer {
       for (Item i : f.getItems()) {
         if (i.hasItem(temp)) {
           switch (i.type()) {
-          case "Container": case "Fridge": case "Bookshelf":
-            ((Container)i).removeItem(temp);
-            break;
-          case "Display":
-            ((Display)i).disconnect(temp);
-            break;
+            case "Container": ((Container)i).removeItem(temp); break;
+            case "Display": ((Display)i).disconnect(temp); break;
           }
         }
       }
     }
     cur_house.getFloor(cur_floor).removeItem(in);
   }
-  public void removeItem(int in) {
-    removeItem(cur_house.getFloor(cur_floor).getItem(in));
-    /*if (temp == cur_item) cur_item = new Empty();
-    if (temp.hasItem(cur_item)) if (!(temp instanceof Display)) cur_item = new Empty();
-    //any Item that can have this item will have it removed
-    for (Floor f : cur_house.getFloors()) {
-      for (Item i : f.getItems()) {
-        if (i.hasItem(temp)) {
-          switch (i.type()) {
-          case "Container": case "Fridge": case "Bookshelf":
-            ((Container)i).removeItem(temp);
-            break;
-          case "Display":
-            ((Display)i).disconnect(temp);
-            break;
-          }
-        }
-      }
-    }
-    cur_house.getFloor(cur_floor).removeItem(in);*/
-  }
-  public int curFloor() {
-    return cur_floor;
-  }
+  public void removeItem(int in) { removeItem(cur_house.getFloor(cur_floor).getItem(in)); }
+  public int curFloor() { return cur_floor; }
   public String goUp() {
     cur_floor++;
     if (cur_floor >= cur_house.size()) {
@@ -132,11 +84,9 @@ public class Viewer {
     return "\nYou are currently on the bottom floor, floor unchanged.\n";
   }
   public boolean changeItemFocus(int i) {
-    if (i >= 0 && i < cur_house.getFloor(cur_floor).size()) {
-      cur_item = cur_house.getItem(cur_floor, i);
-      return true;
-    }
-    return false;
+    boolean check = (i >= 0 && i < cur_house.getFloor(cur_floor).size());
+    if (check) cur_item = cur_house.getItem(cur_floor, i);
+    return check;
   }
   public int changeItemFocus(int i, int si) {
     if (i >= 0 && i < cur_house.getFloor(cur_floor).size()) {
@@ -145,9 +95,6 @@ public class Viewer {
     }
     return 2;
   }
-  /*public void changeItemFocus(Item i) {
-    cur_item = i;
-  }*/
   public void changeHouseFocus(House h) {
     cur_floor = 0;
     cur_item = new Empty();

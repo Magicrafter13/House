@@ -13,12 +13,9 @@ public class Dresser extends Container implements Item {
     for (int i = 0; i < size(); i++) if (getItem(i).subType().equalsIgnoreCase(type)) return true;
     return false;
   }
-  public String subType() {
-    return typeS;
-  }
+  public String subType() { return typeS; }
   public String listInfo(boolean before_not_after) {
-    if (before_not_after) return "";
-    return " [" + (size() > 0 ? Main.bright("cyan", Integer.toString(size())) + " pieces of " + Main.bright("yellow", "Clothing") : Main.color("yellow", "Empty")) + "]";
+    return (before_not_after ? "" : " [" + (size() > 0 ? Main.bright("cyan", Integer.toString(size())) + " pieces of " + Main.bright("yellow", "Clothing") : Main.color("yellow", "Empty")) + "]");
   }
   public String toString() {
     String ret_val = Main.color("yellow", "Items") + " in this " + Main.bright("yellow", "Dresser") + ":";
@@ -33,7 +30,6 @@ public class Dresser extends Container implements Item {
           int temp_int = count.get(s);
           count.remove(s);
           count.add(s, temp_int + 1);
-          //count.set(s) = Integer.parseInt(Integer.toString(count.get(s) + 1));
         }
       }
       if (isNewType) {

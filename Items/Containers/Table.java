@@ -9,12 +9,9 @@ public class Table extends Container implements Item {
   public Table(ArrayList<Item> is) {
     super(is);
   }
-  public String subType() {
-    return typeS;
-  }
+  public String subType() { return typeS; }
   public String listInfo(boolean before_not_after) {
-    if (before_not_after) return (size() < 9 ? "Clean" : "Dirty") + " ";
-    return " -" + (size() > 0 ? " " + Main.bright("cyan", Integer.toString(size())) + Main.bright("Yellow", " Items") : " Empty");
+    return (before_not_after ? (size() < 9 ? "Clean" : "Dirty") + " " : " -" + (size() > 0 ? " " + Main.bright("cyan", Integer.toString(size())) + Main.bright("Yellow", " Items") : " Empty"));
   }
   public String toString() {
     String ret_val = Main.color("yellow", "Items") + " on this " + Main.color("yellow", "Table") + ":\n";

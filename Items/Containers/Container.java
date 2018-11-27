@@ -10,10 +10,7 @@ public class Container implements Item {
   public Container(ArrayList<Item> is) {
     items = is;
   }
-  public Item getItem(int i) {
-    if (i < 0 || i >= items.size()) return new Empty();
-    return items.get(i);
-  }
+  public Item getItem(int i) { return (i < 0 || i >= items.size() ? new Empty() : items.get(i)); }
   public String addItem(Item i) {
     if (i == this) return "You can't put something inside itself!";
     if (!hasItem(i)) items.add(i);
@@ -33,22 +30,15 @@ public class Container implements Item {
     }
     return "No matching " + Main.bright("yellow", "Item") + " found.";
   }
-  public int size() {
-    return items.size();
-  }
+  public int size() { return items.size(); }
   public boolean hasItem(Item test) {
     for (Item i : items) if (i == test) return true;
     return false;
   }
-  public String type() {
-    return typeS;
-  }
-  public String subType() {
-    return type();
-  }
+  public String type() { return typeS; }
+  public String subType() { return type(); }
   public String listInfo(boolean before_not_after) {
-    if (before_not_after) return "";
-    return ", " + (items.size() > 0 ? Main.bright("cyan", Integer.toString(items.size())) + Main.bright("yellow", " Items") : Main.color("yellow", "Empty"));
+    return (before_not_after ? "" : ", " + (items.size() > 0 ? Main.bright("cyan", Integer.toString(items.size())) + Main.bright("yellow", " Items") : Main.color("yellow", "Empty")));
   }
   public String toString() {
     String ret_val = Main.bright("yellow", typeS);

@@ -8,10 +8,8 @@ public class House {
   private int color;
   private int floor_count;
   private Floor[] floors;
+  private void initializeFloors() { for (int i = 0; i < floors.length; i++) floors[i] = new Floor(); }
 
-  private void initializeFloors() {
-    for (int i = 0; i < floors.length; i++) floors[i] = new Floor();
-  }
   public House() {
     color = 0;
     floor_count = 1;
@@ -34,7 +32,9 @@ public class House {
     int items = 0;
     for (int i = rangeStart; i < rangeEnd; i++) {
       if (i > floors[f].size()) continue;
-      if (searchType.equals("*") || searchType.equalsIgnoreCase(floors[f].getItem(i).subType()) || searchType.equalsIgnoreCase(floors[f].getItem(i).type())) {
+      if (searchType.equals("*") ||
+          searchType.equalsIgnoreCase(floors[f].getItem(i).subType()) ||
+          searchType.equalsIgnoreCase(floors[f].getItem(i).type())) {
         items++;
       }
     }
@@ -52,7 +52,9 @@ public class House {
     ArrayList<Integer> item_ids = new ArrayList<Integer>();
     for (int i = s; i < e; i++) {
       if (i > floors[f].size()) continue;
-      if (type.equals("*") || type.equalsIgnoreCase(floors[f].getItem(i).subType()) || type.equalsIgnoreCase(floors[f].getItem(i).type())) {
+      if (type.equals("*") ||
+          type.equalsIgnoreCase(floors[f].getItem(i).subType()) ||
+          type.equalsIgnoreCase(floors[f].getItem(i).type())) {
         items.add(floors[f].getItem(i));
         item_ids.add(i);
       }
@@ -65,34 +67,18 @@ public class House {
     }
     return ret_val + "\n";
   }
-  public String list(int f) {
-    return list(f, 0, floors[f].size(), "*", floors[f].size(), 0);
-  }
-  public String list(int f, String type) {
-    return list(f, 0, floors[f].size(), type, floors[f].size(), 0);
-  }
-  public int size() {
-    return floor_count;
-  }
+  public String list(int f) { return list(f, 0, floors[f].size(), "*", floors[f].size(), 0); }
+  public String list(int f, String type) { return list(f, 0, floors[f].size(), type, floors[f].size(), 0); }
+  public int size() { return floor_count; }
   public boolean addItem(int f, Item i) {
-    if (f >= 0 && f < floor_count) {
-      floors[f].addItem(i);
-      return true;
-    }
-    return false;
+    boolean check = (f >= 0 && f < floor_count);
+    if (check) floors[f].addItem(i);
+    return check;
   }
-  public Item getItem(int f, int i) {
-    return floors[f].getItem(i);
-  }
-  public Item getItem(int f, int i, int si) {
-    return floors[f].getItem(i, si);
-  }
-  public Floor getFloor(int f) {
-    return floors[f];
-  }
-  public Floor[] getFloors() {
-    return floors;
-  }
+  public Item getItem(int f, int i) { return floors[f].getItem(i); }
+  public Item getItem(int f, int i, int si) { return floors[f].getItem(i, si); }
+  public Floor getFloor(int f) { return floors[f]; }
+  public Floor[] getFloors() { return floors; }
   public String toString() {
     return "Color: " + colors[color] + "\n" +
            "Floors: " + Main.bright("cyan", Integer.toString(floor_count));

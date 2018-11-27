@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 
 public class Bookshelf extends Container implements Item {
-  //private ArrayList<Book> items;
   private static final String typeS = "Bookshelf";
 
   public Bookshelf() {
@@ -18,11 +17,11 @@ public class Bookshelf extends Container implements Item {
     } else return Main.bright("yellow", "Item") + " is not a " + Main.bright("yellow", "Book") + ".";
   }
   public String removeItem(int i) {
+    if (size() == 0) return Main.bright("yellow", "Bookshelf") + " is already empty!";
     if (i >= 0 && i < size()) {
       super.removeItem(i);
       return Main.bright("yellow", "\nBook ") + i + Main.color("blue", " removed") + ".\n";
     }
-    if (size() == 0) return Main.bright("yellow", "Bookshelf") + " is already empty!";
     return Main.bright("yellow", "Bookshelf") + " only has " + Main.bright("cyan", Integer.toString(size())) + (size() > 1 ? Main.color("yellow", " Books") : Main.bright("yellow", " Book")) + " on it.";
   }
   public String removeItem(Item i) {
@@ -34,13 +33,9 @@ public class Bookshelf extends Container implements Item {
     }
     return "No matching " + Main.bright("yellow", "Book") + " found.";
   }
-  public String subType() {
-    return typeS;
-  }
+  public String subType() { return typeS; }
   public String listInfo(boolean before_not_after) {
-    if (before_not_after) return size() > 0 ? "" : "Empty ";
-    if (size() > 0) return " (" + Main.bright("cyan", Integer.toString(size())) + (size() > 1 ? Main.color("yellow", " Books") : Main.bright("yellow", " Book")) + ")";
-    return "";
+    return (before_not_after ? (size() > 0 ? "" : "Empty ") : (size() > 0 ? " (" + Main.bright("cyan", Integer.toString(size())) + (size() > 1 ? Main.color("yellow", " Books") : Main.bright("yellow", " Book")) + ")" : ""));
   }
   public String toString() {
     String ret_val = Main.color("yellow", "Books") + " in this " + Main.color("yellow", "shelf") + ":";
