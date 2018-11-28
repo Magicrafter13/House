@@ -22,6 +22,11 @@ public class House {
     floors = new Floor[floor_count];
     initializeFloors();
   }
+  public House(int c, Floor[] fs) {
+    color = (c >= 0 && c <= 9 ? c : 0);
+    floor_count = fs.length;
+    floors = fs;
+  }
   public int pageCount(int f, int rangeStart, int rangeEnd, String searchType, int pageLength) {
     boolean valid_type = false;
     for (String t : types) if (searchType.equalsIgnoreCase(t)) valid_type = true;

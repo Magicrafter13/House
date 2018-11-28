@@ -4,8 +4,8 @@ import static java.lang.System.*;
 import java.util.*;
 
 class Main {
-  private static final int verMajor = 1;
-  private static final int verMinor = 17;
+  private static final int verMajor = 2;
+  private static final int verMinor = 0;
   private static final int verFix = 0;
   private static String curVer() {return verMajor + "." + verMinor + "." + verFix;}
   public static final String ANSI = "\u001b[";
@@ -217,30 +217,16 @@ class Main {
     String command;
     String[] cmds = {""};
 
-    House my_house = new House(2, 2);
-    Viewer user = new Viewer(my_house);
-    Boolean here = true;
-
     //This is to keep the contents of my actual house a little more private.
     //Just make your own .java file that returns Items.
-    for (int i = 0; i < ItemImport.bookshelfs.length; i++)
-      my_house.addItem(ItemImport.bookshelfs_f[i], ItemImport.bookshelfs[i]);
-    for (int i = 0; i < ItemImport.computers.length; i++)
-      my_house.addItem(ItemImport.computers_f[i], ItemImport.computers[i]);
-    for (int i = 0; i < ItemImport.consoles.length; i++)
-      my_house.addItem(ItemImport.consoles_f[i], ItemImport.consoles[i]);
-    for (int i = 0; i < ItemImport.displays.length; i++)
-      my_house.addItem(ItemImport.displays_f[i], ItemImport.displays[i]);
-    for (int i = 0; i < ItemImport.beds.length; i++)
-      my_house.addItem(ItemImport.beds_f[i], ItemImport.beds[i]);
-    for (int i = 0; i < ItemImport.containers.length; i++)
-      my_house.addItem(ItemImport.containers_f[i], ItemImport.containers[i]);
-    for (int i = 0; i < ItemImport.fridges.length; i++)
-      my_house.addItem(ItemImport.fridges_f[i], ItemImport.fridges[i]);
-    for (int i = 0; i < ItemImport.dressers.length; i++)
-      my_house.addItem(ItemImport.dressers_f[i], ItemImport.dressers[i]);
-    for (int i = 0; i < ItemImport.tables.length; i++)
-      my_house.addItem(ItemImport.tables_f[i], ItemImport.tables[i]);
+    ItemImport.initializeItems();
+    ArrayList<House> houseData = ItemImport.houses;
+    ArrayList<Viewer> viewers = new ArrayList<Viewer>();
+    for (House h : houseData) viewers.add(new Viewer(h));
+
+    House my_house = houseData.get(0);
+    Viewer user = viewers.get(0);
+    Boolean here = true;
 
     while (here) {
       System.out.print("> ");
@@ -250,6 +236,17 @@ class Main {
       cmds = temp_arr.clone();
       if (cmds.length > 0) {
         switch (cmds[0].toLowerCase()) {
+          case "visit":
+            if (cmds.length == 2) {
+              if (cmds[1].matches("[0-9]+")) {
+                int dst = Integer.parseInt(cmds[1]);
+                if (dst < houseData.size()) {
+                  user = viewers.get(dst);
+                  System.out.println("\nWelcome to House " + dst + ".\n");
+                } else System.out.println("There aren't that many Houses! (Remember: the first House is #0)");
+              } else System.out.println("House number must be a positive " + bright("cyan", "Integer") + ", that is less than " + houseData.size() + ".");
+            } else System.out.println("Visit which house? (There are " + houseData.size() + ")");
+            break;
           case "use":
             if (cmds.length > 1) {
               switch (cmds[1]) {

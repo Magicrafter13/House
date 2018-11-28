@@ -1,0 +1,128 @@
+import java.util.*; //import java.util.ArrayList;
+
+public class ItemImport {
+  public static final Bookshelf[] bookshelfs = {
+    new Bookshelf(new ArrayList<Book>(Arrays.asList(
+      new Book("The Hobbit", "J.R.R. Tolkien", 1937) //A book in a bookshelf
+    )))
+  };
+  public static final int[] bookshelfs_f = {
+    1 //the bookshelf is on floor 1...
+  };
+  public static final int[] bookshelfs_h = {
+    0 //...of house 0
+  };
+  public static final Computer[] computers = {
+    new Computer("Tandy", "1000", "TL/2", false, "Desktop") //An old computer
+  };
+  public static final int[] computers_f = {
+    1 //the PC is on floor 1...
+  };
+  public static final int[] computers_h = {
+    0 //...of house 0
+  };
+  public static final Console[] consoles = {
+    new Console(0, "Nintendo", "Wii U"), //console 0
+    new Console(0, "Microsoft", "Xbox 360"), //console 1
+    new Console(1, "Nintendo", "New 3DS XL") //console 2
+  };
+  public static final int[] consoles_f = {
+    1, 1, 1 //all of them on floor 1...
+  };
+  public static final int[] consoles_h = {
+    0, 0, 0 //...of house 0
+  };
+  public static final Display[] displays = {
+    new Display(true, new ArrayList<Item>(Arrays.asList( //a 24" monitor...
+      computers[0] //...with the old PC attached to it
+    )), 24)
+  };
+  public static final int[] displays_f = {
+    1 //on floor 1...
+  };
+  public static final int[] displays_h = {
+    0 //...of house 0
+  };
+  public static final Bed[] beds = {
+    new Bed(false, 2) //standard bed
+  };
+  public static final int[] beds_f = {
+    1 //on floor 1...
+  };
+  public static final int[] beds_h = {
+    0 //...of house 0
+  };
+  public static final Container[] containers = {
+    new Container(),
+    new Container() //2 generic empty containers
+  };
+  public static final int[] containers_f = {
+    0, 0 //all on floor 0...
+  };
+  public static final int[] containers_h = {
+    0, 0 //...of house 0
+  };
+  public static final Fridge[] fridges = {
+    new Fridge(new ArrayList<Item>(Arrays.asList( //fridges with books (ya know, a normal fridge)
+      new Book("One", "Two", 3),
+      new Book("Four", "Five", 6)
+    )), false),
+    new Fridge(new ArrayList<Item>(Arrays.asList(
+      new Book("Seven", "Eight", 9)
+    )), false)
+  };
+  public static final int[] fridges_f = {
+    0, 0 //all on floor 0...
+  };
+  public static final int[] fridges_h = {
+    0, 0 //...of house 0
+  };
+  public static final Dresser[] dressers = {
+    new Dresser(new ArrayList<Item>(Arrays.asList( //clothes dressers
+      new Shirt("Red"),
+      new Pants("Blue"),
+      new Pants("Black")
+    ))),
+    new Dresser(new ArrayList<Item>(Arrays.asList(
+      new Pants("Black")
+    )))
+  };
+  public static final int[] dressers_f = {
+    1, 1 //floor 1
+  };
+  public static final int[] dressers_h = {
+    0, 0 //house 0 (I think we get it by now)
+  };
+  public static final Table[] tables = {
+    new Table(new ArrayList<Item>(Arrays.asList( //a table full of retro goodness
+      new Console(0, "Atari", "VCS 2600"),
+      new Console(0, "Nintendo", "NES"),
+      new Console(0, "Sega", "Genesis")
+    )))
+  };
+  public static final int[] tables_f = {
+    1 //floor 1...
+  };
+  public static final int[] tables_h = {
+    0 //house 0...
+  };
+
+  //the above doesn't actually matter, because you don't have to do it that way, that's just the weird way I do it
+
+  public static ArrayList<House> houses = new ArrayList<House>(); //this is required (though it doesn't have to be an empty constructor if you wish)
+  public static void initializeItems() { //this method is required, though it doesn't actually need to do anything if you define all the items in the variable from the start, however I will eventually use this method to add a "reset" functionality
+    House myHouse = new House(5, 2);
+    House fakeHouse = new House(6, 3);
+    houses.add(myHouse);
+    houses.add(fakeHouse);
+    for (int i = 0; i < bookshelfs.length; i++) houses.get(bookshelfs_h[i]).addItem(bookshelfs_f[i], bookshelfs[i]);
+    for (int i = 0; i < computers.length; i++) houses.get(computers_h[i]).addItem(computers_f[i], computers[i]);
+    for (int i = 0; i < consoles.length; i++) houses.get(consoles_h[i]).addItem(consoles_f[i], consoles[i]);
+    for (int i = 0; i < displays.length; i++) houses.get(displays_h[i]).addItem(displays_f[i], displays[i]);
+    for (int i = 0; i < beds.length; i++) houses.get(beds_h[i]).addItem(beds_f[i], beds[i]);
+    for (int i = 0; i < containers.length; i++) houses.get(containers_h[i]).addItem(containers_f[i], containers[i]);
+    for (int i = 0; i < fridges.length; i++) houses.get(fridges_h[i]).addItem(fridges_f[i], fridges[i]);
+    for (int i = 0; i < dressers.length; i++) houses.get(dressers_h[i]).addItem(dressers_f[i], dressers[i]);
+    for (int i = 0; i < tables.length; i++) houses.get(tables_h[i]).addItem(tables_f[i], tables[i]);
+  }
+}
