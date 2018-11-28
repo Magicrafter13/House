@@ -5,8 +5,8 @@ import java.util.*;
 
 class Main {
   private static final int verMajor = 1;
-  private static final int verMinor = 16;
-  private static final int verFix = 3;
+  private static final int verMinor = 17;
+  private static final int verFix = 0;
   private static String curVer() {return verMajor + "." + verMinor + "." + verFix;}
   public static final String ANSI = "\u001b[";
   public static final String ANSI_RESET = "\u001B[0m";
@@ -205,6 +205,11 @@ class Main {
       default: return new Clothing();
     }
   }
+  public static String[][] enviVar = {
+    {"interactive", "false", "bool", "user"},
+    {"temperature", "70.0", "double", "system"},
+    {"house", "0", "int", "system"}
+  };
 
   public static void main (String str[]) throws IOException {
     Scanner scan = new Scanner(System.in);
@@ -215,12 +220,6 @@ class Main {
     House my_house = new House(2, 2);
     Viewer user = new Viewer(my_house);
     Boolean here = true;
-
-    String[][] enviVar = {
-      {"interactive", "false", "bool", "user"},
-      {"temperature", "70.0", "double", "system"},
-      {"house", "0", "int", "system"}
-    };
 
     //This is to keep the contents of my actual house a little more private.
     //Just make your own .java file that returns Items.
@@ -251,55 +250,73 @@ class Main {
       cmds = temp_arr.clone();
       if (cmds.length > 0) {
         switch (cmds[0].toLowerCase()) {
-          case "set":
-            if (cmds.length == 1) {
-              System.out.print("\n\tEnvironment Variables:\n\n");
-              for (int i = 0; i < enviVar.length; i++) System.out.println(enviVar[i][0] + " = " + enviVar[i][1]);
-              System.out.println();
-            } else if (cmds.length == 2) {
-              boolean validVar = false;
-              for (int i = 0; i < enviVar.length; i++) {
-                if (enviVar[i][0].equalsIgnoreCase(cmds[1])) {
-                  System.out.print("\n" + enviVar[i][0] + " = " + enviVar[i][1] + "\n\n");
-                  validVar = true;
-                }
-              }
-              if (!validVar) System.out.print(cmds[1] + " is not a valid variable.\n");
-            } else if (cmds.length == 3) {
-              boolean validVar = false;
-              int i;
-              for (i = 0; i < enviVar.length; i++) {
-                if (enviVar[i][0].equalsIgnoreCase(cmds[1])) {
-                  validVar = true;
+          case "use":
+            if (cmds.length > 1) {
+              switch (cmds[1]) {
+                case "light":
+                case "lights":
+                  if (cmds.length == 2) System.out.println("\n" + user.curHouse().getFloor(user.curFloor()).toggleLights() + "\n");
+                  else System.out.println(bright("blue", "use") + " " + cmds[1] + ", does have extra arguments.");
                   break;
-                }
+                default: System.out.println(cmds[1] + " cannot be '" + color("blue", "used") + "'."); break;
               }
-              if (validVar) {
-                if (enviVar[i][3].equals("user")) {
-                  switch (enviVar[i][2]) {
-                    case "bool":
-                      if (equalsIgnoreCaseOr(cmds[2], new String[]{"false", "true", "0", "1"})) {
-                        enviVar[i][1] = (equalsIgnoreCaseOr(cmds[2], new String[]{"true", "1"}) ? "true" : "false");
-                      } else System.out.print("\n" + enviVar[i][0] + " stores a boolean value, must be true or false. (0 and 1 are acceptible)\n");
-                      break;
-                    case "int":
-                    case "double":
-                      if (cmds[2].matches("-?[0-9]+([.]{1}[0-9]+)?")) {
-                        double newVal = Double.parseDouble(cmds[2]);
-                        enviVar[i][1] = (enviVar[i][2].equals("int") ? Integer.toString((int)newVal) : Double.toString(newVal));
-                      } else System.out.print("\n" + enviVar[i][0] + " stores a numeric value, must only contain a number, - is optional, if variable stores a double, you may provide a decimal value\n");
-                      break;
-                    default:
-                      System.out.print("\n" + enviVar[i][0] + " did not have a recognized value type, be cautious, and report this bug.\n");
-                    case "string":
-                      enviVar[i][1] = cmds[2];
-                      break;
+            } else System.out.println(bright("blue", "Use") + " what?");
+            break;
+          case "set":
+            boolean validVar;
+            switch (cmds.length) {
+              case 1:
+                System.out.print("\n\tEnvironment Variables:\n\n");
+                for (int i = 0; i < enviVar.length; i++) System.out.println(enviVar[i][0] + " = " + enviVar[i][1]);
+                System.out.println();
+                break;
+              case 2:
+                validVar = false;
+                for (int i = 0; i < enviVar.length; i++) {
+                  if (enviVar[i][0].equalsIgnoreCase(cmds[1])) {
+                    System.out.print("\n" + enviVar[i][0] + " = " + enviVar[i][1] + "\n\n");
+                    validVar = true;
                   }
-                  //enviVar[i][1] = cmds[2];
-                  System.out.print("\n" + enviVar[i][0] + " = " + enviVar[i][1] + "\n\n");
-                } else System.out.print(enviVar[i][0] + " is a system variable, and cannot be changed by the user.\n");
-              } else System.out.print(cmds[1] + " is not a valid variable.\n");
-            } else System.out.print("Invalid amount of arguments.\n");
+                }
+                if (!validVar) System.out.print(cmds[1] + " is not a valid variable.\n");
+                break;
+              case 3:
+                validVar = false;
+                int i;
+                for (i = 0; i < enviVar.length; i++) {
+                  if (enviVar[i][0].equalsIgnoreCase(cmds[1])) {
+                    validVar = true;
+                    break;
+                  }
+                }
+                if (validVar) {
+                  if (enviVar[i][3].equals("user")) {
+                    switch (enviVar[i][2]) {
+                      case "bool":
+                        if (equalsIgnoreCaseOr(cmds[2], new String[]{"false", "true", "0", "1"})) {
+                          enviVar[i][1] = (equalsIgnoreCaseOr(cmds[2], new String[]{"true", "1"}) ? "true" : "false");
+                        } else System.out.print("\n" + enviVar[i][0] + " stores a boolean value, must be true or false. (0 and 1 are acceptible)\n");
+                        break;
+                      case "int":
+                      case "double":
+                        if (cmds[2].matches("-?[0-9]+([.]{1}[0-9]+)?")) {
+                          double newVal = Double.parseDouble(cmds[2]);
+                          enviVar[i][1] = (enviVar[i][2].equals("int") ? Integer.toString((int)newVal) : Double.toString(newVal));
+                        } else System.out.print("\n" + enviVar[i][0] + " stores a numeric value, must only contain a number, - is optional, if variable stores a double, you may provide a decimal value\n");
+                        break;
+                      default:
+                        System.out.print("\n" + enviVar[i][0] + " did not have a recognized value type, be cautious, and report this bug.\n");
+                      case "string":
+                        enviVar[i][1] = cmds[2];
+                        break;
+                    }
+                    //enviVar[i][1] = cmds[2];
+                    System.out.print("\n" + enviVar[i][0] + " = " + enviVar[i][1] + "\n\n");
+                  } else System.out.print(enviVar[i][0] + " is a system variable, and cannot be changed by the user.\n");
+                } else System.out.print(cmds[1] + " is not a valid variable.\n");
+                break;
+              default: System.out.print("Invalid amount of arguments.\n"); break;
+            }
             break;
           case "attach":
             if (cmds.length > 1) {
@@ -466,26 +483,28 @@ class Main {
                   invalidArg = i;
                 }
                 if (invalidArg == 0) {
-                  if (page) {
-                    int pageCount = user.pageCount(rangeStart, rangeEnd, searchType, 20);
-                    switch (pageCount) {
-                      case 0: System.out.print("No " + bright("yellow", "Items") + " match your criteria.\n"); break;
-                      case -1: System.out.print(searchType + " is not a valid type.\n"); break;
-                      case -2: System.out.print("Floor is empty.\n"); break;
-                      case -3: System.out.print("Range start must be greater than or equal to range end.\n"); break;
-                      case -4: System.out.print("Range start must be greater than or equal to 0.\n"); break;
-                      default:
-                        for (int i = 0; i < pageCount; i++) {
-                          System.out.println("\n\tFloor " + color("blue", "Listing") + " - Page " + (i + 1));
-                          boolean end_test = (i + 1 < pageCount);
-                          System.out.print(user.list(rangeStart, rangeEnd, searchType, 20, i));
-                          if (end_test) {
-                            System.out.print("Press enter to continue > ");
-                            scan.nextLine();
-                          } else System.out.println();
-                        }
-                    }
-                  } else System.out.print(user.list(rangeStart, rangeEnd, searchType, user.floorSize(), 0) + "\n");
+                  if (enviVar[0][1].equals("false") || user.curHouse().getFloor(user.curFloor()).getLights()) {
+                    if (page) {
+                      int pageCount = user.pageCount(rangeStart, rangeEnd, searchType, 20);
+                      switch (pageCount) {
+                        case 0: System.out.print("No " + bright("yellow", "Items") + " match your criteria.\n"); break;
+                        case -1: System.out.print(searchType + " is not a valid type.\n"); break;
+                        case -2: System.out.print("Floor is empty.\n"); break;
+                        case -3: System.out.print("Range start must be greater than or equal to range end.\n"); break;
+                        case -4: System.out.print("Range start must be greater than or equal to 0.\n"); break;
+                        default:
+                          for (int i = 0; i < pageCount; i++) {
+                            System.out.println("\n\tFloor " + color("blue", "Listing") + " - Page " + (i + 1));
+                            boolean end_test = (i + 1 < pageCount);
+                            System.out.print(user.list(rangeStart, rangeEnd, searchType, 20, i));
+                            if (end_test) {
+                              System.out.print("Press enter to continue > ");
+                              scan.nextLine();
+                            } else System.out.println();
+                          }
+                      }
+                    } else System.out.print(user.list(rangeStart, rangeEnd, searchType, user.floorSize(), 0) + "\n");
+                  } else System.out.print("\nYou can't see anything, the floor is completely dark!\n\n");
                 } else System.out.print(cmds[invalidArg] + " is not a valid argument.\n");
               } else if (cmds[1].matches("-?[0-9]+")) {
                 if (Integer.parseInt(cmds[1]) < user.floorSize()) {
@@ -551,7 +570,10 @@ class Main {
                   user.cur_item = temp_item;
                 } else System.out.print("This floor only has " + user.floorSize() + color("yellow", " Items") + " on it\n");
               } else System.out.print("\"" + cmds[1] + "\" is not a valid " + bright("cyan", "integer\n"));
-            } else System.out.println(user.list());
+            } else {
+              if (enviVar[0][1].equals("false") || user.curHouse().getFloor(user.curFloor()).getLights()) System.out.println(user.list());
+              else System.out.print("\nYou can't see anything, the floor is completely dark!\n\n");
+            }
             break;
           case "add":
             if (cmds.length > 1) {

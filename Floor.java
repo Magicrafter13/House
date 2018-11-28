@@ -2,14 +2,25 @@ import java.util.ArrayList;
 
 public class Floor {
   private ArrayList<Item> items = new ArrayList<Item>();
+  private boolean lights = false;
 
   public Floor() {
-    items = new ArrayList<Item>();
-    items.clear();
+    this(new ArrayList<Item>(), false);
+  }
+  public Floor(ArrayList<Item> i, boolean l) {
+    items = i;
+    lights = l;
   }
   public Floor(ArrayList<Item> i) {
-    this();
-    items = i;
+    this(i, false);
+  }
+  public Floor(boolean l) {
+    this(new ArrayList<Item>(), l);
+  }
+  public boolean getLights() { return lights; }
+  public String toggleLights() {
+    lights = (lights ? false : true);
+    return "Lights turned " + (lights ? "on" : "off") + ".";
   }
   public void addItem(Item i) { items.add(i); }
   public void removeItem(int i) { items.remove(i); }
@@ -20,12 +31,12 @@ public class Floor {
     int remove_from_floor = -1;
     for (int i = 0; i < items.size(); i++) {
       switch(items.get(in).type()) {
-      case "Container": case "Fridge": case "Bookshelf":
-        if (((Container)items.get(in)).getItem(sin) == items.get(i)) remove_from_floor = i;
-        break;
-      case "Display":
-        if (((Display)items.get(in)).getDevice(sin) == items.get(i)) remove_from_floor = i;
-        break;
+        case "Container": case "Fridge": case "Bookshelf":
+          if (((Container)items.get(in)).getItem(sin) == items.get(i)) remove_from_floor = i;
+          break;
+        case "Display":
+          if (((Display)items.get(in)).getDevice(sin) == items.get(i)) remove_from_floor = i;
+          break;
       }
     }
     switch (items.get(in).type()) {
