@@ -37,7 +37,7 @@ public class Computer implements Item {
   public String type() { return typeS; }
   public String subType() { return type(); }
   public String listInfo(boolean before_not_after) {
-    return (before_not_after ? " " : ", turned" + (is_on ? "on" : "off"));
+    return (before_not_after ? "" : ", turned " + (is_on ? "on" : "off"));
   }
   public String toString() {
     return computer_type + " " + Main.bright("yellow", "Computer") + ", ID:" + id + "\n" +

@@ -20,7 +20,7 @@ public class Console implements Item {
   public String type() { return typeS; }
   public String subType() { return type(); }
   public String listInfo(boolean before_not_after) {
-    return (before_not_after ? " " : " - " + types[sys_type]);
+    return (before_not_after ? "" : " - " + types[sys_type]);
   }
   public String toString() {
     return "This Video Game " + types[sys_type] + ", is a " + company + "\n" +

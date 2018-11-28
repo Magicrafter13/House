@@ -57,7 +57,7 @@ public class Fridge extends Container implements Item {
   }
   public String subType() { return typeS; }
   public String listInfo(boolean before_not_after) {
-    return (before_not_after ? temperature + "° " : " - " + (size() > 0 ? Main.bright("cyan", Integer.toString(size())) + Main.bright("yellow", " Items") + "]" : Main.color("yellow", "Empty")) + (hasFreezer ? ", with " + freezerTemp + "° Freezer - " : ""));
+    return (before_not_after ? temperature + "° " : " - " + (size() > 0 ? Main.bright("cyan", Integer.toString(size())) + Main.bright("yellow", " Items") : Main.color("yellow", "Empty")) + (hasFreezer ? ", with " + freezerTemp + "° Freezer - " : ""));
   }
   public String toString() {
     String ret_val = Main.color("yellow", "Items") + " in this " + Main.bright("yellow", "Fridge") + ":";
