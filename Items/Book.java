@@ -31,7 +31,7 @@ public class Book implements Item {
   public int getID() { return id; }
   public String type() { return typeS; }
   public String subType() { return type(); }
-  public String listInfo(boolean before_not_after) { return (before_not_after ? "" : ": "); }
+  public String listInfo(boolean before_not_after) { return (before_not_after ? "" : ": " + title); }
   public String toString() {
     return "Title: " + title + "\n" +
            "Author: " + author + "\n" +

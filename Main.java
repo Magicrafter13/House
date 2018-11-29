@@ -5,7 +5,7 @@ import java.util.*;
 
 class Main {
   private static final int verMajor = 2;
-  private static final int verMinor = 0;
+  private static final int verMinor = 1;
   private static final int verFix = 0;
   private static String curVer() {return verMajor + "." + verMinor + "." + verFix;}
   public static final String ANSI = "\u001b[";
@@ -210,6 +210,15 @@ class Main {
     {"temperature", "70.0", "double", "system"},
     {"house", "0", "int", "system"}
   };
+  public static int getInput(Scanner scan, int min, int max) {
+    if (min >= max) throw new InvalidRange(min, max);
+    do {
+      System.out.print("\n[" + bright("cyan", Integer.toString(min)) + "-" + bright("cyan", Integer.toString(max - 1)) + "] > ");
+      String lineIn = scan.nextLine();
+      if (lineIn.matches("-?[0-9]+") && Integer.parseInt(lineIn) >= min && Integer.parseInt(lineIn) < max) return Integer.parseInt(lineIn);
+    } while (true);
+  }
+  public static int house = 0;
 
   public static void main (String str[]) throws IOException {
     Scanner scan = new Scanner(System.in);
@@ -242,6 +251,7 @@ class Main {
                 int dst = Integer.parseInt(cmds[1]);
                 if (dst < houseData.size()) {
                   user = viewers.get(dst);
+                  house = dst;
                   System.out.println("\nWelcome to House " + dst + ".\n");
                 } else System.out.println("There aren't that many Houses! (Remember: the first House is #0)");
               } else System.out.println("House number must be a positive " + bright("cyan", "Integer") + ", that is less than " + houseData.size() + ".");
@@ -410,11 +420,23 @@ class Main {
             break;
           case "remove":
             if (cmds.length > 1) {
-              if (cmds[1].matches("-?[0-9]+")) {
+              if (cmds[1].matches("[0-9]+")) {
                 Item temp_item = user.cur_item;
                 Boolean valid_answer = false;
                 if (cmds.length > 2) {
-                  if (cmds[2].matches("-?[0-9]+")) {
+                  if (equalsIgnoreCaseOr(cmds[2], new String[]{"-h", "--house"})) {
+                    if (Integer.parseInt(cmds[1]) < houseData.size()) {
+                      houseData.remove(Integer.parseInt(cmds[1]));
+                      viewers.remove(Integer.parseInt(cmds[1]));
+                      System.out.println("\nHouse " + cmds[1] + " removed.\n");
+                      if (house > Integer.parseInt(cmds[1])) house--;
+                      if (house == Integer.parseInt(cmds[1])) {
+                        System.out.print("\nPlease select a pre-existing House to go to now.\n");
+                        int newHouse = getInput(scan, 0, houseData.size());
+                        user = viewers.get(newHouse);
+                      }
+                    } else System.out.println("There aren't that many Houses! (Remember: the first House is #0)");
+                  } else if (cmds[2].matches("-?[0-9]+")) {
                     switch (user.changeItemFocus(Math.abs(Integer.parseInt(cmds[1])), Math.abs(Integer.parseInt(cmds[2])))) {
                       case 0:
                         while (!valid_answer) {
@@ -575,6 +597,31 @@ class Main {
           case "add":
             if (cmds.length > 1) {
               switch (cmds[1].toLowerCase()) {
+                case "house":
+                  if (cmds.length > 2) {
+                    if (cmds[2].equalsIgnoreCase("arg")) {
+                      int color;
+                      System.out.println("\nChoose from these colors:\n");
+                      for (int i = 0; i < House.colors.length; i++) {
+                        System.out.print(bright("cyan", Integer.toString(i)) + ": " + House.colors[i] + " ");
+                      }
+                      System.out.println();
+                      color = getInput(scan, 0, House.colors.length);
+                      int floors;
+                      System.out.print("\nHow many floors will this house have?\n");
+                      floors = getInput(scan, 1, 101); //Kinda just had to pick an arbitrary number here
+                      House newHouse = new House(color, floors);
+                      houseData.add(newHouse);
+                      viewers.add(new Viewer(newHouse));
+                      System.out.println("\n" + floors + " story, " + House.colors[color] + " House, number " + (houseData.size() - 1) + " added.\n");
+                    } else System.out.print("\nInvalid 2nd argument, did you mean " + bright("green", "arg") + "?\n\n");
+                  } else {
+                    House newHouse = new House();
+                    houseData.add(newHouse);
+                    viewers.add(new Viewer(newHouse));
+                    System.out.println("\nHouse " + (houseData.size() - 1) + " added.\n");
+                  }
+                  break;
                 case "book":
                   Book temp_book = new Book();
                   if (cmds.length > 2) {
@@ -746,11 +793,29 @@ class Main {
             break;
           case ">":
           case "up":
-            System.out.println(user.goUp());
+            switch (cmds.length) {
+              case 1: System.out.println(user.goUp()); break;
+              case 2:
+                if (cmds[1].matches("[0-9]+")) {
+                  if (user.goFloor(user.curFloor() + Integer.parseInt(cmds[1]))) System.out.println("\nWelcome to floor " + bright("cyan", Integer.toString(user.curFloor())) + ".\n");
+                  else System.out.println("\nYou are currently on the top floor, floor unchanged.\n");
+                } else System.out.println("Argument must be a positive " + bright("cyan", "integer") + ".");
+                break;
+              default: System.out.println(cmds[0] + " only accepts 1 argument."); break;
+            }
             break;
           case "<":
           case "down":
-            System.out.println(user.goDown());
+            switch (cmds.length) {
+              case 1: System.out.println(user.goDown()); break;
+              case 2:
+                if (cmds[1].matches("[0-9]+")) {
+                  if (user.goFloor(user.curFloor() - Integer.parseInt(cmds[1]))) System.out.println("\nWelcome to floor " + bright("cyan", Integer.toString(user.curFloor())) + ".\n");
+                  else System.out.println("\nYou are currently on the bottom floor, floor unchanged.\n");
+                } else System.out.println("Argument must be a positive " + bright("cyan", "integer") + ".");
+                break;
+              default: System.out.println(cmds[0] + " only accepts 1 argument."); break;
+            }
             break;
           case "": break;
           case "help":

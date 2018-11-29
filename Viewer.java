@@ -104,7 +104,8 @@ public class Viewer {
     cur_house = h;
   }
   public String toString() {
-    return "\tCurrent Floor: " + cur_floor + "\n" +
+    return "\tCurrent House: " + Main.house + "\n" +
+           "\tCurrent Floor: " + cur_floor + "\n" +
            "\tCurrent Item Type: " + Main.bright("yellow") + cur_item.type() + Main.ANSI_RESET;
   }
 }
