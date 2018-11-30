@@ -6,7 +6,7 @@ import java.util.*;
 class Main {
   private static final int verMajor = 2;
   private static final int verMinor = 1;
-  private static final int verFix = 0;
+  private static final int verFix = 1;
   private static String curVer() {return verMajor + "." + verMinor + "." + verFix;}
   public static final String ANSI = "\u001b[";
   public static final String ANSI_RESET = "\u001B[0m";
@@ -210,13 +210,44 @@ class Main {
     {"temperature", "70.0", "double", "system"},
     {"house", "0", "int", "system"}
   };
-  public static int getInput(Scanner scan, int min, int max) {
+  public static int getInput(Scanner scan, int min, int max) throws InvalidRange {
     if (min >= max) throw new InvalidRange(min, max);
     do {
       System.out.print("\n[" + bright("cyan", Integer.toString(min)) + "-" + bright("cyan", Integer.toString(max - 1)) + "] > ");
       String lineIn = scan.nextLine();
       if (lineIn.matches("-?[0-9]+") && Integer.parseInt(lineIn) >= min && Integer.parseInt(lineIn) < max) return Integer.parseInt(lineIn);
     } while (true);
+  }
+  public static double getInput(Scanner scan, double min, double max) throws InvalidRange {
+    if (min >= max) throw new InvalidRange(min, max);
+    do {
+      System.out.print("\n[" + bright("cyan", Double.toString(min)) + "-" + bright("cyan", Double.toString(max - 1.0)) + "] > ");
+      String lineIn = scan.nextLine();
+      if (lineIn.matches("-?[0-9]+([.]{1}[0-9]+)?") && Double.parseDouble(lineIn) >= min && Double.parseDouble(lineIn) <= (max - 1.0)) return Double.parseDouble(lineIn);
+    } while (true);
+  }
+  public static String getInput(Scanner scan, String message, ArrayList<String> values, boolean ignoreCase) throws ArrayTooSmall {
+    if (values.size() == 0) throw new ArrayTooSmall(1, values.size());
+    do {
+      System.out.print("\n" + message + "> ");
+      String lineIn = scan.nextLine();
+      for (String test : values) if ((ignoreCase && lineIn.equalsIgnoreCase(test)) || (!ignoreCase && lineIn.equals(test))) return lineIn;
+    } while (true);
+  }
+  public static String getInput(Scanner scan, String message, String[] values, boolean ignoreCase) throws ArrayTooSmall {
+    try {
+      return getInput(scan, message, new ArrayList<String>(Arrays.asList(values)), ignoreCase);
+    } catch (ArrayTooSmall e) { throw e; }
+  }
+  public static String getInput(Scanner scan, ArrayList<String> values, boolean ignoreCase) throws ArrayTooSmall {
+    try {
+      return getInput(scan, "", values, ignoreCase);
+    } catch (ArrayTooSmall e) { throw e; }
+  }
+  public static String getInput(Scanner scan, String[] values, boolean ignoreCase) throws ArrayTooSmall {
+    try {
+      return getInput(scan, "", values, ignoreCase);
+    } catch (ArrayTooSmall e) { throw e; }
   }
   public static int house = 0;
 
@@ -227,7 +258,7 @@ class Main {
     String[] cmds = {""};
 
     //This is to keep the contents of my actual house a little more private.
-    //Just make your own .java file that returns Items.
+    //Just make your own .java file that returns Items. (See example)
     ItemImport.initializeItems();
     ArrayList<House> houseData = ItemImport.houses;
     ArrayList<Viewer> viewers = new ArrayList<Viewer>();
@@ -422,8 +453,11 @@ class Main {
             if (cmds.length > 1) {
               if (cmds[1].matches("[0-9]+")) {
                 Item temp_item = user.cur_item;
-                Boolean valid_answer = false;
+                boolean valid_answer = false;
+                boolean validItem = false;
+                boolean subItem = false;
                 if (cmds.length > 2) {
+                  subItem = true;
                   if (equalsIgnoreCaseOr(cmds[2], new String[]{"-h", "--house"})) {
                     if (Integer.parseInt(cmds[1]) < houseData.size()) {
                       houseData.remove(Integer.parseInt(cmds[1]));
@@ -438,36 +472,29 @@ class Main {
                     } else System.out.println("There aren't that many Houses! (Remember: the first House is #0)");
                   } else if (cmds[2].matches("-?[0-9]+")) {
                     switch (user.changeItemFocus(Math.abs(Integer.parseInt(cmds[1])), Math.abs(Integer.parseInt(cmds[2])))) {
-                      case 0:
-                        while (!valid_answer) {
-                          System.out.print("\nThis " + bright("yellow", "Item") + " is:\n" + user.cur_item + "\n\n" +
-                                           bright("red") + "Are you sure you want to delete this? [Y/N] > ");
-                          user.cur_item = temp_item;
-                          String yenu = scan.nextLine().toUpperCase();
-                          System.out.println(ANSI_RESET);
-                          switch (yenu) {
-                          case "Y": user.removeItem(Math.abs(Integer.parseInt(cmds[1])), Math.abs(Integer.parseInt(cmds[2])));
-                          case "N": valid_answer = true;
-                          }
-                        }
-                        break;
+                      case 0: validItem = true;
                       case 1: System.out.print("This " + bright("yellow", "Item") + " either has no " + color("yellow", "sub-Items") + " on it, or the " + bright("cyan", "integer") + " is too high\n"); break;
                       case 2: System.out.print("This floor only has " + bright("cyan", Integer.toString(user.floorSize())) + " items on it\n"); break;
                     }
                   } else System.out.print("\"" + cmds[2] + "\" is not a valid " + bright("cyan", "integer\n"));
-                } else if (user.changeItemFocus(Math.abs(Integer.parseInt(cmds[1])))) {
+                } else validItem = user.changeItemFocus(Math.abs(Integer.parseInt(cmds[1])));
+                if (validItem) {
                   while (!valid_answer) {
-                    System.out.print("\nThis " + bright("yellow", "Item") + " is:\n" + user.cur_item + "\n\n" +
-                                     bright("red") + "Are you sure you want to delete this? [Y/N] > ");
+                    System.out.println("\nThis " + bright("yellow", "Item") + " is:\n" + user.cur_item);
                     user.cur_item = temp_item;
-                    String yenu = scan.nextLine().toUpperCase();
+                    String yenu = "";
+                    try {
+                      yenu = getInput(scan, bright("red") + "Are you sure you want to delete this? [Y/N] ", new String[]{"y", "n"}, true);
+                    } catch (ArrayTooSmall e) { e.printStackTrace(); }
                     System.out.println(ANSI_RESET);
-                    switch (yenu) {
-                    case "Y": user.removeItem(Math.abs(Integer.parseInt(cmds[1])));
+                    switch (yenu.toUpperCase()) {
+                    case "Y":
+                      if (subItem)user.removeItem(Math.abs(Integer.parseInt(cmds[1])), Math.abs(Integer.parseInt(cmds[2])));
+                      else user.removeItem(Math.abs(Integer.parseInt(cmds[1])));
                     case "N": valid_answer = true;
                     }
                   }
-                } else System.out.print("This floor only has " + bright("cyan", Integer.toString(user.floorSize())) + " items on it\n");
+                } else if (!subItem) System.out.print("This floor only has " + bright("cyan", Integer.toString(user.floorSize())) + " items on it\n");
               } else System.out.print("\"" + cmds[1] + "\" is not a valid " + bright("cyan", "integer\n"));
             } else System.out.print(bright("blue", "\nRemove") + " what?\n\n");
             break;
@@ -531,27 +558,23 @@ class Main {
                   user.changeItemFocus(Integer.parseInt(cmds[1]));
                   switch (user.cur_item.type()) {
                     case "Container":
-                      System.out.print("This " + bright("yellow", "Item") + " is a " + bright("yellow", user.cur_item.subType()) + ", would you like to see:\n" +
-                                       "(Y) A specific " + bright("yellow", "Item") + "\n(N) Just the overall contents\n\n");
+                      System.out.println("This " + bright("yellow", "Item") + " is a " + bright("yellow", user.cur_item.subType()) + ", would you like to see:\n" +
+                                         "(Y) A specific " + bright("yellow", "Item") + "\n(N) Just the overall contents");
                       while (true) {
-                        System.out.print("[Y/N] > ");
-                        String temp = scan.nextLine().toUpperCase();
+                        String yenu = "";
+                        try {
+                          yenu = getInput(scan, "[Y/N] ", new String[]{"y", "n"}, true);
+                        } catch (ArrayTooSmall e) { e.printStackTrace(); }
                         int i_c = ((Container)user.cur_item).size();
-                        if (temp.equals("Y") && i_c > 0) {
-                          System.out.print("\nWhich " + bright("yellow", "Item") + ":\n\n");
-                          while (true) {
-                            System.out.print("[" + bright("cyan", "0") + "-" + bright("cyan", Integer.toString((i_c - 1))) + "] > ");
-                            int im = Math.abs(scan.nextInt());
-                            scan.nextLine();
-                            if (im < i_c) {
-                              System.out.print("\n" + ((Container)user.cur_item).getItem(im));
-                              break;
-                            } else System.out.print("There aren't that many " + bright("yellow", "Items") + " in this " + bright("yellow", user.cur_item.subType()));
-                          }
-                        } else if (temp.equals("N") || ((Container)user.cur_item).size() == 0) System.out.print("\n" + user.viewCurItem());
+                        if (yenu.equals("Y") && i_c > 0) {
+                          System.out.println("\nWhich " + bright("yellow", "Item") + ":");
+                          int im = 0;
+                          im = getInput(scan, 0, i_c);
+                          System.out.print("\n" + ((Container)user.cur_item).getItem(im));
+                        } else if (yenu.equals("N") || ((Container)user.cur_item).size() == 0) System.out.print("\n" + user.viewCurItem());
                         else System.out.print(bright("yellow", user.cur_item.subType()) + " is empty.");
                         System.out.println();
-                        if (equalsIgnoreCaseOr(temp, new String[]{"Y", "N"})) break;
+                        if (equalsIgnoreCaseOr(yenu, new String[]{"Y", "N"})) break;
                       }
                       System.out.println();
                       break;
@@ -560,7 +583,10 @@ class Main {
                                        "(Y) A specific device\n(N) Just the " + bright("yellow", "Display\n\n"));
                       while (true) {
                         System.out.print("[Y/N] > ");
-                        String temp = scan.nextLine().toUpperCase();
+                        String temp = "";
+                        try {
+                          temp = getInput(scan, "[Y/N] ", new String[]{"y", "n"}, true).toUpperCase();
+                        } catch (ArrayTooSmall e) { e.printStackTrace(); }
                         if (temp.equals("Y") && ((Display)user.cur_item).deviceCount() > 0) {
                           System.out.print("\nWhich device:\n\n");
                           while (true) {
@@ -602,9 +628,8 @@ class Main {
                     if (cmds[2].equalsIgnoreCase("arg")) {
                       int color;
                       System.out.println("\nChoose from these colors:\n");
-                      for (int i = 0; i < House.colors.length; i++) {
+                      for (int i = 0; i < House.colors.length; i++)
                         System.out.print(bright("cyan", Integer.toString(i)) + ": " + House.colors[i] + " ");
-                      }
                       System.out.println();
                       color = getInput(scan, 0, House.colors.length);
                       int floors;
@@ -631,9 +656,9 @@ class Main {
                       System.out.print("\nEnter " + bright("yellow", "Book") + " Author > ");
                       String author = scan.nextLine();
                       System.out.print("\nEnter Publishing Year > ");
-                      int year = scan.nextInt();
+                      String year = scan.nextLine();
                       scan.nextLine();
-                      temp_book.reset(title, author, year);
+                      temp_book.reset(title, author, (year.matches("[0-9]+") ? Integer.parseInt(year) : 0));
                       System.out.print("\nThis " + bright("yellow", "Book") + " added:\n" + temp_book + "\n\n");
                     } else System.out.print("\nInvalid 2nd argument, did you mean " + bright("green", "arg") + "?\n\n");
                   } else System.out.print("\nNew " + bright("yellow", "Book") + " added to floor " + bright("cyan", Integer.toString(user.curFloor())) + ".\n\n");
@@ -651,8 +676,11 @@ class Main {
                       String family = scan.nextLine();
                       System.out.print("" + bright("yellow", "Computer") + " Model (ie: dv6, Pro 3) > ");
                       String model = scan.nextLine();
-                      System.out.print("\nIs it on? (Invalid input will default to no)\nYes or no? [Y/N] > ");
-                      String is_on = scan.nextLine().toUpperCase();
+                      System.out.println("\nIs the computer turned on?");
+                      String is_on = "";
+                      try {
+                        is_on = getInput(scan, "[Y/N] ", new String[]{"y", "n"}, true).toUpperCase();
+                      } catch (ArrayTooSmall e) { e.printStackTrace(); }
                       temp_comp.reset(brand, family, model, (is_on.equals("Y") ? true : false), type);
                       System.out.print("\nThis " + bright("yellow", "Computer") + " added:\n" + temp_comp + "\n\n");
                     } else System.out.print("\nInvalid 2nd argument, did you mean " + bright("green", "arg") + "?\n\n");
@@ -682,8 +710,11 @@ class Main {
                   Display temp_disp = new Display();
                   if (cmds.length > 2) {
                     if (cmds[2].equalsIgnoreCase("arg")) {
-                      System.out.print("\nIs it a Monitor (Y) or a TV (N)?\nWill default to (Y)es if next input is invalid.\n[Y/N] > ");
-                      String is_mon = scan.nextLine().toUpperCase();
+                      System.out.println("\nIs it a Monitor (Y) or a TV (N)?");
+                      String is_mon = "";
+                      try {
+                        is_mon = getInput(scan, "[Y/N] ", new String[]{"y", "n"}, true).toUpperCase();
+                      } catch (ArrayTooSmall e) { e.printStackTrace(); }
                       System.out.print("\nType the number for each device connected to this " + bright("yellow", "Display") + " seperated by a space.\n(Optional)\n> ");
                       String[] con_devs = scan.nextLine().split(" +");
                       ArrayList<Item> valid_devs = new ArrayList<Item>();
@@ -703,9 +734,8 @@ class Main {
                       for (int num : not_added) System.out.print(num + " ");
                       System.out.print("\n\nNot a number: ");
                       for (String str_num : not_number) System.out.print(str_num + " ");
-                      System.out.print("\n\nEnter the " + color("yellow", "Display's") + " size in inches (decimals allowed) > ");
-                      double size = scan.nextDouble();
-                      scan.nextLine();
+                      System.out.println("\n\nEnter the " + color("yellow", "Display's") + " size in inches (decimals allowed)");
+                      double size = getInput(scan, 0.0, 100.0);
                       ArrayList<Item> new_items = new ArrayList<Item>();
                       for (int id : added) new_items.add(user.getItem(id));
                       temp_disp = new Display((is_mon.equals("N") ? false : true), new_items, size);
@@ -718,14 +748,16 @@ class Main {
                   Bed temp_bed = new Bed();
                   if (cmds.length > 2) {
                     if (cmds[2].equalsIgnoreCase("arg")) {
-                      System.out.print("\nIs this " + bright("yellow", "Bed") + " adjustable? (Invalid input will default to N)\n[Y/N] > ");
-                      boolean can_move = scan.nextLine().equalsIgnoreCase("Y");
+                      System.out.println("\nIs this " + bright("yellow", "Bed") + " adjustable?");
+                      boolean can_move = false;
+                      try {
+                        can_move = getInput(scan, "[Y/N] ", new String[]{"y", "n"}, true).equalsIgnoreCase("Y");
+                      } catch (ArrayTooSmall e) { e.printStackTrace(); }
                       System.out.println();
-                      for (int i = 0; i < Bed.types.length; i++) System.out.print("[" + bright("cyan", Integer.toString(i)) + "] " + Bed.types[i] + " ");
-                      System.out.print("\nInvalid input defaults to " + bright("cyan", "2"));
-                      System.out.print("\n[" + bright("cyan", "0") + "-" + bright("cyan", Integer.toString((Bed.types.length - 1))) + "] > ");
-                      String type_input = scan.nextLine();
-                      int bed_type = (type_input.matches("-?[0-9]+") && Math.abs(Integer.parseInt(type_input)) < Bed.types.length ? Math.abs(Integer.parseInt(type_input)) : 2);
+                      for (int i = 0; i < Bed.types.length; i++)
+                        System.out.print("[" + bright("cyan", Integer.toString(i)) + "] " + Bed.types[i] + " ");
+                      System.out.println();
+                      int bed_type = getInput(scan, 0, Bed.types.length);
                       temp_bed = new Bed(can_move, bed_type);
                       System.out.print("\nThis " + bright("yellow", "Bed") + " added:\n" + temp_bed + "\n\n");
                     } else System.out.print("\nInvalid 2nd argument, did you mean " + bright("green", "arg") + "?\n\n");
@@ -746,7 +778,7 @@ class Main {
                       ArrayList<Integer> not_added = new ArrayList<Integer>();
                       ArrayList<String> not_number = new ArrayList<String>();
                       for (String itm : objs) {
-                        if (itm.matches("-?[0-9]+")) {
+                        if (itm.matches("[0-9]+")) {
                           int itmID = Integer.parseInt(itm);
                           if (itmID >= 0 && itmID < user.floorSize()) added.add(itmID);
                           else not_added.add(itmID);
