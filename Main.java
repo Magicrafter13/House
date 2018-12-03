@@ -6,7 +6,7 @@ import java.util.*;
 class Main {
   private static final int verMajor = 2;
   private static final int verMinor = 1;
-  private static final int verFix = 1;
+  private static final int verFix = 2;
   private static String curVer() {return verMajor + "." + verMinor + "." + verFix;}
   public static final String ANSI = "\u001b[";
   public static final String ANSI_RESET = "\u001B[0m";
@@ -78,7 +78,8 @@ class Main {
         return bright("purple", "\nSyntax") + " is: " + bright("blue", "clear\n\n") +
                color("blue", "Clears") + " the console, and places cursor at home position\n\n";
       case "down":
-        return bright("purple", "\nSyntax") + " is: " + bright("blue", "down\n\n") +
+        return bright("purple", "\nSyntax") + " is: " + bright("blue", "down ") + "[" + bright("red", "floors") + "]\n\n" +
+               "\t" + bright("red", "floors") + " - " + bright("cyan", "integer") + " of how many floors you want to go down\n\n" +
                "Moves to the next floor " + bright("blue", "down") + ", unless you are at the bottom\n\n";
       case "exit":
         return bright("purple", "\nSyntax") + " is: " + bright("blue", "exit\n\n") +
@@ -126,15 +127,30 @@ class Main {
                "\t        up)\n\n" +
                color("blue", "Moves") + " an " + bright("yellow", "Item") + " from your current floor to the specified floor.\n\n";
       case "remove":
-        return bright("purple", "\nSyntax") + " is: " + bright("blue", "remove ") + bright("red") + "item\n\n" +
-               "\titem" + ANSI_RESET + " - " + bright("cyan", "integer") + " of " + bright("yellow", "Item") + " (see " + bright("blue", "list") + ")\n\n" +
+        return bright("purple", "\nSyntax") + " is: " + bright("blue", "remove ") + bright("red", "item") + " [" + bright("red", "sub-item") + "]\n\n" +
+               "\t" + bright("red", "item") + "     - " + bright("cyan", "integer") + " of " + bright("yellow", "Item") + " (see " + bright("blue", "list") + ")\n" +
+               "\t" + bright("red", "sub-item") + " - " + bright("cyan", "integer") + " of " + color("yellow", "subItem") + "\n\n" +
                color("blue", "Removes") + " specified " + bright("yellow", "Item") + " from current floor.\n\n";
+      case "set":
+        return "\n" + bright("purple", "Syntax") + " is: " + bright("blue", "set ") + "[" + bright("red", "variable") + " [" + bright("red", "value") + "] ]\n\n" +
+               "\t" + bright("red", "variable") + " - displays what said " + bright("red", "variable") + " is currently set to\n" +
+               "\t" + bright("red", "   value") + " - sets " + bright("red", "variable") + " to " + bright("red", "value") + "\n\n" +
+               color("blue", "Sets") + " and views variables.\n\n";
       case "up":
-        return bright("purple", "\nSyntax") + " is: " + bright("blue", "up\n\n") +
+        return bright("purple", "\nSyntax") + " is: " + bright("blue", "up ") + "[" + bright("red", "floors") + "]\n\n" +
+               "\t" + bright("red", "floors") + " - " + bright("cyan", "integer") + " of how many floors you want to go up\n\n" +
                "Moves to the next floor " + bright("blue", "up") + ", unless you are at the top\n\n";
+      case "use":
+        return "\n" + bright("purple", "Syntax") + " is: " + bright("blue", "use ") + bright("red", "object\n\n") +
+               "\t" + bright("red", "object") + " and object to interact with\n\n" +
+               color("blue", "Uses") + " an interactable object.\n\n";
       case "ver":
         return bright("purple", "\nSyntax") + " is: " + bright("blue", "vern\n") +
                "Tells you the current " + bright("blue", "version") + " of the Heck Command Interpretter\n\n";
+      case "visit":
+        return "\n" + bright("purple", "Syntax") + " is: " + bright("blue", "visit ") + bright("red", "house\n\n") +
+               "\t" + bright("red", "house") + " - " + bright("cyan", "integer") + " of house to go to\n\n" +
+               color("blue", "Visits") + " a specified house.\n\n";
       default:
         return bright("red") + "Code error!!! (Please report, as this message shouldn't be possible to see.)";
     }
@@ -864,26 +880,32 @@ class Main {
                 case "list": case "look": System.out.print(help("list")); break;
                 case "move": System.out.print(help("move")); break;
                 case "remove": System.out.print(help("remove")); break;
+                case "set": System.out.print(help("set")); break;
                 case "up": System.out.print(help("up")); break;
+                case "use": System.out.print(help("use")); break;
                 case "ver": case "version": System.out.print(help("ver")); break;
+                case "visit": System.out.print(help("visit")); break;
                 default: System.out.print("\nNo help was found for this command.\n\n"); break;
               }
             } else {
               System.out.println();
-              System.out.print("          " + bright("blue") + "add" + ANSI_RESET + " - adds an " + bright("yellow") + "Item" + ANSI_RESET + " to the current floor\n");
-              System.out.print("       " + bright("blue") + "attach" + ANSI_RESET + " - attaches (or detaches) one " + bright("yellow") + "Item" + ANSI_RESET + " to (from) another\n");
-              System.out.print("  " + bright("blue") + "clear / cls" + ANSI_RESET + " - clears the screen\n");
-              System.out.print("         " + bright("blue") + "down" + ANSI_RESET + " - goes down 1 floor\n");
-              System.out.print("  " + bright("blue") + "exit / quit" + ANSI_RESET + " - stops the program\n");
-              System.out.print("" + bright("blue") + "grab / select" + ANSI_RESET + " - sets which " + bright("yellow") + "Item" + ANSI_RESET + " you are currently focused on\n");
-              System.out.print("         " + bright("blue") + "help" + ANSI_RESET + " - displays this screen, and others\n");
-              System.out.print("" + bright("blue") + "info / status" + ANSI_RESET + " - shows information about you and the " + bright("yellow") + "House" + ANSI_RESET + " you are currently in\n");
-              System.out.print("  " + bright("blue") + "list / look" + ANSI_RESET + " - shows the " + bright("yellow") + "Item" + ANSI_RESET + "s on the current floor, or shows info about a\n" +
+              System.out.print("          " + bright("blue", "add") + " - adds an " + bright("yellow") + "Item" + ANSI_RESET + " to the current floor\n");
+              System.out.print("       " + bright("blue", "attach") + " - attaches (or detaches) one " + bright("yellow") + "Item" + ANSI_RESET + " to (from) another\n");
+              System.out.print("  " + bright("blue", "clear / cls") + " - clears the screen\n");
+              System.out.print("         " + bright("blue", "down") + " - goes down 1 floor\n");
+              System.out.print("  " + bright("blue", "exit / quit") + " - stops the program\n");
+              System.out.print("" + bright("blue", "grab / select") + " - sets which " + bright("yellow") + "Item" + ANSI_RESET + " you are currently focused on\n");
+              System.out.print("         " + bright("blue", "help") + " - displays this screen, and others\n");
+              System.out.print("" + bright("blue", "info / status") + " - shows information about you and the " + bright("yellow") + "House" + ANSI_RESET + " you are currently in\n");
+              System.out.print("  " + bright("blue", "list / look") + " - shows the " + bright("yellow") + "Item" + ANSI_RESET + "s on the current floor, or shows info about a\n" +
                                "                specific " + bright("yellow") + "Item\n");
-              System.out.print("         " + bright("blue") + "move" + ANSI_RESET + " - moves an " + bright("yellow") + "Item" + ANSI_RESET + " to another floor\n");
-              System.out.print("       " + bright("blue") + "remove" + ANSI_RESET + " - removes an " + bright("yellow") + "Item" + ANSI_RESET + " from the current floor\n");
-              System.out.print("           " + bright("blue") + "up" + ANSI_RESET + " - goes up 1 floor\n");
-              System.out.print("" + bright("blue") + "ver / version" + ANSI_RESET + " - displays information about this command interpretter\n");
+              System.out.print("         " + bright("blue", "move") + " - moves an " + bright("yellow") + "Item" + ANSI_RESET + " to another floor\n");
+              System.out.print("       " + bright("blue", "remove") + " - removes an " + bright("yellow") + "Item" + ANSI_RESET + " from the current floor\n");
+              System.out.print("          " + bright("blue", "set") + " - used to set variables in the command interpretter\n");
+              System.out.print("           " + bright("blue", "up") + " - goes up 1 floor\n");
+              System.out.print("          " + bright("blue", "use") + " - interacts with certain items (for interactive mode)\n");
+              System.out.print("" + bright("blue", "ver / version") + " - displays information about this command interpretter\n");
+              System.out.print("        " + bright("blue", "visit") + " - changes which House (and which viewer) you are in\n");
               System.out.print("\ntype help (command) for more detailed information about a specific command\n\n");
             }
             break;
