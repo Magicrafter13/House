@@ -5,8 +5,8 @@ import java.util.*;
 
 class Main {
   private static final int verMajor = 2;
-  private static final int verMinor = 1;
-  private static final int verFix = 2;
+  private static final int verMinor = 2;
+  private static final int verFix = 0;
   private static String curVer() {return verMajor + "." + verMinor + "." + verFix;}
   public static final String ANSI = "\u001b[";
   public static final String ANSI_RESET = "\u001B[0m";
@@ -59,11 +59,14 @@ class Main {
     for (int i = 0; i < text.length(); i++) ret_val += (i % 2 == 0 ? bright(color, text.substring(i, i + 1)) : color(color, text.substring(i, i + 1)));
     return ret_val + ANSI_RESET;
   }
+  public static final String[] top_types = {"Bed", "Book", "Computer", "Console", "Display", "Clothing", "Container"};
+  public static final String[] floor_interacts = {"light (or lights)"};
   private static String help(String cmd) {
+    String ret_val = "";
     switch (cmd) {
       case "add":
         return "\n" + bright("purple", "Syntax") + " is: " + bright("blue", "add ") + bright("red", "item ") + bright("green", "[arg]\n\n") +
-               "\t" + bright("red", "item") + " - must be a valid type\n" +
+               "\t" + bright("red", "item") + " - must be an Item type, or House\n" +
                "\t " + bright("green", "arg") + " - causes you to be prompted for the requried info to create a new\n" +
                "\t                " + bright("yellow", "Item") + " of this type (without " + bright("green", "arg") + ", a default " + bright("yellow", "Item") + " is created)\n\n" +
                color("blue") + "Adds" + bright("yellow", " Item ") + "to the current floor\n\n";
@@ -74,23 +77,24 @@ class Main {
                "\t" + bright("red", "dst") + " - " + bright("cyan", "integer") + " of an " + bright("yellow", "Item") + " on the current floor\n" +
                "\t " + bright("green", "-d") + " - " + color("blue", "detaches") + color("red", " source") + " from " + color("red", "destination\n\n") +
                color("blue", "[De/A]ttaches ") + bright("red", "src") + " [from/to] " + bright("red", "dst") + ".\n\n";
-      case "clear":
-        return bright("purple", "\nSyntax") + " is: " + bright("blue", "clear\n\n") +
+      case "clear": case "cls":
+        return bright("purple", "\nSyntax") + " is: " + bright("blue", cmd.toLowerCase()) + "\n\n" +
                color("blue", "Clears") + " the console, and places cursor at home position\n\n";
       case "down":
         return bright("purple", "\nSyntax") + " is: " + bright("blue", "down ") + "[" + bright("red", "floors") + "]\n\n" +
                "\t" + bright("red", "floors") + " - " + bright("cyan", "integer") + " of how many floors you want to go down\n\n" +
                "Moves to the next floor " + bright("blue", "down") + ", unless you are at the bottom\n\n";
-      case "exit":
-        return bright("purple", "\nSyntax") + " is: " + bright("blue", "exit\n\n") +
+      case "exit": case "quit":
+        return bright("purple", "\nSyntax") + " is: " + bright("blue", cmd.toLowerCase()) + "\n\n" +
                "Stops the program, and returns to your command line/operating environment\n\n";
-      case "grab":
-        return bright("purple", "\nSyntax") + " is: " + bright("blue", "grab ") + bright("red") + "item\n\n" +
+      case "grab": case "select":
+        return bright("purple", "\nSyntax") + " is: " + bright("blue", cmd.toLowerCase()) + bright("red") + " item\n\n" +
                "\titem" + ANSI_RESET + " - " + bright("cyan", "integer") + " of " + bright("yellow", "Item") + " (see " + bright("blue", "list") + ")\n\n" +
                "Changes the \"Viewer\"'s current " + bright("yellow", "Item\n\n");
       case "help":
-        return bright("purple", "\nSyntax") + " is: " + bright("blue", "help ") + bright("red") + "[command]\n\n" +
-               "\tcommand" + ANSI_RESET + " - a valid " + color("blue", "command\n\n") +
+        return bright("purple", "\nSyntax") + " is: " + bright("blue", "help ") + "[" + bright("red", "command") + " [" + bright("red", "sub-topic") + "] ]\n\n" +
+               "\t" + bright("red", "  command") + " - a valid " + color("blue", "command\n") +
+               "\t" + bright("red", "sub-topic") + " - some " + color("blue", "commands") + " can give you more info about their arguments\n" +
                "Colors:\n" +
                "\t   " + alternate("red", "red") + " - warning -or- argument name (usually an integer)\n" +
                "\t         dark: usually expanded name of a commands argument (to show\n" +
@@ -104,12 +108,12 @@ class Main {
                "\t         dark: Item integer for sub-items (ie: a book in a bookshelf)\n" +
                "\t  " + alternate("blue", "blue") + " - command\n" +
                "\t         dark: when referencing the command without using its exact name\n\n";
-      case "info":
-        return bright("purple", "\nSyntax") + " is: " + bright("blue", "info\n\n") +
+      case "info": case "status":
+        return bright("purple", "\nSyntax") + " is: " + bright("blue", cmd.toLowerCase()) + "\n\n" +
                "Returns " + bright("blue", "info") + " about the current 'Viewer'\n\n";
-      case "list":
-        return bright("purple", "\nSyntax") + " is: " + bright("blue", "list ") + "[" + bright("red", "item") + "] [(" + bright("green", "-h") + " / " + bright("green", "-f") + ")] [" + bright("green", "-r ") + bright("red", "start end") + "] [" + bright("green", " -p") + "] [" + bright("green", "-i ") + bright("yellow", "Item") + "]\n\n" +
-               "\t   " + bright("red", "item") + " - " + bright("cyan", "integer") + " of " + bright("yellow", "Item") + " (see " + bright("blue", "list") + ")\n" +
+      case "list": case "look":
+        return bright("purple", "\nSyntax") + " is: " + bright("blue", cmd.toLowerCase()) + " [" + bright("red", "item") + "] [(" + bright("green", "-h") + " / " + bright("green", "-f") + ")] [" + bright("green", "-r ") + bright("red", "start end") + "] [" + bright("green", " -p") + "] [" + bright("green", "-i ") + bright("yellow", "Item") + "]\n\n" +
+               "\t   " + bright("red", "item") + " - " + bright("cyan", "integer") + " of " + bright("yellow", "Item") + " (see " + bright("blue", cmd.toLowerCase()) + ")\n" +
                "\t" + bright("green", "-h / -f") + " - will show the the \"Viewer\"'s current " + bright("yellow", "Item\n") +
                "\t          Long version is " + bright("green", "--hand") + " or " + bright("green") + "--focus\n" +
                "\t     -r" + ANSI_RESET + " - will " + bright("blue", "list") + " " + color("yellow", "Items") + " between [" + bright("red", "start") + "] and [" + bright("red", "end") + "]\n" +
@@ -144,15 +148,26 @@ class Main {
         return "\n" + bright("purple", "Syntax") + " is: " + bright("blue", "use ") + bright("red", "object\n\n") +
                "\t" + bright("red", "object") + " and object to interact with\n\n" +
                color("blue", "Uses") + " an interactable object.\n\n";
-      case "ver":
-        return bright("purple", "\nSyntax") + " is: " + bright("blue", "vern\n") +
+      case "ver": case "version":
+        return bright("purple", "\nSyntax") + " is: " + bright("blue", cmd.toLowerCase()) + "\n\n" +
                "Tells you the current " + bright("blue", "version") + " of the Heck Command Interpretter\n\n";
       case "visit":
         return "\n" + bright("purple", "Syntax") + " is: " + bright("blue", "visit ") + bright("red", "house\n\n") +
                "\t" + bright("red", "house") + " - " + bright("cyan", "integer") + " of house to go to\n\n" +
                color("blue", "Visits") + " a specified house.\n\n";
+      //start sub-help
+      case "top-item":
+        ret_val = "\n" + bright("yellow", "Item") + " must be one of these types:\n";
+        for (String type : top_types) ret_val += "\n\t* " + type;
+        return ret_val + "\n\n";
+      case "floor-interact":
+        ret_val = "\n" + bright("red", "Object") + " must be one of these types:\n";
+        for (String obj : floor_interacts) ret_val += "\n\t* " + obj;
+        return ret_val + "\n\n";
+      case "bad-sub":
+        return "\nInvalid help sub-topic.\n\n";
       default:
-        return bright("red") + "Code error!!! (Please report, as this message shouldn't be possible to see.)";
+        return "\nNo help was found for this command.\n\n";
     }
   }
   private static boolean equalsIgnoreCaseOr(String test, String[] strs) {
@@ -868,25 +883,20 @@ class Main {
           case "": break;
           case "help":
             if (cmds.length > 1) {
-              switch (cmds[1].toLowerCase()) {
-                case "add": System.out.print(help("add")); break;
-                case "attach": System.out.print(help("attach")); break;
-                case "clear": case "cls": System.out.print(help("clear")); break;
-                case "down": System.out.print(help("down")); break;
-                case "exit": case "quit": System.out.print(help("exit")); break;
-                case "grab": case "select": System.out.print(help("grab")); break;
-                case "help": System.out.print(help("help")); break;
-                case "info": case "status": System.out.print(help("info")); break;
-                case "list": case "look": System.out.print(help("list")); break;
-                case "move": System.out.print(help("move")); break;
-                case "remove": System.out.print(help("remove")); break;
-                case "set": System.out.print(help("set")); break;
-                case "up": System.out.print(help("up")); break;
-                case "use": System.out.print(help("use")); break;
-                case "ver": case "version": System.out.print(help("ver")); break;
-                case "visit": System.out.print(help("visit")); break;
-                default: System.out.print("\nNo help was found for this command.\n\n"); break;
-              }
+              if (cmds.length > 2) {
+                switch (cmds[1].toLowerCase()) {
+                  case "add":
+                  case "list":
+                    if (cmds[2].equalsIgnoreCase("item")) System.out.print(help("top-item"));
+                    else System.out.print(help("bad-sub"));
+                    break;
+                  case "use":
+                    if (cmds[2].equalsIgnoreCase("object")) System.out.print(help("floor-interact"));
+                    else System.out.print(help("bad-sub"));
+                    break;
+                  default: System.out.print(help("."));
+                }
+              } else System.out.print(help(cmds[1].toLowerCase()));
             } else {
               System.out.println();
               System.out.print("          " + bright("blue", "add") + " - adds an " + bright("yellow") + "Item" + ANSI_RESET + " to the current floor\n");
