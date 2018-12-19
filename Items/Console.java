@@ -4,17 +4,19 @@ public class Console implements Item {
   private int sys_type;
   private String company;
   private String system;
+  private int roomID;
 
   public Console() {
-    sys_type = 0;
-    company = "Generi-sys";
-    system = "Generic System 1000";
+    this(0, "Generic-sys", "Generic System 1000", -1);
   }
-  public Console(int type, String c, String s) {
-    this();
+  public Console(int type, String c, String s, int i) {
     if (type >= 0 && type < types.length) sys_type = type;
     company = c;
     system = s;
+    roomID = i;
+  }
+  public int getRoom() {
+    return roomID;
   }
   public boolean hasItem(Item test) { return false; }
   public String type() { return typeS; }

@@ -1,10 +1,21 @@
 import java.util.*; //import java.util.ArrayList;
 
 public class ItemImport {
+  public static final String[][][] roomNames = {
+    {
+      {"Kitchen", "Dining Room", "Family Room", "Laundry Room", "Garage"},
+      {"Master Bedroom", "Office", "Game Room", "Master Bathroom"}
+    }, //Floor 0 and 1 of House 0
+    {
+      {"Room"},
+      {"Room"},
+      {"Room"}
+    } //3 Floors of House 1
+  };
   public static final Bookshelf[] bookshelfs = {
     new Bookshelf(new ArrayList<Book>(Arrays.asList(
-      new Book("The Hobbit", "J.R.R. Tolkien", 1937) //A book in a bookshelf
-    )))
+      new Book("The Hobbit", "J.R.R. Tolkien", 1937, 0) //A book in a bookshelf, in the "Master Bedroom"
+    )), 0) //0 indicating that the bookshelf is also in the Master Bedroom
   };
   public static final int[] bookshelfs_f = {
     1 //the bookshelf is on floor 1...
@@ -13,7 +24,7 @@ public class ItemImport {
     0 //...of house 0
   };
   public static final Computer[] computers = {
-    new Computer("Tandy", "1000", "TL/2", false, "Desktop") //An old computer
+    new Computer("Tandy", "1000", "TL/2", false, "Desktop", -1) //An old computer in the hallway (Room -1)
   };
   public static final int[] computers_f = {
     1 //the PC is on floor 1...
@@ -22,10 +33,10 @@ public class ItemImport {
     0 //...of house 0
   };
   public static final Console[] consoles = {
-    new Console(0, "Nintendo", "Wii U"), //console 0
-    new Console(0, "Microsoft", "Xbox 360"), //console 1
-    new Console(1, "Nintendo", "New 3DS XL") //console 2
-  };
+    new Console(0, "Nintendo", "Wii U", 2), //console 0
+    new Console(0, "Microsoft", "Xbox 360", 2), //console 1
+    new Console(1, "Nintendo", "New 3DS XL", 2) //console 2
+  }; //3 consoles in room 2 (Game Room)
   public static final int[] consoles_f = {
     1, 1, 1 //all of them on floor 1...
   };
@@ -35,7 +46,7 @@ public class ItemImport {
   public static final Display[] displays = {
     new Display(true, new ArrayList<Item>(Arrays.asList( //a 24" monitor...
       computers[0] //...with the old PC attached to it
-    )), 24)
+    )), 24, 2)
   };
   public static final int[] displays_f = {
     1 //on floor 1...
@@ -44,7 +55,7 @@ public class ItemImport {
     0 //...of house 0
   };
   public static final Bed[] beds = {
-    new Bed(false, 2) //standard bed
+    new Bed(false, 2, 0) //standard bed
   };
   public static final int[] beds_f = {
     1 //on floor 1...
@@ -64,12 +75,12 @@ public class ItemImport {
   };
   public static final Fridge[] fridges = {
     new Fridge(new ArrayList<Item>(Arrays.asList( //fridges with books (ya know, a normal fridge)
-      new Book("One", "Two", 3),
-      new Book("Four", "Five", 6)
-    )), false),
+      new Book("One", "Two", 3, 0),
+      new Book("Four", "Five", 6, 0)
+    )), false, 0), //a fridge in the kitchen... where it belongs
     new Fridge(new ArrayList<Item>(Arrays.asList(
-      new Book("Seven", "Eight", 9)
-    )), false)
+      new Book("Seven", "Eight", 9, 0)
+    )), false, 4) //room 4 = garage
   };
   public static final int[] fridges_f = {
     0, 0 //all on floor 0...
@@ -79,13 +90,13 @@ public class ItemImport {
   };
   public static final Dresser[] dressers = {
     new Dresser(new ArrayList<Item>(Arrays.asList( //clothes dressers
-      new Shirt("Red"),
-      new Pants("Blue"),
-      new Pants("Black")
-    ))),
+      new Shirt("Red", 0),
+      new Pants("Blue", 0),
+      new Pants("Black", 0)
+    )), 0),
     new Dresser(new ArrayList<Item>(Arrays.asList(
-      new Pants("Black")
-    )))
+      new Pants("Black", 0)
+    )), 0)
   };
   public static final int[] dressers_f = {
     1, 1 //floor 1
@@ -95,10 +106,10 @@ public class ItemImport {
   };
   public static final Table[] tables = {
     new Table(new ArrayList<Item>(Arrays.asList( //a table full of retro goodness
-      new Console(0, "Atari", "VCS 2600"),
-      new Console(0, "Nintendo", "NES"),
-      new Console(0, "Sega", "Genesis")
-    )))
+      new Console(0, "Atari", "VCS 2600", 2),
+      new Console(0, "Nintendo", "NES", 2),
+      new Console(0, "Sega", "Genesis", 2)
+    )), 2)
   };
   public static final int[] tables_f = {
     1 //floor 1...
@@ -115,6 +126,10 @@ public class ItemImport {
     House fakeHouse = new House(6, 3);
     houses.add(myHouse);
     houses.add(fakeHouse);
+    for (int h = 0; h < houses.size(); h++) //this abomination adds the room names to the floors of the houses
+      for (int f = 0; f < houses.get(h).getFloors().length; f++)
+        for (String room : roomNames[h][f])
+          houses.get(h).getFloors()[f].addRoom(room);
     for (int i = 0; i < bookshelfs.length; i++) houses.get(bookshelfs_h[i]).addItem(bookshelfs_f[i], bookshelfs[i]);
     for (int i = 0; i < computers.length; i++) houses.get(computers_h[i]).addItem(computers_f[i], computers[i]);
     for (int i = 0; i < consoles.length; i++) houses.get(consoles_h[i]).addItem(consoles_f[i], consoles[i]);

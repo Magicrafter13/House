@@ -1,4 +1,5 @@
 public interface Item {
+  public int getRoom();
   public boolean hasItem(Item test);
   public String type();
   public String subType();

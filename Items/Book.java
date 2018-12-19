@@ -5,6 +5,7 @@ public class Book implements Item {
   private static int total_books = 0;
   private int id;
   private static final String typeS = "Book";
+  private int roomID;
 
   public Book() {
     title = "none";
@@ -12,12 +13,17 @@ public class Book implements Item {
     year = 1600;
     total_books++;
     id = total_books;
+    roomID = -1;
   }
-  public Book(String t, String a, int y) {
+  public Book(String t, String a, int y, int i) {
     this();
     title = t;
     author = a;
     if (y >= 1600) year = y;
+    roomID = i;
+  }
+  public int getRoom() {
+    return roomID;
   }
   public boolean hasItem(Item test) { return false; }
   public void reset(String t, String a, int y) {

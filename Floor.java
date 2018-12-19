@@ -3,20 +3,40 @@ import java.util.ArrayList;
 public class Floor {
   private ArrayList<Item> items = new ArrayList<Item>();
   private boolean lights = false;
+  private ArrayList<String> roomNames = new ArrayList<String>();
 
   public Floor() {
-    this(new ArrayList<Item>(), false);
+    this(new ArrayList<Item>(), false, new ArrayList<String>());
   }
-  public Floor(ArrayList<Item> i, boolean l) {
+  public Floor(ArrayList<Item> i, boolean l, ArrayList<String> n) {
     items = i;
     lights = l;
+    roomNames = n;
   }
-  public Floor(ArrayList<Item> i) {
-    this(i, false);
+  public void addRoom(String r) {
+    roomNames.add(r);
+  }
+  public ArrayList<String> rooms() {
+    return new ArrayList<String>(roomNames);
+  }
+  /*public Floor(ArrayList<Item> i) {
+    this(i, false, new ArrayList<String>());
   }
   public Floor(boolean l) {
-    this(new ArrayList<Item>(), l);
+    this(new ArrayList<Item>(), l, new ArrayList<String>());
   }
+  public Floor(ArrayList<String> n) {
+    this(new ArrayList<Item>(), false, n);
+  }
+  public Floor(ArrayList<Item> i, boolean l) {
+    this(i, l, new ArrayList<String>());
+  }
+  public Floor(ArrayList<Item> i, ArrayList<String> n) {
+    this(i, false, n);
+  }
+  public Floor(boolean l, ArrayList<String> n) {
+    this(new ArrayList<Item>(), l, n);
+  }*/
   public boolean getLights() { return lights; }
   public String toggleLights() {
     lights = (lights ? false : true);

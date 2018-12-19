@@ -5,7 +5,7 @@ import java.util.*;
 
 class Main {
   private static final int verMajor = 2;
-  private static final int verMinor = 2;
+  private static final int verMinor = 3;
   private static final int verFix = 0;
   private static String curVer() {return verMajor + "." + verMinor + "." + verFix;}
   public static final String ANSI = "\u001b[";
@@ -91,6 +91,11 @@ class Main {
         return bright("purple", "\nSyntax") + " is: " + bright("blue", cmd.toLowerCase()) + bright("red") + " item\n\n" +
                "\titem" + ANSI_RESET + " - " + bright("cyan", "integer") + " of " + bright("yellow", "Item") + " (see " + bright("blue", "list") + ")\n\n" +
                "Changes the \"Viewer\"'s current " + bright("yellow", "Item\n\n");
+      case "goto":
+        return bright("purple", "\nSyntax") + " is: " + bright("blue", "goto") + " [" + bright("red", "room") + "]\n\n" +
+               bright("red", "\troom") + " - " + bright("cyan", "integer") + " of room (run " + bright("blue", "goto") + " without arguments to see rooms) [" + bright("green", "-1\n") +
+               "\t       exits all rooms (think of it like a hallway)]\n\n" +
+               "Changes the current room of the \"Viewer\"\n\n";
       case "help":
         return bright("purple", "\nSyntax") + " is: " + bright("blue", "help ") + "[" + bright("red", "command") + " [" + bright("red", "sub-topic") + "] ]\n\n" +
                "\t" + bright("red", "  command") + " - a valid " + color("blue", "command\n") +
@@ -237,9 +242,11 @@ class Main {
     }
   }
   public static String[][] enviVar = {
-    {"interactive", "false", "bool", "user"},
-    {"temperature", "70.0", "double", "system"},
-    {"house", "0", "int", "system"}
+    {"interactive", "false", "bool", "user"}, //tells the environment whether or not to do certain things
+    {"temperature", "70.0", "double", "system"}, //the ambient house temperature
+    {"house", "0", "int", "system"}, //integer representation of current viewer
+    {"use_rooms", "false", "bool", "user"}, //off by default so previous users aren't confused as to where their items are
+    {"cur_room", "-1", "int", "system"}//, //current room to get items from
   };
   public static int getInput(Scanner scan, int min, int max) throws InvalidRange {
     if (min >= max) throw new InvalidRange(min, max);
@@ -307,6 +314,39 @@ class Main {
       cmds = temp_arr.clone();
       if (cmds.length > 0) {
         switch (cmds[0].toLowerCase()) {
+          /*case "save":
+          case "export":
+            if (cmds.length > 1) {
+
+            } else {
+              for (int i = 0; i < houseData.size(); i++) //h.export(i);
+              System.out.print("\nAll House Data " + cmds[0].toUpperCase().charAt(0) + cmds[0].substring(1).toLowerCase() + (cmds[0].equalsIgnoreCase("export") ? "e" : "") + "d\n\n");
+            }
+            break;*/
+          case "goto":
+            if (cmds.length > 1) {
+              if (cmds[1].matches("(-1)|([0-9]+)")) {
+                int r = Integer.parseInt(cmds[1]);
+                switch (user.goRoom(r)) {
+                  case 1: System.out.println(bright("red", "Error: user.goRoom returned 1! Please report this bug!")); break;
+                  case 2: System.out.println("There aren't that many rooms on this floor."); break;
+                  case 3: System.out.println("\nLeft the room(s).\n");
+                  case 0: System.out.println("\nWelcome to room " + cmds[1] + ".\n"); break;
+                }
+                enviVar[4][1] = cmds[1];
+              } else System.out.println(bright("red", "room") + " must be a positive " + bright("cyan", "integer") + ", or " + bright("cyan", "-1") + ".");
+            } else {
+              System.out.println("\nRooms on this floor:\n");
+              ArrayList<String> tmp = user.roomNames();
+              for (int i = 0; i < tmp.size(); i++) System.out.println(Integer.toString(i) + ": " + tmp.get(i));
+              int new_room = getInput(scan, -1, tmp.size());
+              switch(user.goRoom(new_room)) {
+                case 3: System.out.println("\nLeft the room(s).\n");
+                case 0: System.out.println("\nWelcome to room " + new_room + ".\n"); break;
+              }
+              enviVar[4][1] = Integer.toString(new_room);
+            }
+            break;
           case "visit":
             if (cmds.length == 2) {
               if (cmds[1].matches("[0-9]+")) {
@@ -573,14 +613,14 @@ class Main {
                           for (int i = 0; i < pageCount; i++) {
                             System.out.println("\n\tFloor " + color("blue", "Listing") + " - Page " + (i + 1));
                             boolean end_test = (i + 1 < pageCount);
-                            System.out.print(user.list(rangeStart, rangeEnd, searchType, 20, i));
+                            System.out.print(user.list(rangeStart, rangeEnd, searchType, 20, i, (enviVar[3][1].equals("true") ? Integer.parseInt(enviVar[4][1]) : -2)));
                             if (end_test) {
                               System.out.print("Press enter to continue > ");
                               scan.nextLine();
                             } else System.out.println();
                           }
                       }
-                    } else System.out.print(user.list(rangeStart, rangeEnd, searchType, user.floorSize(), 0) + "\n");
+                    } else System.out.print(user.list(rangeStart, rangeEnd, searchType, user.floorSize(), 0, (enviVar[3][1].equals("true") ? Integer.parseInt(enviVar[4][1]) : -2)) + "\n");
                   } else System.out.print("\nYou can't see anything, the floor is completely dark!\n\n");
                 } else System.out.print(cmds[invalidArg] + " is not a valid argument.\n");
               } else if (cmds[1].matches("-?[0-9]+")) {
@@ -647,7 +687,7 @@ class Main {
                 } else System.out.print("This floor only has " + user.floorSize() + color("yellow", " Items") + " on it\n");
               } else System.out.print("\"" + cmds[1] + "\" is not a valid " + bright("cyan", "integer\n"));
             } else {
-              if (enviVar[0][1].equals("false") || user.curHouse().getFloor(user.curFloor()).getLights()) System.out.println(user.list());
+              if (enviVar[0][1].equals("false") || user.curHouse().getFloor(user.curFloor()).getLights()) System.out.println(user.list(0, user.floorSize(), "*", user.floorSize(), 0, (enviVar[3][1].equals("true") ? Integer.parseInt(enviVar[4][1]) : -2)));
               else System.out.print("\nYou can't see anything, the floor is completely dark!\n\n");
             }
             break;
@@ -712,7 +752,7 @@ class Main {
                       try {
                         is_on = getInput(scan, "[Y/N] ", new String[]{"y", "n"}, true).toUpperCase();
                       } catch (ArrayTooSmall e) { e.printStackTrace(); }
-                      temp_comp.reset(brand, family, model, (is_on.equals("Y") ? true : false), type);
+                      temp_comp.reset(brand, family, model, (is_on.equals("Y") ? true : false), type, Integer.parseInt(enviVar[4][1]));
                       System.out.print("\nThis " + bright("yellow", "Computer") + " added:\n" + temp_comp + "\n\n");
                     } else System.out.print("\nInvalid 2nd argument, did you mean " + bright("green", "arg") + "?\n\n");
                   } else System.out.print("\nNew " + bright("yellow", "Computer") + " added to floor " + bright("cyan", Integer.toString(user.curFloor())) + ".\n\n");
@@ -731,7 +771,7 @@ class Main {
                       String com = scan.nextLine();
                       System.out.print("\nEnter " + bright("yellow", "Console") + " Name (ie GameCube) > ");
                       String sys = scan.nextLine();
-                      temp_console = new Console(temp_type, com, sys);
+                      temp_console = new Console(temp_type, com, sys, Integer.parseInt(enviVar[4][1]));
                       System.out.print("\nThis " + bright("yellow", "Console") + " added:\n" + temp_console + "\n\n");
                     } else System.out.print("\nInvalid 2nd argument, did you mean " + bright("green", "arg") + "?\n\n");
                   } else System.out.print("\nNew " + bright("yellow", "Console") + " added to floor " + bright("cyan", Integer.toString(user.curFloor())) + ".\n\n");
@@ -769,7 +809,7 @@ class Main {
                       double size = getInput(scan, 0.0, 100.0);
                       ArrayList<Item> new_items = new ArrayList<Item>();
                       for (int id : added) new_items.add(user.getItem(id));
-                      temp_disp = new Display((is_mon.equals("N") ? false : true), new_items, size);
+                      temp_disp = new Display((is_mon.equals("N") ? false : true), new_items, size, Integer.parseInt(enviVar[4][1]));
                       System.out.print("\nThis " + bright("yellow", "Display") + " added:\n" + temp_disp + "\n\n");
                     } else System.out.print("\nInvalid 2nd argument, did you mean " + bright("green", "arg") + "?\n\n");
                   } else System.out.print("\nNew " + bright("yellow", "Display") + " added to floor " + bright("cyan", Integer.toString(user.curFloor())) + ".\n\n");
@@ -789,7 +829,7 @@ class Main {
                         System.out.print("[" + bright("cyan", Integer.toString(i)) + "] " + Bed.types[i] + " ");
                       System.out.println();
                       int bed_type = getInput(scan, 0, Bed.types.length);
-                      temp_bed = new Bed(can_move, bed_type);
+                      temp_bed = new Bed(can_move, bed_type, Integer.parseInt(enviVar[4][1]));
                       System.out.print("\nThis " + bright("yellow", "Bed") + " added:\n" + temp_bed + "\n\n");
                     } else System.out.print("\nInvalid 2nd argument, did you mean " + bright("green", "arg") + "?\n\n");
                   } else System.out.print("\nNew " + bright("yellow", "Bed") + " added to floor " + bright("cyan", Integer.toString(user.curFloor())) + ".\n\n");

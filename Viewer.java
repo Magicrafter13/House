@@ -1,7 +1,10 @@
+import java.util.ArrayList;
+
 public class Viewer {
   private int cur_floor;
   public Item cur_item;
   private House cur_house;
+  private int cur_room;
 
   public Viewer() {
     cur_floor = 0;
@@ -11,6 +14,17 @@ public class Viewer {
   public Viewer(House h) {
     this();
     cur_house = h;
+  }
+  public int goRoom(int r) {
+    if (r < -1) return 1;
+    ArrayList<String> rooms = roomNames();
+    if (r >= rooms.size()) return 2;
+    cur_room = r;
+    if (r == -1) return 3;
+    return 0;
+  }
+  public ArrayList<String> roomNames() {
+    return cur_house.getFloor(cur_floor).rooms();
   }
   public House curHouse() {
     return cur_house;
@@ -27,12 +41,12 @@ public class Viewer {
   }
   public int floorSize() { return cur_house.getFloor(cur_floor).size(); }
   public int pageCount(int s, int e, String t, int l) { return cur_house.pageCount(cur_floor, s, e, t, l); }
-  public String list(int s, int e, String t, int l, int p) {
-    return cur_house.list(cur_floor, s, e, t, l, p);
+  public String list(int s, int e, String t, int l, int p, int r) {
+    return cur_house.list(cur_floor, s, e, t, l, p, r);
   }
-  public String list() { return cur_house.list(cur_floor); }
-  public String list(int s, int e) { return cur_house.list(cur_floor, s, e, "*", floorSize(), 0); }
-  public String list(String type) { return cur_house.list(cur_floor, type); }
+  //public String list() { return cur_house.list(cur_floor); }
+  //public String list(int s, int e) { return cur_house.list(cur_floor, s, e, "*", floorSize(), 0); }
+  //public String list(String type) { return cur_house.list(cur_floor, type); }
   public void addItem(Item i) { cur_house.addItem(cur_floor, i); }
   public void removeItem(int in, int sin) {
     Item temp = cur_house.getFloor(cur_floor).getItem(in, sin);

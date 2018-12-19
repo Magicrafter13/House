@@ -6,8 +6,8 @@ public class Table extends Container implements Item {
   public Table() {
     super();
   }
-  public Table(ArrayList<Item> is) {
-    super(is);
+  public Table(ArrayList<Item> is, int i) {
+    super(is, i);
   }
   public String subType() { return typeS; }
   public String listInfo(boolean before_not_after) {

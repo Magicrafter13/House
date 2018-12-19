@@ -45,7 +45,7 @@ public class House {
     }
     return (items / pageLength + (items % pageLength == 0 ? 0 : 1));
   }
-  public String list(int f, int s, int e, String type, int pageLength, int page) {
+  public String list(int f, int s, int e, String type, int pageLength, int page, int room) {
     boolean valid_type = false;
     for (String t : types) if (type.equalsIgnoreCase(t)) valid_type = true;
     if (!valid_type) return type + " is not a valid " + Main.bright("yellow", "Item") + " type.";
@@ -57,9 +57,11 @@ public class House {
     ArrayList<Integer> item_ids = new ArrayList<Integer>();
     for (int i = s; i < e; i++) {
       if (i > floors[f].size()) continue;
-      if (type.equals("*") ||
+      if ((
+          type.equals("*") ||
           type.equalsIgnoreCase(floors[f].getItem(i).subType()) ||
-          type.equalsIgnoreCase(floors[f].getItem(i).type())) {
+          type.equalsIgnoreCase(floors[f].getItem(i).type())
+        ) && (room == -2 || floors[f].getItem(i).getRoom() == room)) {
         items.add(floors[f].getItem(i));
         item_ids.add(i);
       }
@@ -72,8 +74,8 @@ public class House {
     }
     return ret_val + "\n";
   }
-  public String list(int f) { return list(f, 0, floors[f].size(), "*", floors[f].size(), 0); }
-  public String list(int f, String type) { return list(f, 0, floors[f].size(), type, floors[f].size(), 0); }
+  //public String list(int f) { return list(f, 0, floors[f].size(), "*", floors[f].size(), 0); }
+  //public String list(int f, String type) { return list(f, 0, floors[f].size(), type, floors[f].size(), 0); }
   public int size() { return floor_count; }
   public boolean addItem(int f, Item i) {
     boolean check = (f >= 0 && f < floor_count);

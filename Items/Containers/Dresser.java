@@ -6,8 +6,8 @@ public class Dresser extends Container implements Item {
   public Dresser() {
     super();
   }
-  public Dresser(ArrayList<Item> is) {
-    super(is);
+  public Dresser(ArrayList<Item> is, int i) {
+    super(is, i);
   }
   public boolean hasClothes(String type) {
     for (int i = 0; i < size(); i++) if (getItem(i).subType().equalsIgnoreCase(type)) return true;

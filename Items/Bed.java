@@ -5,14 +5,18 @@ public class Bed implements Item {
   private boolean adjustable;
   private int bed_type;
   private static final String typeS = "Bed";
+  private int roomID;
 
   Bed() {
-    adjustable = false;
-    bed_type = 2;
+    this(false, 2, -1);
   }
-  Bed(boolean a, int t) {
+  Bed(boolean a, int t, int i) {
     adjustable = a;
     bed_type = (t >= 0 && t < types.length ? t : 2);
+    roomID = i;
+  }
+  public int getRoom() {
+    return roomID;
   }
   public boolean hasItem(Item test) { return false; }
   public String type() { return typeS; }

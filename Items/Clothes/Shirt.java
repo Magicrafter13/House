@@ -4,8 +4,8 @@ public class Shirt extends Clothing implements Item {
   public Shirt() {
     super();
   }
-  public Shirt(String c) {
-    super(c);
+  public Shirt(String c, int i) {
+    super(c, i);
   }
   public String subType() { return typeS; }
   public String listInfo(boolean before_not_after) { return (before_not_after ? getColor() + " " : ""); }

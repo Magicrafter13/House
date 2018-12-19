@@ -11,17 +11,18 @@ public class Fridge extends Container implements Item {
   public Fridge() {
     super();
   }
-  public Fridge(ArrayList<Item> is) {
-    super(is);
+  public Fridge(ArrayList<Item> is, boolean f, int i) {
+    super(is, i);
+    hasFreezer = f;
   }
-  public Fridge(boolean f) {
+  /*public Fridge(boolean f, int i) {
     super();
     hasFreezer = f;
   }
-  public Fridge(ArrayList<Item> is, boolean f) {
+  public Fridge(ArrayList<Item> is, boolean f, int i) {
     super(is);
     hasFreezer = f;
-  }
+  }*/
   public void toCelsius(boolean freezer) {
     if (freezer) {
       if (!freezerCelsius) {

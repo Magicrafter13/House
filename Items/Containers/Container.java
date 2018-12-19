@@ -3,12 +3,14 @@ import java.util.ArrayList;
 public class Container implements Item {
   private ArrayList<Item> items = new ArrayList<Item>();
   private static final String typeS = "Container";
+  private int roomID;
 
   public Container() {
-    items = new ArrayList<Item>();
+    this(new ArrayList<Item>(), -1);
   }
-  public Container(ArrayList<Item> is) {
+  public Container(ArrayList<Item> is, int i) {
     items = is;
+    roomID = i;
   }
   public Item getItem(int i) { return (i < 0 || i >= items.size() ? new Empty() : items.get(i)); }
   public String addItem(Item i) {
@@ -31,6 +33,9 @@ public class Container implements Item {
     return "No matching " + Main.bright("yellow", "Item") + " found.";
   }
   public int size() { return items.size(); }
+  public int getRoom() {
+    return roomID;
+  }
   public boolean hasItem(Item test) {
     for (Item i : items) if (i == test) return true;
     return false;

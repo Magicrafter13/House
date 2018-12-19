@@ -3,17 +3,21 @@ import java.util.ArrayList;
 public class Display implements Item {
   private static final String typeS = "Display";
   private boolean is_monitor;
-  private ArrayList<Item> connected_to = new ArrayList<Item>();
+  private ArrayList<Item> connected_to;
   private double size_inch;
+  private int roomID;
 
   public Display() {
-    is_monitor = false;
-    size_inch = 20.0;
+    this(false, new ArrayList<Item>(), 20.0, -1);
   }
-  public Display(boolean mon, ArrayList<Item> con, double sin) {
+  public Display(boolean mon, ArrayList<Item> con, double sin, int i) {
     is_monitor = mon;
     connected_to = con;
     size_inch = (sin > 0 ? sin : 20.0);
+    roomID = i;
+  }
+  public int getRoom() {
+    return roomID;
   }
   public boolean hasItem(Item test) {
     for (Item i : connected_to) if (i == test) return true;

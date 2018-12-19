@@ -7,31 +7,28 @@ public class Computer implements Item {
   private String brand;
   private String family;
   private String model;
+  private int roomID;
 
+  public void reset(String b, String f, String m, boolean state, String type, int id) {
+    computer_type = type;
+    is_on = state;
+    brand = b;
+    family = f;
+    model = m;
+    roomID = id;
+  }
   public Computer() {
-    computer_type = "Desktop";
+    this("Generic", "PC", "", false, "Desktop", -1);
+  }
+  public Computer(String b, String f, String m, boolean state, String type, int id) {
     id = total_comps;
     total_comps++;
-    brand = "Generic";
-    family = "PC";
-    model = "";
+    reset(b, f, m, state, type, id);
   }
-  public Computer(String b, String f, String m, boolean state, String type) {
-    this();
-    computer_type = type;
-    is_on = state;
-    brand = b;
-    family = f;
-    model = m;
+  public int getRoom() {
+    return roomID;
   }
   public boolean hasItem(Item test) { return false; }
-  public void reset(String b, String f, String m, boolean state, String type) {
-    computer_type = type;
-    is_on = state;
-    brand = b;
-    family = f;
-    model = m;
-  }
   public void turnOn() { is_on = true; }
   public void turnOff() { is_on = false; }
   public String type() { return typeS; }

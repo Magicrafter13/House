@@ -6,8 +6,8 @@ public class Bookshelf extends Container implements Item {
   public Bookshelf() {
     super();
   }
-  public Bookshelf(ArrayList<Book> b) {
-    super();
+  public Bookshelf(ArrayList<Book> b, int i) {
+    super(new ArrayList<Item>(), i);
     for (Book a : b) addItem(a);
   }
   public String addItem(Item i) {
