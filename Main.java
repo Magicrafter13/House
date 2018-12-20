@@ -6,7 +6,7 @@ import java.util.*;
 class Main {
   private static final int verMajor = 2;
   private static final int verMinor = 3;
-  private static final int verFix = 0;
+  private static final int verFix = 1;
   private static String curVer() {return verMajor + "." + verMinor + "." + verFix;}
   public static final String ANSI = "\u001b[";
   public static final String ANSI_RESET = "\u001B[0m";
@@ -900,7 +900,10 @@ class Main {
               case 1: System.out.println(user.goUp()); break;
               case 2:
                 if (cmds[1].matches("[0-9]+")) {
-                  if (user.goFloor(user.curFloor() + Integer.parseInt(cmds[1]))) System.out.println("\nWelcome to floor " + bright("cyan", Integer.toString(user.curFloor())) + ".\n");
+                  if (user.goFloor(user.curFloor() + Integer.parseInt(cmds[1]))) {
+                    System.out.println("\nWelcome to floor " + bright("cyan", Integer.toString(user.curFloor())) + ".\n");
+                    enviVar[4][1] = "-1";
+                  }
                   else System.out.println("\nYou are currently on the top floor, floor unchanged.\n");
                 } else System.out.println("Argument must be a positive " + bright("cyan", "integer") + ".");
                 break;
@@ -913,7 +916,10 @@ class Main {
               case 1: System.out.println(user.goDown()); break;
               case 2:
                 if (cmds[1].matches("[0-9]+")) {
-                  if (user.goFloor(user.curFloor() - Integer.parseInt(cmds[1]))) System.out.println("\nWelcome to floor " + bright("cyan", Integer.toString(user.curFloor())) + ".\n");
+                  if (user.goFloor(user.curFloor() - Integer.parseInt(cmds[1]))) {
+                    System.out.println("\nWelcome to floor " + bright("cyan", Integer.toString(user.curFloor())) + ".\n");
+                    enviVar[4][1] = "-1";
+                  }
                   else System.out.println("\nYou are currently on the bottom floor, floor unchanged.\n");
                 } else System.out.println("Argument must be a positive " + bright("cyan", "integer") + ".");
                 break;
