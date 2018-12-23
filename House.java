@@ -27,6 +27,11 @@ public class House {
     floor_count = fs.length;
     floors = fs;
   }
+  public String export(int house) {
+    String retStr = "House " + house + "\n";
+    for (int i = 0; i < floors.length; i++) retStr += floors[i].export(i);
+    return retStr + "End House " + house + "\n";
+  }
   public int pageCount(int f, int rangeStart, int rangeEnd, String searchType, int pageLength) {
     boolean valid_type = false;
     for (String t : types) if (searchType.equalsIgnoreCase(t)) valid_type = true;

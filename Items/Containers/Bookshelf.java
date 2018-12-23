@@ -10,6 +10,36 @@ public class Bookshelf extends Container implements Item {
     super(new ArrayList<Item>(), i);
     for (Book a : b) addItem(a);
   }
+  public String export(int space) {
+    String retStr = "";
+    for (int i = 0; i < space; i++) retStr += " ";
+    retStr += "new Bookshelf(new ArrayList<Item>(Arrays.asList( " + (super.getItems().size() > 0 ? "\n" : " ");
+    for (int i = 0; i < super.getItems().size(); i++) {
+      if (super.getItem(i) instanceof Container) {
+        switch (super.getItem(i).subType()) {
+          case "Bookshelf": retStr += ((Bookshelf)super.getItem(i)).export(space + 2); break;
+          case "Dresser": retStr += ((Dresser)super.getItem(i)).export(space + 2); break;
+          case "Fridge": retStr += ((Fridge)super.getItem(i)).export(space + 2); break;
+          case "Table": retStr += ((Table)super.getItem(i)).export(space + 2); break;
+          default: retStr += ((Container)super.getItem(i)).export(space + 2); break;
+        }
+        continue;
+      }
+      if (super.getItem(i) instanceof Display) {
+        retStr += ((Display)super.getItem(i)).export(space + 2) + "\n";
+        continue;
+      }
+      for (int s = 0; s < space + 2; s++) retStr += " ";
+      retStr += super.getItem(i).export() + "\n";
+    }
+    if (super.getItems().size() > 0)
+      for (int i = 0; i < space; i++)
+        retStr += " ";
+    return retStr + ")), " + super.getRoom() + "),\n";
+  }
+  public String export() {
+    return "new Bookshelf(new ArrayList<Book>(Arrays.asList( /*Books in Bookshelf*/ )), " + super.getRoom() + "),";
+  }
   public String addItem(Item i) {
     if (i instanceof Book) {
       super.addItem(i);

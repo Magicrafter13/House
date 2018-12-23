@@ -15,6 +15,9 @@ public class Bed implements Item {
     bed_type = (t >= 0 && t < types.length ? t : 2);
     roomID = i;
   }
+  public String export() {
+    return "new Bed(" + (adjustable ? "true" : "false") + ", " + bed_type + ", " + roomID + "),";
+  }
   public int getRoom() {
     return roomID;
   }

@@ -22,6 +22,9 @@ public class Book implements Item {
     if (y >= 1600) year = y;
     roomID = i;
   }
+  public String export() {
+    return "new Book(\"" + title + "\", \"" + author + "\", " + year + ", " + roomID + "),";
+  }
   public int getRoom() {
     return roomID;
   }

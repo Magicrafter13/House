@@ -13,6 +13,29 @@ public class Floor {
     lights = l;
     roomNames = n;
   }
+  public String export(int floor) {
+    String retStr = "  Floor " + Integer.toString(floor) + "\n    Room Names = { \"" + roomNames.get(0) + "\"";
+    for (int i = 1; i < roomNames.size(); i++) retStr += ", \"" + roomNames.get(i) + "\"";
+    retStr += " }\n";
+    for (int i = 0; i < items.size(); i++) {
+      if (items.get(i) instanceof Container) {
+        switch (items.get(i).subType()) {
+          case "Bookshelf": retStr += ((Bookshelf)items.get(i)).export(4); break;
+          case "Dresser": retStr += ((Dresser)items.get(i)).export(4); break;
+          case "Fridge": retStr += ((Fridge)items.get(i)).export(4); break;
+          case "Table": retStr += ((Table)items.get(i)).export(4); break;
+          default: retStr += ((Container)items.get(i)).export(4); break;
+        }
+        continue;
+      }
+      if (items.get(i) instanceof Display) {
+        retStr += ((Display)items.get(i)).export(4);
+        continue;
+      }
+      retStr += "    " + items.get(i).export() + "\n";
+    }
+    return retStr + "  End Floor " + floor + "\n";
+  }
   public void addRoom(String r) {
     roomNames.add(r);
   }

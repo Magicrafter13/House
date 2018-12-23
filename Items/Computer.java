@@ -25,6 +25,9 @@ public class Computer implements Item {
     total_comps++;
     reset(b, f, m, state, type, id);
   }
+  public String export() {
+    return "new Computer(\"" + brand + "\", \"" + family + "\", \"" + model + "\", " + (is_on ? "true" : "false") + ", \"" + computer_type + "\", " + roomID + "),";
+  }
   public int getRoom() {
     return roomID;
   }

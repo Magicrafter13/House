@@ -1,12 +1,14 @@
 import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
 import static java.lang.System.*;
 
 import java.util.*;
 
 class Main {
   private static final int verMajor = 2;
-  private static final int verMinor = 3;
-  private static final int verFix = 1;
+  private static final int verMinor = 4;
+  private static final int verFix = 0;
   private static String curVer() {return verMajor + "." + verMinor + "." + verFix;}
   public static final String ANSI = "\u001b[";
   public static final String ANSI_RESET = "\u001B[0m";
@@ -314,15 +316,26 @@ class Main {
       cmds = temp_arr.clone();
       if (cmds.length > 0) {
         switch (cmds[0].toLowerCase()) {
-          /*case "save":
+          case "save":
           case "export":
             if (cmds.length > 1) {
 
             } else {
-              for (int i = 0; i < houseData.size(); i++) //h.export(i);
+              String exportData = "";
+              for (int i = 0; i < houseData.size(); i++)
+                exportData += houseData.get(i).export(i) + "\n";
+              try {
+                File exportFile = new File("exportedItems.txt");
+                FileWriter fileWriter = new FileWriter(exportFile);
+                fileWriter.write(exportData);
+                fileWriter.flush();
+                fileWriter.close();
+              } catch (IOException e) {
+                e.printStackTrace();
+              }
               System.out.print("\nAll House Data " + cmds[0].toUpperCase().charAt(0) + cmds[0].substring(1).toLowerCase() + (cmds[0].equalsIgnoreCase("export") ? "e" : "") + "d\n\n");
             }
-            break;*/
+            break;
           case "goto":
             if (cmds.length > 1) {
               if (cmds[1].matches("(-1)|([0-9]+)")) {

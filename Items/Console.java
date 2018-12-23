@@ -15,6 +15,9 @@ public class Console implements Item {
     system = s;
     roomID = i;
   }
+  public String export() {
+    return "new Console(" + Integer.toString(sys_type) + ", \"" + company + "\", \"" + system + "\", " + roomID + "),";
+  }
   public int getRoom() {
     return roomID;
   }

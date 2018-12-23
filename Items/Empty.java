@@ -11,6 +11,9 @@ public class Empty implements Item {
     return roomID;
   }
   public boolean hasItem(Item test) { return false; }
+  public String export() {
+    return "new Empty(),";
+  }
   public String type() { return typeS; }
   public String subType() { return type(); }
   public String listInfo(boolean before_not_after) { return ""; }

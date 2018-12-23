@@ -16,6 +16,36 @@ public class Display implements Item {
     size_inch = (sin > 0 ? sin : 20.0);
     roomID = i;
   }
+  public String export(int space) {
+    String retStr = "";
+    for (int i = 0; i < space; i++) retStr += " ";
+    retStr += "new Display(" + (is_monitor ? "true" : "false") + "new ArrayList<Item>(Arrays.asList( " + (connected_to.size() > 0 ? "\n" : " ");
+    for (int i = 0; i < connected_to.size(); i++) {
+      if (connected_to.get(i) instanceof Container) {
+        switch (connected_to.get(i).subType()) {
+          case "Bookshelf": retStr += ((Bookshelf)connected_to.get(i)).export(space + 2); break;
+          case "Dresser": retStr += ((Dresser)connected_to.get(i)).export(space + 2); break;
+          case "Fridge": retStr += ((Fridge)connected_to.get(i)).export(space + 2); break;
+          case "Table": retStr += ((Table)connected_to.get(i)).export(space + 2); break;
+          default: retStr += ((Container)connected_to.get(i)).export(space + 2); break;
+        }
+        continue;
+      }
+      if (connected_to.get(i) instanceof Display) {
+        retStr += ((Display)connected_to.get(i)).export(space + 2) + "\n";
+        continue;
+      }
+      for (int s = 0; s < space + 2; s++) retStr += " ";
+      retStr += connected_to.get(i).export() + "\n";
+    }
+    if (connected_to.size() > 0)
+      for (int i = 0; i < space; i++)
+        retStr += " ";
+    return retStr + ")), " + Double.toString(size_inch) + ", " + roomID + "),\n";
+  }
+  public String export() {
+    return "new Display(" + (is_monitor ? "true" : "false") + ", new ArrayList<Item>(Arrays.asList( /*Connected devices*/ )), " + Double.toString(size_inch) + ", " + roomID + "),";
+  }
   public int getRoom() {
     return roomID;
   }

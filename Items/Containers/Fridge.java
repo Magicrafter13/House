@@ -15,6 +15,36 @@ public class Fridge extends Container implements Item {
     super(is, i);
     hasFreezer = f;
   }
+  public String export(int space) {
+    String retStr = "";
+    for (int i = 0; i < space; i++) retStr += " ";
+    retStr += "new Fridge(new ArrayList<Item>(Arrays.asList( " + (super.getItems().size() > 0 ? "\n" : " ");
+    for (int i = 0; i < super.getItems().size(); i++) {
+      if (super.getItem(i) instanceof Container) {
+        switch (super.getItem(i).subType()) {
+          case "Bookshelf": retStr += ((Bookshelf)super.getItem(i)).export(space + 2); break;
+          case "Dresser": retStr += ((Dresser)super.getItem(i)).export(space + 2); break;
+          case "Fridge": retStr += ((Fridge)super.getItem(i)).export(space + 2); break;
+          case "Table": retStr += ((Table)super.getItem(i)).export(space + 2); break;
+          default: retStr += ((Container)super.getItem(i)).export(space + 2); break;
+        }
+        continue;
+      }
+      if (super.getItem(i) instanceof Display) {
+        retStr += ((Display)super.getItem(i)).export(space + 2) + "\n";
+        continue;
+      }
+      for (int s = 0; s < space + 2; s++) retStr += " ";
+      retStr += super.getItem(i).export() + "\n";
+    }
+    if (super.getItems().size() > 0)
+      for (int i = 0; i < space; i++)
+        retStr += " ";
+    return retStr + ")), " + (hasFreezer ? "true" : "false") + ", " + super.getRoom() + "),\n";
+  }
+  public String export() {
+    return "new Fridge(new ArrayList<Item>(Arrays.asList( /*Items in Fridge*/ )), " + (hasFreezer ? "true" : "false") + ", " + super.getRoom() + "),";
+  }
   /*public Fridge(boolean f, int i) {
     super();
     hasFreezer = f;

@@ -12,6 +12,37 @@ public class Container implements Item {
     items = is;
     roomID = i;
   }
+  public String export(int space) {
+    String retStr = "";
+    for (int i = 0; i < space; i++) retStr += " ";
+    retStr += "new Container(new ArrayList<Item>(Arrays.asList( " + (items.size() > 0 ? "\n" : " ");
+    for (int i = 0; i < items.size(); i++) {
+      if (items.get(i) instanceof Container) {
+        switch (items.get(i).subType()) {
+          case "Bookshelf": retStr += ((Bookshelf)items.get(i)).export(space + 2); break;
+          case "Dresser": retStr += ((Dresser)items.get(i)).export(space + 2); break;
+          case "Fridge": retStr += ((Fridge)items.get(i)).export(space + 2); break;
+          case "Table": retStr += ((Table)items.get(i)).export(space + 2); break;
+          default: retStr += ((Container)items.get(i)).export(space + 2); break;
+        }
+        continue;
+      }
+      if (items.get(i) instanceof Display) {
+        retStr += ((Display)items.get(i)).export(space + 2) + "\n";
+        continue;
+      }
+      for (int s = 0; s < space + 2; s++) retStr += " ";
+      retStr += items.get(i).export() + "\n";
+    }
+    if (items.size() > 0)
+      for (int i = 0; i < space; i++)
+        retStr += " ";
+    return retStr + ")), " + roomID + "),\n";
+  }
+  public String export() {
+    return "new Container(new ArrayList<Item>(Arrays.asList( /*Items in Container*/ )), " + roomID + "),";
+  }
+  public ArrayList<Item> getItems() { return items; }
   public Item getItem(int i) { return (i < 0 || i >= items.size() ? new Empty() : items.get(i)); }
   public String addItem(Item i) {
     if (i == this) return "You can't put something inside itself!";

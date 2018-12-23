@@ -11,6 +11,9 @@ public class Clothing implements Item {
     color = c;
     roomID = i;
   }
+  public String export() {
+    return "new Clothing(\"" + color + "\", " + roomID + "),";
+  }
   public void setColor(String c) { color = c; }
   public String getColor() { return color; }
   public int getRoom() {
