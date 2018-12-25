@@ -32,7 +32,23 @@ public class Display implements Item {
         continue;
       }
       if (connected_to.get(i) instanceof Display) {
-        retStr += ((Display)connected_to.get(i)).export(space + 2) + "\n";
+        switch (connected_to.get(i).subType()) {
+          case "Bookshelf":
+            retStr += ((Bookshelf)connected_to.get(i)).export(space + 2);
+            break;
+          case "Dresser":
+            retStr += ((Dresser)connected_to.get(i)).export(space + 2);
+            break;
+          case "Fridge":
+            retStr += ((Fridge)connected_to.get(i)).export(space + 2);
+            break;
+          case "Table":
+            retStr += ((Table)connected_to.get(i)).export(space + 2);
+            break;
+          default:
+            retStr += ((Container)connected_to.get(i)).export(space + 2);
+            break;
+        }
         continue;
       }
       for (int s = 0; s < space + 2; s++) retStr += " ";

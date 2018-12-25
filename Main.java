@@ -61,7 +61,7 @@ class Main {
     for (int i = 0; i < text.length(); i++) ret_val += (i % 2 == 0 ? bright(color, text.substring(i, i + 1)) : color(color, text.substring(i, i + 1)));
     return ret_val + ANSI_RESET;
   }
-  public static final String[] top_types = {"Bed", "Book", "Computer", "Console", "Display", "Clothing", "Container"};
+  public static final String[] top_types = {"Bed", "Book", "Computer", "Console", "Display", "Clothing", "Container", "Printer"};
   public static final String[] floor_interacts = {"light (or lights)"};
   private static String help(String cmd) {
     String ret_val = "";
@@ -271,7 +271,7 @@ class Main {
     do {
       System.out.print("\n" + message + "> ");
       String lineIn = scan.nextLine();
-      for (String test : values) if ((ignoreCase && lineIn.equalsIgnoreCase(test)) || (!ignoreCase && lineIn.equals(test))) return lineIn;
+      for (String test : values) if ((ignoreCase && lineIn.equalsIgnoreCase(test)) || lineIn.equals(test)) return lineIn;
     } while (true);
   }
   public static String getInput(Scanner scan, String message, String[] values, boolean ignoreCase) throws ArrayTooSmall {
@@ -319,7 +319,38 @@ class Main {
           case "save":
           case "export":
             if (cmds.length > 1) {
-
+              if (cmds.length > 2) {
+									switch (cmds[2].toLowerCase()) {
+										case "-h":
+                      if (cmds[1].matches("^\\d+$")) {
+                        if (Integer.parseInt(cmds[1]) >= 0 && Integer.parseInt(cmds[1]) < houseData.size()) {
+                          File exportFile = new File("exportedHouse.txt");
+                          FileWriter fileWriter = new FileWriter(exportFile);
+                          fileWriter.write(houseData.get(Integer.parseInt(cmds[1])).export(Integer.parseInt(cmds[1])) + "\n");
+                          fileWriter.flush();
+                          fileWriter.close();
+                          System.out.println("\nHouse " + cmds[1] + " exported.\n");
+                        } else System.out.print(bright("red", "house") + " must be greater than or equal to " + bright("cyan", "0") + " and less than " + bright("cyan", Integer.toString(houseData.size())) + ".\n");
+                      } else System.out.print(cmds[1] + " is not a valid " + bright("cyan", "integer") + ".\n");
+                      break;
+										case "-f":
+                      if (cmds[1].matches("^\\d+$")) {
+                        if (Integer.parseInt(cmds[1]) >= 0 && Integer.parseInt(cmds[1]) < user.curHouse().getFloor(user.curFloor()).size()) {
+                          File exportFile = new File("exportedFloor.txt");
+                          FileWriter fileWriter = new FileWriter(exportFile);
+                          fileWriter.write(user.curHouse().getFloor(Integer.parseInt(cmds[1])).export(Integer.parseInt(cmds[1])) + "\n");
+                          fileWriter.flush();
+                          fileWriter.close();
+                          System.out.println("\nFloors " + cmds[1] + " exported.\n");
+                        }
+                      }
+                      break;
+										default:
+											System.out.println(cmds[2] + " is not a valid argument.");
+											break;
+									}
+								} else
+								System.out.println(cmds[0].toLowerCase() + " accepts 0 or 2 arguments.");
             } else {
               String exportData = "";
               for (int i = 0; i < houseData.size(); i++)
@@ -693,6 +724,7 @@ class Main {
                     case "Console":
                     case "Bed":
                     case "Clothing":
+                    case "Printer":
                       System.out.print("\n" + user.viewCurItem() + "\n\n");
                       break;
                   }
@@ -894,6 +926,32 @@ class Main {
                     } else System.out.print("\nInvalid 2nd argument, did you mean " + bright("green", "arg") + "?\n\n");
                   } else System.out.print("\nNew " + bright("yellow", temp_cloth.subType()) + " added to floor " + bright("cyan", Integer.toString(user.curFloor())) + ".\n\n");
                   user.addItem(temp_cloth);
+                  break;
+                case "printer":
+                  Printer tempPrint = new Printer();
+                  if (cmds.length > 2) {
+                    if (cmds[2].equalsIgnoreCase("arg")) {
+                      System.out.print("\nEnter the " + bright("yellow", "Printer") + " details.\n");
+                      boolean hasColor = false, canFax = false, canScan = false;
+                      System.out.print("\nDoes the " + bright("yellow", "Printer") + " print in color?\n");
+                      try {
+                        hasColor = getInput(scan, "[Y/N] ", new String[] { "y", "n" }, true).equalsIgnoreCase("Y");
+                      } catch (ArrayTooSmall e) { e.printStackTrace(); }
+                      System.out.print("\nCan the " + bright("yellow", "Printer") + " send and receive faxes?\n");
+                      try {
+                        canFax = getInput(scan, "[Y/N] ", new String[] { "y", "n" }, true).equalsIgnoreCase("Y");
+                      } catch (ArrayTooSmall e) { e.printStackTrace(); }
+                      System.out.print("\nCan the " + bright("yellow", "Printer") + " scan things?\n");
+                      try {
+                        canScan = getInput(scan, "[Y/N] ", new String[] { "y", "n" }, true).equalsIgnoreCase("Y");
+                      } catch (ArrayTooSmall e) { e.printStackTrace(); }
+                      tempPrint = new Printer(canFax, canScan, hasColor, Integer.parseInt(enviVar[4][1]));
+                      System.out.print("\nThis " + bright("yellow", "Printer") + " added:\n" + tempPrint + "\n\n");
+                    } else
+                      System.out.print("\nInvalid 2nd argument, did you mean " + bright("green", "arg") + "?\n\n");
+                  } else
+                    System.out.print("\nNew " + bright("yellow", "Printer") + " added to floor " + bright("cyan", Integer.toString(user.curFloor())) + ".\n\n");
+                  user.addItem(tempPrint);
                   break;
                 default:
                   System.out.print("\"" + cmds[1] + "\" is not a valid " + bright("yellow", "Item") + " type:\n");
