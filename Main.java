@@ -8,7 +8,7 @@ import java.util.*;
 class Main {
   private static final int verMajor = 2;
   private static final int verMinor = 4;
-  private static final int verFix = 0;
+  private static final int verFix = 1;
   private static String curVer() {return verMajor + "." + verMinor + "." + verFix;}
   public static final String ANSI = "\u001b[";
   public static final String ANSI_RESET = "\u001B[0m";
@@ -681,12 +681,12 @@ class Main {
                           yenu = getInput(scan, "[Y/N] ", new String[]{"y", "n"}, true);
                         } catch (ArrayTooSmall e) { e.printStackTrace(); }
                         int i_c = ((Container)user.cur_item).size();
-                        if (yenu.equals("Y") && i_c > 0) {
+                        if (yenu.equalsIgnoreCase("Y") && i_c > 0) {
                           System.out.println("\nWhich " + bright("yellow", "Item") + ":");
                           int im = 0;
                           im = getInput(scan, 0, i_c);
                           System.out.print("\n" + ((Container)user.cur_item).getItem(im));
-                        } else if (yenu.equals("N") || ((Container)user.cur_item).size() == 0) System.out.print("\n" + user.viewCurItem());
+                        } else if (yenu.equalsIgnoreCase("N") || ((Container)user.cur_item).size() == 0) System.out.print("\n" + user.viewCurItem());
                         else System.out.print(bright("yellow", user.cur_item.subType()) + " is empty.");
                         System.out.println();
                         if (equalsIgnoreCaseOr(yenu, new String[]{"Y", "N"})) break;

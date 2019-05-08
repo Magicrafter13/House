@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+import java.util.*;
 
 public class Floor {
   private ArrayList<Item> items = new ArrayList<Item>();
@@ -6,7 +6,7 @@ public class Floor {
   private ArrayList<String> roomNames = new ArrayList<String>();
 
   public Floor() {
-    this(new ArrayList<Item>(), false, new ArrayList<String>());
+    this(new ArrayList<Item>(), false, new ArrayList<String>(Arrays.asList("Room")));
   }
   public Floor(ArrayList<Item> i, boolean l, ArrayList<String> n) {
     items = i;
