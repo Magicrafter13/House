@@ -27,7 +27,7 @@ public class Book implements Item {
   public String search(ArrayList<String> keywords) {
     String output = "";
     for (String key : keywords)
-      if (key.equalsIgnoreCase(title) || key.equalsIgnoreCase(author) || key.equals(year))
+      if (title.toLowerCase().contains(key.toLowerCase()) || key.equalsIgnoreCase(author) || key.equals(year))
         output += listInfo(true) + typeS + listInfo(false);
     return output;
   }

@@ -15,6 +15,13 @@ public class Bookshelf extends Container implements Item {
     for (String key : keywords)
       if (size() == 0 && key.equalsIgnoreCase("Empty"))
         output += listInfo(true) + typeS + listInfo(false);
+    if (output.equals("")) {
+      for (int i = 0; i < size(); i++) {
+        String temp = super.getItem(i).search(keywords);
+        if (output.equals("") && !temp.equals("")) output = "Bookshelf:\n";
+        if (!temp.equals("")) output += "\t" + i + ": " + temp + "\n";
+      }
+    }
     return output;
   }
   public String export(int space) {

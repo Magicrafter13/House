@@ -7,7 +7,7 @@ import java.util.*;
 
 class Main {
   private static final int verMajor = 2;
-  private static final int verMinor = 5;
+  private static final int verMinor = 6;
   private static final int verFix = 1;
   private static String curVer() {return verMajor + "." + verMinor + "." + verFix;}
   public static final String ANSI = "\u001b[";
