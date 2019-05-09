@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Printer implements Item {
   private static String typeS = "Printer";
   private boolean can_fax, can_scan, has_color;
@@ -14,6 +16,13 @@ public class Printer implements Item {
     can_scan = canScan;
     has_color = hasColor;
     roomID = room;
+  }
+  public String search(ArrayList<String> keywords) {
+    String output = "";
+    for (String key : keywords)
+      if ((can_fax && key.equalsIgnoreCase("Fax")) || (can_scan && key.equalsIgnoreCase("Scan")) || (has_color && key.equalsIgnoreCase("Color")))
+        output += listInfo(true) + typeS + listInfo(false);
+    return output;
   }
   public int getRoom() {
     return roomID;

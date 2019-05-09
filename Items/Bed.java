@@ -15,6 +15,13 @@ public class Bed implements Item {
     bed_type = (t >= 0 && t < types.length ? t : 2);
     roomID = i;
   }
+  public String search(ArrayList<String> keywords) {
+    String output = "";
+    for (String key : keywords)
+      if (key.equalsIgnoreCase(types[bed_type]) || (key.toLowerCase().equals("adjustable") && adjustable))
+        output += listInfo(true) + typeS + listInfo(false);
+    return output;
+  }
   public String export() {
     return "new Bed(" + (adjustable ? "true" : "false") + ", " + bed_type + ", " + roomID + "),";
   }

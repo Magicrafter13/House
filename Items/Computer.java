@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Computer implements Item {
   private String computer_type;
   private boolean is_on = false;
@@ -24,6 +26,13 @@ public class Computer implements Item {
     id = total_comps;
     total_comps++;
     reset(b, f, m, state, type, id);
+  }
+  public String search(ArrayList<String> keywords) {
+    String output = "";
+    for (String key : keywords)
+      if (Main.equalsIgnoreCaseOr(key, new String[] { computer_type, brand, family, model }))
+        output += listInfo(true) + typeS + listInfo(false);
+    return output;
   }
   public String export() {
     return "new Computer(\"" + brand + "\", \"" + family + "\", \"" + model + "\", " + (is_on ? "true" : "false") + ", \"" + computer_type + "\", " + roomID + "),";

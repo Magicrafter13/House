@@ -9,6 +9,13 @@ public class Table extends Container implements Item {
   public Table(ArrayList<Item> is, int i) {
     super(is, i);
   }
+  public String search(ArrayList<String> keywords) {
+    String output = "";
+    for (String key : keywords)
+      if (size() == 0 && key.equalsIgnoreCase("Empty"))
+        output += listInfo(true) + typeS + listInfo(false);
+    return output;
+  }
   public String export(int space) {
     String retStr = "";
     for (int i = 0; i < space; i++) retStr += " ";

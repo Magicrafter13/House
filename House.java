@@ -27,6 +27,23 @@ public class House {
     floor_count = fs.length;
     floors = fs;
   }
+  public String search(int floor, int room, String item, ArrayList<String> keywords) {
+    String output = "";
+    if (floor > -1) {
+      String tmp = floors[floor].search(room, item, keywords);
+      if (!tmp.equals(""))
+        output += "Floor " + floor + "\n" + tmp + "\n";
+    }
+    else {
+      for (int flr = 0; flr < floor_count; flr++) {
+        if (floor != -1 && floor != flr) continue;
+        String tmp = floors[flr].search(room, item, keywords);
+        if (!tmp.equals(""))
+          output += "Floor " + flr + "\n" + tmp + "\n";
+      }
+    }
+    return output;
+  }
   public String export(int house) {
     String retStr = "House " + house + "\n";
     for (int i = 0; i < floors.length; i++) retStr += floors[i].export(i);

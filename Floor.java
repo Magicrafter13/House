@@ -13,6 +13,40 @@ public class Floor {
     lights = l;
     roomNames = n;
   }
+  public String search(int room, String itemType, ArrayList<String> keywords) {
+    String output = "";
+    ArrayList<ArrayList<Item>> sortedItems= new ArrayList<ArrayList<Item>>(roomNames.size() + 1);
+    for (int i = 0; i < roomNames.size() + 1; i++) sortedItems.add(new ArrayList<Item>());
+    for (Item item : items) {
+      if (room != -2 && room != item.getRoom()) continue;
+      sortedItems.get(item.getRoom() + 1).add(item);
+    }
+    for (ArrayList<Item> roomItems : sortedItems) {
+      if (roomItems.size() > 0) {
+        int testRoom = roomItems.get(0).getRoom();
+        if (room != -2 && room != testRoom) continue;
+        String tempSearch = "";
+        tempSearch += "    Room " + testRoom + ":\n";
+        for (Item item : roomItems) {
+          if (itemType.equals("") || item.type().equalsIgnoreCase(itemType)) {
+            String temp = item.search(keywords);
+            if (!temp.equals(""))
+              tempSearch += Main.bright("cyan", "        " + items.indexOf(item)) + ": " + temp + "\n";
+          }
+        }
+        if (!tempSearch.equals("    Room " + testRoom + ":\n")) output += tempSearch;
+      }
+      /*if (room == -1 || room == item.getRoom()) {
+        if (itemType.equals("") || item.type().equalsIgnoreCase(itemType)) {
+          String temp = item.search(keywords);
+          if (!temp.equals(""))
+            output += "Room " + (room == -1 ? "any" : room) + ": " + item.search(keywords) + "\n";
+        }
+      }*/
+    }
+    if (!output.equals("")) output += "\n";
+    return output;
+  }
   public String export(int floor) {
     String retStr = "  Floor " + Integer.toString(floor) + "\n    Room Names = { \"" + roomNames.get(0) + "\"";
     for (int i = 1; i < roomNames.size(); i++) retStr += ", \"" + roomNames.get(i) + "\"";

@@ -10,6 +10,13 @@ public class Bookshelf extends Container implements Item {
     super(new ArrayList<Item>(), i);
     for (Book a : b) addItem(a);
   }
+  public String search(ArrayList<String> keywords) {
+    String output = "";
+    for (String key : keywords)
+      if (size() == 0 && key.equalsIgnoreCase("Empty"))
+        output += listInfo(true) + typeS + listInfo(false);
+    return output;
+  }
   public String export(int space) {
     String retStr = "";
     for (int i = 0; i < space; i++) retStr += " ";

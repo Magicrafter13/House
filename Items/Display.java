@@ -16,6 +16,13 @@ public class Display implements Item {
     size_inch = (sin > 0 ? sin : 20.0);
     roomID = i;
   }
+  public String search(ArrayList<String> keywords) {
+    String output = "";
+    for (String key : keywords)
+      if (key.equalsIgnoreCase((is_monitor ? "Monitor" : "Display")))
+        output += listInfo(true) + typeS + listInfo(false);
+    return output;
+  }
   public String export(int space) {
     String retStr = "";
     for (int i = 0; i < space; i++) retStr += " ";

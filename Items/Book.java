@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Book implements Item {
   private String title;
   private String author;
@@ -21,6 +23,13 @@ public class Book implements Item {
     author = a;
     if (y >= 1600) year = y;
     roomID = i;
+  }
+  public String search(ArrayList<String> keywords) {
+    String output = "";
+    for (String key : keywords)
+      if (key.equalsIgnoreCase(title) || key.equalsIgnoreCase(author) || key.equals(year))
+        output += listInfo(true) + typeS + listInfo(false);
+    return output;
   }
   public String export() {
     return "new Book(\"" + title + "\", \"" + author + "\", " + year + ", " + roomID + "),";

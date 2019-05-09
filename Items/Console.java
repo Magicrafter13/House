@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Console implements Item {
   private static final String typeS = "Console";
   public static final String[] types = {"Console", "Handheld", "Hybrid System"};
@@ -14,6 +16,13 @@ public class Console implements Item {
     company = c;
     system = s;
     roomID = i;
+  }
+  public String search(ArrayList<String> keywords) {
+    String output = "";
+    for (String key : keywords)
+      if (Main.equalsIgnoreCaseOr(key, new String[] { types[sys_type], company, system }))
+        output += types[sys_type] + " - " + company + " " + system;
+    return output;
   }
   public String export() {
     return "new Console(" + Integer.toString(sys_type) + ", \"" + company + "\", \"" + system + "\", " + roomID + "),";

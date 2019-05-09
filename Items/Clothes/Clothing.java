@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Clothing implements Item {
   private static final String typeS = "Clothing";
   private String color = "";
@@ -10,6 +12,13 @@ public class Clothing implements Item {
   public Clothing(String c, int i) {
     color = c;
     roomID = i;
+  }
+  public String search(ArrayList<String> keywords) {
+    String output = "";
+    for (String key : keywords)
+      if (key.equalsIgnoreCase(color))
+        output += listInfo(true) + typeS + listInfo(false);
+    return output;
   }
   public String export() {
     return "new Clothing(\"" + color + "\", " + roomID + "),";

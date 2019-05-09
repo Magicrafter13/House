@@ -15,6 +15,9 @@ public class Viewer {
     this();
     cur_house = h;
   }
+  public String search(int floor, int room, String item, ArrayList<String> keywords) {
+    return cur_house.search(room != -2 && floor == -1 ? cur_floor : floor, room, item, keywords);
+  }
   public int goRoom(int r) {
     if (r < -1) return 1;
     ArrayList<String> rooms = roomNames();

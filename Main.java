@@ -7,7 +7,7 @@ import java.util.*;
 
 class Main {
   private static final int verMajor = 2;
-  private static final int verMinor = 4;
+  private static final int verMinor = 5;
   private static final int verFix = 1;
   private static String curVer() {return verMajor + "." + verMinor + "." + verFix;}
   public static final String ANSI = "\u001b[";
@@ -177,14 +177,14 @@ class Main {
         return "\nNo help was found for this command.\n\n";
     }
   }
-  private static boolean equalsIgnoreCaseOr(String test, String[] strs) {
+  public static boolean equalsIgnoreCaseOr(String test, String[] strs) {
     for (int i = 0; i < strs.length; i++) if (test.equalsIgnoreCase(strs[i])) return true;
     return false;
   }
-  private static boolean matchesAnd(String[] strs, String match) {
+  /*private static boolean matchesAnd(String[] strs, String match) { //Unused
     for (int i = 0; i < strs.length; i++) if (!strs[i].matches(match)) return false;
     return true;
-  }
+  }*/
   private static boolean canGoInside(String src, String dst) {
     switch (dst.toLowerCase()) {
       case "bookshelf":
@@ -304,7 +304,6 @@ class Main {
     ArrayList<Viewer> viewers = new ArrayList<Viewer>();
     for (House h : houseData) viewers.add(new Viewer(h));
 
-    House my_house = houseData.get(0);
     Viewer user = viewers.get(0);
     Boolean here = true;
 
@@ -316,6 +315,59 @@ class Main {
       cmds = temp_arr.clone();
       if (cmds.length > 0) {
         switch (cmds[0].toLowerCase()) {
+          case "search":
+          case "find":
+            String searchItem = "";
+            ArrayList<String> keywords = new ArrayList<String>();
+            int searchFloor = -1;
+            int searchRoom = -2;
+            for (int arg = 1; arg < cmds.length - 1; arg += 2) {
+              if (equalsIgnoreCaseOr(cmds[arg], new String[] { "-t", "--type" })) {
+                searchItem = cmds[arg + 1];
+                continue;
+              }
+              if (searchFloor == -1 && equalsIgnoreCaseOr(cmds[arg], new String[] { "-f", "--floor" })) {
+                if (cmds[arg + 1].matches("^\\d+$"))
+                  searchFloor = Integer.parseInt(cmds[arg + 1]);
+                else
+                  System.out.println(bright("red", "floor") + " must be a positive " + bright("cyan", "integer") + ".");
+                continue;
+              }
+              if (searchRoom == -2 && equalsIgnoreCaseOr(cmds[arg], new String[] { "-r", "--room" })) {
+                if (cmds[arg + 1].matches("^((-1)|\\d+)$"))
+                  searchRoom = Integer.parseInt(cmds[arg + 1]);
+                else
+                  System.out.println(bright("red", "room") + " must be a positive " + bright("cyan", "integer") + "or" + bright("cyan", "-1") + ".");
+                continue;
+              }
+            }
+            System.out.println(searchFloor + " " + searchRoom);
+            System.out.println("Please enter 1 -3 keywords: (2 and 3 optional)");
+            String[] keys = { "", "", "" };
+            do {
+              System.out.print("Keyword 1 > ");
+              keys[0] = scan.nextLine();
+            } while (keys[0].equals(""));
+            System.out.print("Keyword 2 > ");
+            keys[1] = scan.nextLine();
+            if (!keys[1].equals("")) {
+              System.out.print("Keyword 3 > ");
+              keys[2] = scan.nextLine();
+            }
+            keywords.add(keys[0]);
+            if (!keys[1].equals("")) keywords.add(keys[1]);
+            if (!keys[2].equals("")) keywords.add(keys[2]);
+            System.out.println("\nSearching for:");
+            System.out.print("\"" + keywords.get(0) + "\"");
+            for (int key = 1; key < keywords.size(); key++) System.out.print(", \"" + keywords.get(key) + "\"");
+            System.out.println();
+            System.out.println("In: " + (searchItem.equals("") ? "All" : searchItem) + bright("yellow", " items") + ". On floor: " + (searchFloor == -1 ? "all" : bright("yellow", Integer.toString(searchFloor))) + ". In room: " + (searchRoom == -2 ? "all" : searchRoom == -1 ? "No room" : bright("cyan", Integer.toString(searchRoom))) + ".");
+            String output = user.search(searchFloor, searchRoom, searchItem, keywords);
+            if (!output.equals(""))
+              System.out.print(output);
+            else
+              System.out.println("No matches found.\n");
+            break;
           case "save":
           case "export":
             if (cmds.length > 1) {
@@ -683,8 +735,7 @@ class Main {
                         int i_c = ((Container)user.cur_item).size();
                         if (yenu.equalsIgnoreCase("Y") && i_c > 0) {
                           System.out.println("\nWhich " + bright("yellow", "Item") + ":");
-                          int im = 0;
-                          im = getInput(scan, 0, i_c);
+                          int im = getInput(scan, 0, i_c);
                           System.out.print("\n" + ((Container)user.cur_item).getItem(im));
                         } else if (yenu.equalsIgnoreCase("N") || ((Container)user.cur_item).size() == 0) System.out.print("\n" + user.viewCurItem());
                         else System.out.print(bright("yellow", user.cur_item.subType()) + " is empty.");
@@ -833,7 +884,6 @@ class Main {
                       } catch (ArrayTooSmall e) { e.printStackTrace(); }
                       System.out.print("\nType the number for each device connected to this " + bright("yellow", "Display") + " seperated by a space.\n(Optional)\n> ");
                       String[] con_devs = scan.nextLine().split(" +");
-                      ArrayList<Item> valid_devs = new ArrayList<Item>();
                       ArrayList<Integer> added = new ArrayList<Integer>();
                       ArrayList<Integer> not_added = new ArrayList<Integer>();
                       ArrayList<String> not_number = new ArrayList<String>();
@@ -889,7 +939,6 @@ class Main {
                       System.out.print("\nType the number for each " + bright("yellow", "Item") + " to be put inside this " + bright("yellow", temp_con.subType()) + " seperated by a space.\n(Optional)\n> ");
                       String[] objs = scan.nextLine().split(" +");
                       System.out.println();
-                      ArrayList<Item> valid_objs = new ArrayList<Item>();
                       ArrayList<Integer> added = new ArrayList<Integer>();
                       ArrayList<Integer> not_added = new ArrayList<Integer>();
                       ArrayList<String> not_number = new ArrayList<String>();
