@@ -8,7 +8,7 @@ import java.util.*;
 class Main {
   private static final int verMajor = 2;
   private static final int verMinor = 6;
-  private static final int verFix = 1;
+  private static final int verFix = 2;
   private static String curVer() {return verMajor + "." + verMinor + "." + verFix;}
   public static final String ANSI = "\u001b[";
   public static final String ANSI_RESET = "\u001B[0m";
@@ -89,15 +89,15 @@ class Main {
       case "exit": case "quit":
         return bright("purple", "\nSyntax") + " is: " + bright("blue", cmd.toLowerCase()) + "\n\n" +
                "Stops the program, and returns to your command line/operating environment\n\n";
-      case "grab": case "select":
-        return bright("purple", "\nSyntax") + " is: " + bright("blue", cmd.toLowerCase()) + bright("red") + " item\n\n" +
-               "\titem" + ANSI_RESET + " - " + bright("cyan", "integer") + " of " + bright("yellow", "Item") + " (see " + bright("blue", "list") + ")\n\n" +
-               "Changes the \"Viewer\"'s current " + bright("yellow", "Item\n\n");
       case "goto":
         return bright("purple", "\nSyntax") + " is: " + bright("blue", "goto") + " [" + bright("red", "room") + "]\n\n" +
                bright("red", "\troom") + " - " + bright("cyan", "integer") + " of room (run " + bright("blue", "goto") + " without arguments to see rooms) [" + bright("green", "-1\n") +
                "\t       exits all rooms (think of it like a hallway)]\n\n" +
                "Changes the current room of the \"Viewer\"\n\n";
+      case "grab": case "select":
+        return bright("purple", "\nSyntax") + " is: " + bright("blue", cmd.toLowerCase()) + bright("red") + " item\n\n" +
+               "\titem" + ANSI_RESET + " - " + bright("cyan", "integer") + " of " + bright("yellow", "Item") + " (see " + bright("blue", "list") + ")\n\n" +
+               "Changes the \"Viewer\"'s current " + bright("yellow", "Item\n\n");
       case "help":
         return bright("purple", "\nSyntax") + " is: " + bright("blue", "help ") + "[" + bright("red", "command") + " [" + bright("red", "sub-topic") + "] ]\n\n" +
                "\t" + bright("red", "  command") + " - a valid " + color("blue", "command\n") +
@@ -142,6 +142,13 @@ class Main {
                "\t" + bright("red", "item") + "     - " + bright("cyan", "integer") + " of " + bright("yellow", "Item") + " (see " + bright("blue", "list") + ")\n" +
                "\t" + bright("red", "sub-item") + " - " + bright("cyan", "integer") + " of " + color("yellow", "subItem") + "\n\n" +
                color("blue", "Removes") + " specified " + bright("yellow", "Item") + " from current floor.\n\n";
+      case "save": case "export":
+        return "\n" + bright("purple", "Syntax") + " is: " + bright("blue", cmd.toLowerCase()) + " [" + bright("cyan", "number") + " ((" + bright("green", "-h") + " / " + bright("green", "--house") + ") / (" + bright("green", "-f") + " / " + bright("green", "--floor") + "))]\n\n" +
+               "\t" + bright("cyan", "number") + " - specifies which (floor / house) to " + bright("blue", cmd.toLowerCase()) + "\n\n" +
+               color("blue", cmd.substring(0, 1).toUpperCase() + cmd.substring(1).toLowerCase() + "s") + " all data from all houses, or data specified from arguments\n\n";
+      case "search": case "find":
+        return "\n" + bright("purple", "Syntax") + " is: " + bright("blue", cmd.toLowerCase()) + "\n\n" +
+               "Starts a search dialogue for finding items via keywords\n\n";
       case "set":
         return "\n" + bright("purple", "Syntax") + " is: " + bright("blue", "set ") + "[" + bright("red", "variable") + " [" + bright("red", "value") + "] ]\n\n" +
                "\t" + bright("red", "variable") + " - displays what said " + bright("red", "variable") + " is currently set to\n" +
@@ -374,6 +381,7 @@ class Main {
               if (cmds.length > 2) {
 									switch (cmds[2].toLowerCase()) {
 										case "-h":
+                    case "--house":
                       if (cmds[1].matches("^\\d+$")) {
                         if (Integer.parseInt(cmds[1]) >= 0 && Integer.parseInt(cmds[1]) < houseData.size()) {
                           File exportFile = new File("exportedHouse.txt");
@@ -386,6 +394,7 @@ class Main {
                       } else System.out.print(cmds[1] + " is not a valid " + bright("cyan", "integer") + ".\n");
                       break;
 										case "-f":
+                    case "--floor":
                       if (cmds[1].matches("^\\d+$")) {
                         if (Integer.parseInt(cmds[1]) >= 0 && Integer.parseInt(cmds[1]) < user.curHouse().getFloor(user.curFloor()).size()) {
                           File exportFile = new File("exportedFloor.txt");
@@ -1070,6 +1079,7 @@ class Main {
               System.out.print("  " + bright("blue", "clear / cls") + " - clears the screen\n");
               System.out.print("         " + bright("blue", "down") + " - goes down 1 floor\n");
               System.out.print("  " + bright("blue", "exit / quit") + " - stops the program\n");
+              System.out.print("         " + bright("blue", "goto") + " - changes the current room\n");
               System.out.print("" + bright("blue", "grab / select") + " - sets which " + bright("yellow") + "Item" + ANSI_RESET + " you are currently focused on\n");
               System.out.print("         " + bright("blue", "help") + " - displays this screen, and others\n");
               System.out.print("" + bright("blue", "info / status") + " - shows information about you and the " + bright("yellow") + "House" + ANSI_RESET + " you are currently in\n");
@@ -1077,6 +1087,8 @@ class Main {
                                "                specific " + bright("yellow") + "Item\n");
               System.out.print("         " + bright("blue", "move") + " - moves an " + bright("yellow") + "Item" + ANSI_RESET + " to another floor\n");
               System.out.print("       " + bright("blue", "remove") + " - removes an " + bright("yellow") + "Item" + ANSI_RESET + " from the current floor\n");
+              System.out.print("" + bright("blue", "save / export") + " - saves item data currently stored in the program\n");
+              System.out.print("" + bright("blue", "search / find") + " - searches the current house for items\n");
               System.out.print("          " + bright("blue", "set") + " - used to set variables in the command interpretter\n");
               System.out.print("           " + bright("blue", "up") + " - goes up 1 floor\n");
               System.out.print("          " + bright("blue", "use") + " - interacts with certain items (for interactive mode)\n");
