@@ -5,3 +5,6 @@ to do.txt
 Furniture/
 /.vs
 /House
+/House.sln
+/House.vcxproj*
+/Debug
